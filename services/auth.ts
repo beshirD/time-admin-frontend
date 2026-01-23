@@ -3,6 +3,8 @@
  */
 
 import { api } from './api';
+import { setAuthCookie } from '@/lib/auth-cookies';
+
 import { 
   SignInCredentials, 
   SignInResponse, 
@@ -117,12 +119,16 @@ class AuthService {
       if (response.data.success && response.data.data) {
         const { accessToken, refreshToken: newRefreshToken } = response.data.data;
         this.setTokens(accessToken, newRefreshToken);
+              
+        await setAuthCookie(accessToken);
+
         return accessToken;
       }
 
       return null;
     } catch (error) {
       this.clearTokens();
+      await removeAuthCookie();
       return null;
     }
   }
