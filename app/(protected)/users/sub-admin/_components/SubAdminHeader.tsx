@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { ArrowLeft, Pencil, Trash2 } from "lucide-react";
-import IconButton from "@/components/ui/IconButton";
 import { DeleteSubAdminDialog } from "./DeleteSubAdminDialog";
 
 interface SubAdminHeaderProps {

@@ -12,7 +12,6 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
 
 interface DeleteSubAdminDialogProps {
   subAdminId: number | string;
@@ -22,12 +21,12 @@ interface DeleteSubAdminDialogProps {
 }
 
 export function DeleteSubAdminDialog({
-  subAdminId,
+  // subAdminId,
   subAdminName,
   children,
   onDeleteSuccess,
 }: DeleteSubAdminDialogProps) {
-  const router = useRouter();
+  // const router = useRouter();
 
   const handleDelete = async () => {
     toast.success("Sub-Admin deleted successfully", {

@@ -61,9 +61,9 @@ export function CreateSubAdminDialog() {
       </DialogTrigger>
       <DialogContent className="sm:max-w-2xl">
         <DialogHeader>
-          <div className="bg-orange-500 text-white px-4 py-2 rounded-t-lg -mx-6 -mt-6 mb-6">
+          <div className="text-white px-4 py-2 rounded-t-lg">
             <DialogTitle className="text-lg font-semibold">
-              Create Admin
+              Fill the form to create new admin
             </DialogTitle>
           </div>
         </DialogHeader>
@@ -159,10 +159,10 @@ export function CreateSubAdminDialog() {
             {/* Profile File */}
             <div className="md:col-span-2">
               <Label htmlFor="profileFile">Profile File</Label>
-              <div className="mt-1 flex items-center gap-2">
+              <div className="mt-1 flex flex-col gap-2">
                 <label
                   htmlFor="profileFile"
-                  className="cursor-pointer px-4 py-2 bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 transition">
+                  className="cursor-pointer w-full  px-4 py-2 bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 transition">
                   Choose File
                 </label>
                 <span className="text-sm text-gray-500 dark:text-gray-400">
@@ -185,8 +185,8 @@ export function CreateSubAdminDialog() {
           <div className="flex justify-end pt-2">
             <button
               type="submit"
-              className="px-6 py-2.5 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors duration-200 font-medium">
-              Save
+              className="px-6 py-2.5 bg-primary hover:bg-primary/80 text-white rounded-lg transition-colors duration-200 font-medium">
+              Create Admin
             </button>
           </div>
         </form>

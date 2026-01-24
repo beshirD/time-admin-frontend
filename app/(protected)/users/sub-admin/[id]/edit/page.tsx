@@ -1,5 +1,6 @@
 "use client";
 
+import * as React from "react";
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { ArrowLeft, Eye, EyeOff } from "lucide-react";
@@ -22,8 +23,9 @@ const getSubAdmin = (id: string) => {
 export default function EditSubAdminPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
+  const { id } = React.use(params);
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
@@ -36,14 +38,15 @@ export default function EditSubAdminPage({
 
   useEffect(() => {
     // Simulate fetching data
-    const data = getSubAdmin(params.id);
+    const data = getSubAdmin(id);
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setFormData((prev) => ({
       ...prev,
       firstName: data.firstName,
       lastName: data.lastName,
       email: data.email,
     }));
-  }, [params.id]);
+  }, [id]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

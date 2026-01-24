@@ -12,7 +12,6 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
 
 interface DeleteTailorDialogProps {
   tailorId: number | string;
@@ -22,12 +21,12 @@ interface DeleteTailorDialogProps {
 }
 
 export function DeleteTailorDialog({
-  tailorId,
+  // tailorId,
   tailorName,
   children,
   onDeleteSuccess,
 }: DeleteTailorDialogProps) {
-  const router = useRouter();
+  // const router = useRouter();
 
   const handleDelete = async () => {
     toast.success("Tailor deleted successfully", {

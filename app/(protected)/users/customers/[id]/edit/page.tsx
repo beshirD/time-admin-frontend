@@ -1,5 +1,6 @@
 "use client";
 
+import * as React from "react";
 import { useState } from "react";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
@@ -20,8 +21,9 @@ const mockCustomer = {
 export default function EditCustomerPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
+  const { id } = React.use(params);
   const [formData, setFormData] = useState({
     firstName: mockCustomer.firstName,
     lastName: mockCustomer.lastName,
@@ -48,7 +50,7 @@ export default function EditCustomerPage({
         {/* Header */}
         <div className="mb-6 flex items-center gap-4">
           <Link
-            href={`/users/customers/${params.id}`}
+            href={`/users/customers/${id}`}
             className="flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition">
             <ArrowLeft className="h-5 w-5" />
           </Link>

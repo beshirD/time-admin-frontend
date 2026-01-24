@@ -1,5 +1,6 @@
 "use client";
 
+import * as React from "react";
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { ArrowLeft, Eye, EyeOff } from "lucide-react";
@@ -22,8 +23,9 @@ const getTailorAdmin = (id: string) => {
 export default function EditTailorAdminPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
+  const { id } = React.use(params);
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
@@ -36,14 +38,15 @@ export default function EditTailorAdminPage({
 
   useEffect(() => {
     // Simulate fetching data
-    const data = getTailorAdmin(params.id);
+    const data = getTailorAdmin(id);
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setFormData((prev) => ({
       ...prev,
       firstName: data.firstName,
       lastName: data.lastName,
       email: data.email,
     }));
-  }, [params.id]);
+  }, [id]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -79,11 +82,6 @@ export default function EditTailorAdminPage({
 
         {/* Form Section */}
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
-          {/* Orange Header */}
-          <div className="bg-orange-500 text-white px-4 py-2 rounded-t-lg">
-            <h2 className="text-lg font-semibold">Tailor Admin</h2>
-          </div>
-
           {/* Form */}
           <form
             onSubmit={handleSubmit}
@@ -196,8 +194,8 @@ export default function EditTailorAdminPage({
             <div className="mt-6 flex justify-end">
               <button
                 type="submit"
-                className="px-6 py-2.5 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors duration-200 font-medium">
-                Update
+                className="px-4 py-2 bg-primary hover:bg-primary/80 text-white rounded-lg transition-colors duration-200 font-medium">
+                Update Tailor Admin
               </button>
             </div>
           </form>

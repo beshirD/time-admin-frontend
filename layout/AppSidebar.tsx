@@ -6,15 +6,12 @@ import { usePathname } from "next/navigation";
 import { useSidebar } from "../context/SidebarContext";
 import {
   BoxCubeIcon,
-  CalenderIcon,
   ChevronDownIcon,
   GridIcon,
   HorizontaLDots,
   ListIcon,
-  PageIcon,
   PieChartIcon,
   PlugInIcon,
-  TableIcon,
   UserCircleIcon,
 } from "../components/icons/index";
 import SidebarWidget from "./SidebarWidget";
@@ -260,6 +257,7 @@ const AppSidebar: React.FC = () => {
 
     // If no submenu item matches, close the open submenu
     if (!submenuMatched) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setOpenSubmenu(null);
     }
   }, [pathname, isActive]);

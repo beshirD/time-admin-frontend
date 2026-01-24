@@ -1,5 +1,6 @@
 "use client";
 
+import * as React from "react";
 import { useState } from "react";
 import { CustomerHeader } from "./_components/CustomerHeader";
 import { CustomerProfile } from "./_components/CustomerProfile";
@@ -30,20 +31,21 @@ const mockCustomer = {
 export default function CustomerDetailsPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
+  const { id } = React.use(params);
   const [activeTab, setActiveTab] = useState<
     "access-token" | "additional-address" | "orders"
   >("access-token");
 
-  const customer = mockCustomer; // In real app, fetch based on params.id
+  const customer = mockCustomer; // In real app, fetch based on id
 
   return (
     <div className="p-6 w-full bg-white dark:bg-gray-900 space-y-4 rounded-lg mb-7">
       <div className="mx-auto">
         {/* Header */}
         <CustomerHeader
-          customerId={params.id}
+          customerId={id}
           fullName={customer.fullName}
           status={customer.stateId}
           role={customer.role}

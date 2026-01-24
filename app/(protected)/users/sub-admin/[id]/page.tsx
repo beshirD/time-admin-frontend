@@ -1,5 +1,6 @@
 "use client";
 
+import * as React from "react";
 import { SubAdminHeader } from "../_components/SubAdminHeader";
 import { SubAdminProfile } from "../_components/SubAdminProfile";
 import { DetailField } from "../_components/DetailField";
@@ -20,16 +21,17 @@ const mockSubAdmin = {
 export default function SubAdminDetailsPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
-  const subAdmin = mockSubAdmin; // In real app, fetch based on params.id
+  const { id } = React.use(params);
+  const subAdmin = mockSubAdmin; // In real app, fetch based on id
 
   return (
     <div className="p-6 w-full bg-white dark:bg-gray-900 space-y-4 rounded-lg mb-7">
       <div className=" mx-auto">
         {/* Header */}
         <SubAdminHeader
-          subAdminId={params.id}
+          subAdminId={id}
           fullName={subAdmin.fullName}
           status={subAdmin.stateId}
         />

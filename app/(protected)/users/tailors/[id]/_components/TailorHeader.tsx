@@ -51,12 +51,11 @@ export function TailorHeader({
       </div>
 
       <div className="flex items-center gap-3">
-        <Link href={`/users/tailors/${tailorId}/edit`}>
-          <IconButton
-            variant="edit"
-            title="Edit Tailor">
-            <Pencil className="h-4 w-4" />
-          </IconButton>
+        <Link
+          href={`/users/tailors/${tailorId}/edit`}
+          className="flex items-center gap-2 px-3 py-1.5 border border-blue-500 text-blue-600 dark:text-blue-400 hover:bg-blue-500/20 dark:hover:bg-blue-500/20 rounded-lg transition-colors duration-200">
+          <Pencil className="h-4 w-4" />
+          Edit
         </Link>
 
         <DeleteTailorDialog
@@ -65,11 +64,10 @@ export function TailorHeader({
           onDeleteSuccess={() => {
             window.location.href = "/users/tailors";
           }}>
-          <IconButton
-            variant="delete"
-            title="Delete Tailor">
+          <button className="flex items-center gap-2 px-3 py-1.5 border border-red-500 text-red-600 dark:text-red-400 hover:bg-red-500/20 dark:hover:bg-red-500/20 rounded-lg transition-colors duration-200">
             <Trash2 className="h-4 w-4" />
-          </IconButton>
+            Delete
+          </button>
         </DeleteTailorDialog>
       </div>
     </div>

@@ -101,7 +101,7 @@ class ApiService {
       this.setAccessToken(newAccessToken);
       
       return newAccessToken;
-    } catch (error) {
+    } catch {
       this.clearTokens();
       return null;
     }

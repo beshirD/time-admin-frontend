@@ -1,5 +1,6 @@
 "use client";
 
+import * as React from "react";
 import { TailorAdminHeader } from "./_components/TailorAdminHeader";
 import { TailorAdminProfile } from "./_components/TailorAdminProfile";
 import { DetailField } from "./_components/DetailField";
@@ -19,16 +20,17 @@ const mockTailorAdmin = {
 export default function TailorAdminDetailsPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
-  const tailorAdmin = mockTailorAdmin; // In real app, fetch based on params.id
+  const { id } = React.use(params);
+  const tailorAdmin = mockTailorAdmin; // In real app, fetch based on id
 
   return (
     <div className="p-6 w-full bg-white dark:bg-gray-900 space-y-4 rounded-lg mb-7">
       <div className=" mx-auto">
         {/* Header */}
         <TailorAdminHeader
-          tailorAdminId={params.id}
+          tailorAdminId={id}
           fullName={tailorAdmin.fullName}
           status={tailorAdmin.stateId}
         />

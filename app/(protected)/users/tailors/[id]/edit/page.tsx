@@ -1,5 +1,6 @@
 "use client";
 
+import * as React from "react";
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
@@ -20,7 +21,12 @@ const getTailor = (id: string) => {
   };
 };
 
-export default function EditTailorPage({ params }: { params: { id: string } }) {
+export default function EditTailorPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = React.use(params);
   const router = useRouter();
   const [formData, setFormData] = useState({
     firstName: "",
@@ -32,7 +38,8 @@ export default function EditTailorPage({ params }: { params: { id: string } }) {
 
   useEffect(() => {
     // Simulate fetching data
-    const data = getTailor(params.id);
+    const data = getTailor(id);
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setFormData((prev) => ({
       ...prev,
       firstName: data.firstName,
@@ -40,7 +47,7 @@ export default function EditTailorPage({ params }: { params: { id: string } }) {
       email: data.email,
       contactNo: data.contactNo,
     }));
-  }, [params.id]);
+  }, [id]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -76,11 +83,6 @@ export default function EditTailorPage({ params }: { params: { id: string } }) {
 
         {/* Form Section */}
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
-          {/* Orange Header */}
-          <div className="bg-orange-500 text-white px-4 py-2 rounded-t-lg">
-            <h2 className="text-lg font-semibold">Tailor</h2>
-          </div>
-
           {/* Form */}
           <form
             onSubmit={handleSubmit}
@@ -180,8 +182,8 @@ export default function EditTailorPage({ params }: { params: { id: string } }) {
             <div className="mt-6 flex justify-end">
               <button
                 type="submit"
-                className="px-6 py-2.5 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors duration-200 font-medium">
-                Update
+                className="px-6 py-2.5 bg-primary hover:bg-primary/80 text-white rounded-lg transition-colors duration-200 font-medium">
+                Update Tailor
               </button>
             </div>
           </form>

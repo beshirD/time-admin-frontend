@@ -12,7 +12,6 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
 
 interface DeleteTailorAdminDialogProps {
   tailorAdminId: number | string;
@@ -22,12 +21,12 @@ interface DeleteTailorAdminDialogProps {
 }
 
 export function DeleteTailorAdminDialog({
-  tailorAdminId,
+  // tailorAdminId,
   tailorAdminName,
   children,
   onDeleteSuccess,
 }: DeleteTailorAdminDialogProps) {
-  const router = useRouter();
+  // const router = useRouter();
 
   const handleDelete = async () => {
     toast.success("Tailor Admin deleted successfully", {

@@ -12,7 +12,6 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
 
 interface DeleteCustomerDialogProps {
   customerId: number | string;
@@ -22,17 +21,21 @@ interface DeleteCustomerDialogProps {
 }
 
 export function DeleteCustomerDialog({
-  customerId,
+  // customerId,
   customerName,
   children,
   onDeleteSuccess,
 }: DeleteCustomerDialogProps) {
-  const router = useRouter();
+  // const router = useRouter();
 
   const handleDelete = async () => {
     toast.success("Customer deleted successfully", {
       description: `${customerName} has been removed from the system.`,
     });
+
+    if (onDeleteSuccess) {
+      onDeleteSuccess();
+    }
   };
 
   return (
