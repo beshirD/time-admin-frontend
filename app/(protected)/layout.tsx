@@ -8,6 +8,7 @@ import Backdrop from "@/layout/Backdrop";
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { authService } from "@/services/auth";
+import { Toaster } from "sonner";
 
 function ProtectedLayoutContent({ children }: { children: React.ReactNode }) {
   const { isExpanded, isHovered, isMobileOpen } = useSidebar();
@@ -18,12 +19,12 @@ function ProtectedLayoutContent({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const checkAuth = async () => {
       const isAuth = authService.isAuthenticated();
-      
+
       if (!isAuth) {
         router.push("/login");
         return;
       }
-      
+
       setIsChecking(false);
     };
 
@@ -46,8 +47,8 @@ function ProtectedLayoutContent({ children }: { children: React.ReactNode }) {
   const mainContentMargin = isMobileOpen
     ? "ml-0"
     : isExpanded || isHovered
-    ? "lg:ml-[290px]"
-    : "lg:ml-[90px]";
+      ? "lg:ml-[290px]"
+      : "lg:ml-[90px]";
 
   return (
     <div className="min-h-screen xl:flex">
@@ -56,8 +57,7 @@ function ProtectedLayoutContent({ children }: { children: React.ReactNode }) {
       <Backdrop />
       {/* Main Content Area */}
       <div
-        className={`flex-1 transition-all  duration-300 ease-in-out ${mainContentMargin}`}
-      >
+        className={`flex-1 transition-all  duration-300 ease-in-out ${mainContentMargin}`}>
         {/* Header */}
         <AppHeader />
         {/* Page Content */}
@@ -65,6 +65,11 @@ function ProtectedLayoutContent({ children }: { children: React.ReactNode }) {
           {children}
         </div>
       </div>
+      {/* Toast Notifications */}
+      <Toaster
+        position="top-right"
+        richColors
+      />
     </div>
   );
 }
@@ -82,4 +87,3 @@ export default function ProtectedLayout({
     </ThemeProvider>
   );
 }
-

@@ -2,6 +2,8 @@
 
 import { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown, Eye, Pencil, Trash2 } from "lucide-react";
+import Link from "next/link";
+import IconButton from "@/components/ui/IconButton";
 
 // Customer type definition
 export type Customer = {
@@ -31,43 +33,39 @@ const StatusBadge = ({ status }: { status: string }) => {
   );
 };
 
+import { DeleteCustomerDialog } from "./DeleteCustomerDialog";
+
 // Action buttons component
 const ActionButtons = ({ customer }: { customer: Customer }) => {
-  const handleView = () => {
-    console.log("View customer:", customer.id);
-    // Add your view logic here
-  };
-
-  const handleEdit = () => {
-    console.log("Edit customer:", customer.id);
-    // Add your edit logic here
-  };
-
-  const handleDelete = () => {
-    console.log("Delete customer:", customer.id);
-    // Add your delete logic here
-  };
-
   return (
     <div className="flex items-center gap-2">
-      <button
-        onClick={handleView}
-        className="h-8 w-8 flex items-center border justify-center hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-md transition text-blue-600 dark:text-blue-400"
-        title="View">
-        <Eye className="h-4 w-4" />
-      </button>
-      <button
-        onClick={handleEdit}
-        className="h-8 w-8 flex items-center border justify-center hover:bg-green-50 dark:hover:bg-green-900/20 rounded-md transition text-green-600 dark:text-green-400"
-        title="Edit">
-        <Pencil className="h-4 w-4" />
-      </button>
-      <button
-        onClick={handleDelete}
-        className="h-8 w-8 flex items-center border justify-center hover:bg-red-50 dark:hover:bg-red-900/20 rounded-md transition text-red-600 dark:text-red-400"
-        title="Delete">
-        <Trash2 className="h-4 w-4" />
-      </button>
+      <Link href={`/users/customers/${customer.id}`}>
+        <IconButton
+          variant="view"
+          title="View">
+          <Eye className="h-4 w-4" />
+        </IconButton>
+      </Link>
+      <Link href={`/users/customers/${customer.id}/edit`}>
+        <IconButton
+          variant="edit"
+          title="Edit">
+          <Pencil className="h-4 w-4" />
+        </IconButton>
+      </Link>
+      <DeleteCustomerDialog
+        customerId={customer.id}
+        customerName={customer.fullName}
+        onDeleteSuccess={() => {
+          // Refresh table data
+          window.location.reload();
+        }}>
+        <IconButton
+          variant="delete"
+          title="Delete">
+          <Trash2 className="h-4 w-4" />
+        </IconButton>
+      </DeleteCustomerDialog>
     </div>
   );
 };
