@@ -1,8 +1,9 @@
+import PageTitle from "@/components/common/PageTitle";
 import { columns, Customer } from "./_components/columns";
 import { DataTable } from "./_components/data-table";
 
 async function getData(): Promise<Customer[]> {
-  // Fetch data from your API here.
+  // just mock data
   return [
     {
       id: 820,
@@ -119,7 +120,8 @@ export default async function page() {
   const data = await getData();
 
   return (
-    <div className="container mx-auto py-10">
+    <div className="w-full bg-white dark:bg-gray-900 p-5 space-y-4 rounded-lg mb-7">
+      <PageTitle title="Customers Management" />
       <DataTable
         columns={columns}
         data={data}

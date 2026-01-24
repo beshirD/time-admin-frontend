@@ -51,7 +51,7 @@ function ProtectedLayoutContent({ children }: { children: React.ReactNode }) {
       : "lg:ml-[90px]";
 
   return (
-    <div className="min-h-screen xl:flex">
+    <div className="min-h-screen bg-gray-100 dark:bg-background/50 xl:flex">
       {/* Sidebar and Backdrop */}
       <AppSidebar />
       <Backdrop />
@@ -61,9 +61,7 @@ function ProtectedLayoutContent({ children }: { children: React.ReactNode }) {
         {/* Header */}
         <AppHeader />
         {/* Page Content */}
-        <div className="p-4 mx-auto max-w-(--breakpoint-2xl) md:p-6">
-          {children}
-        </div>
+        <div className="p-4 mx-auto  md:p-6">{children}</div>
       </div>
       {/* Toast Notifications */}
       <Toaster

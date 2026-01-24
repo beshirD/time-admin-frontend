@@ -227,7 +227,16 @@ const AppSidebar: React.FC = () => {
   );
   const subMenuRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
-  const isActive = useCallback((path: string) => path === pathname, [pathname]);
+  const isActive = useCallback(
+    (path: string) => {
+      // Exact match for root paths
+      if (path === pathname) return true;
+      // Check if current pathname starts with the menu path (for child routes)
+      // Add a trailing slash to prevent false matches (e.g., /users/customers vs /users/customers-archive)
+      return pathname.startsWith(path + "/");
+    },
+    [pathname],
+  );
 
   useEffect(() => {
     // Check if the current path matches any submenu item

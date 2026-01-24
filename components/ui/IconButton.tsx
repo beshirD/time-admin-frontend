@@ -22,8 +22,8 @@ const IconButton: React.FC<IconButtonProps> = ({
 }) => {
   // Variant Classes using design system colors
   const variantClasses = {
-    view: "border border-brand-500 text-brand-600 dark:text-brand-400 hover:bg-brand-500/20 dark:hover:bg-brand-500/20",
-    edit: "border border-warning-500 text-warning-600 dark:text-warning-400 hover:bg-warning-500/20 dark:hover:bg-warning-500/20",
+    view: "border border-blue-500 text-blue-600 dark:text-blue-400 hover:bg-blue-500/20 dark:hover:bg-blue-500/20",
+    edit: "border border-brand-500 text-brand-600 dark:text-brand-400 hover:bg-brand-500/20 dark:hover:bg-brand-500/20",
     delete:
       "border border-error-500 text-error-600 dark:text-error-400 hover:bg-error-500/20 dark:hover:bg-error-500/20",
   };
