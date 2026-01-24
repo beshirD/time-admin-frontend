@@ -63,8 +63,8 @@ export default function EditSubAdminPage({
   };
 
   return (
-    <div className="p-6">
-      <div className="max-w-7xl mx-auto">
+    <div className="p-6 w-full bg-white dark:bg-gray-900 space-y-4 rounded-lg mb-7">
+      <div className=" mx-auto">
         {/* Header */}
         <div className="mb-6 flex items-center gap-4">
           <Link
@@ -73,17 +73,12 @@ export default function EditSubAdminPage({
             <ArrowLeft className="h-5 w-5" />
           </Link>
           <h1 className="text-2xl font-semibold text-gray-900 dark:text-white">
-            Tailor Admins
+            Sub Admins
           </h1>
         </div>
 
         {/* Form Section */}
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
-          {/* Orange Header */}
-          <div className="bg-orange-500 text-white px-4 py-2 rounded-t-lg">
-            <h2 className="text-lg font-semibold">Admin</h2>
-          </div>
-
           {/* Form */}
           <form
             onSubmit={handleSubmit}
@@ -196,8 +191,8 @@ export default function EditSubAdminPage({
             <div className="mt-6 flex justify-end">
               <button
                 type="submit"
-                className="px-6 py-2.5 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors duration-200 font-medium">
-                Update
+                className="px-4 py-2.5 bg-primary hover:bg-primary/80 text-white rounded-lg transition-colors duration-200 font-medium">
+                Update Admin
               </button>
             </div>
           </form>

@@ -54,7 +54,8 @@ export function CreateSubAdminDialog() {
       open={open}
       onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <button className="bg-green-600 hover:bg-green-700 text-white p-2 rounded-md transition">
+        <button className="bg-primary flex items-center gap-2 hover:bg-primary/80 text-white py-2 px-3 rounded-md transition">
+          Add New Admin
           <Plus className="h-5 w-5" />
         </button>
       </DialogTrigger>

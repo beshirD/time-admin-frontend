@@ -43,8 +43,8 @@ export default function EditCustomerPage({
   };
 
   return (
-    <div className="p-6">
-      <div className="max-w-7xl mx-auto">
+    <div className="p-6 w-full bg-white dark:bg-gray-900 space-y-4 rounded-lg mb-7">
+      <div className=" mx-auto">
         {/* Header */}
         <div className="mb-6 flex items-center gap-4">
           <Link

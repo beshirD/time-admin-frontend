@@ -100,7 +100,7 @@ export function DataTable<TData, TValue>({
             onClick={() => setColumnDropdownOpen(!columnDropdownOpen)}
             className="dropdown-toggle inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition">
             <Settings2 className="h-4 w-4" />
-            Columns
+            Edit Columns
           </button>
           <Dropdown
             isOpen={columnDropdownOpen}
@@ -132,7 +132,7 @@ export function DataTable<TData, TValue>({
       </div>
 
       {/* Table */}
-      <div className="overflow-hidden rounded-md border border-gray-200 dark:border-gray-800">
+      <div className="overflow-hidden rounded-md border border-gray-200 dark:border-gray-700/90">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (

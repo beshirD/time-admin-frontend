@@ -1,3 +1,4 @@
+import PageTitle from "@/components/common/PageTitle";
 import { columns, SubAdmin } from "./_components/columns";
 import { DataTable } from "./_components/data-table";
 import { CreateSubAdminDialog } from "./_components/CreateSubAdminDialog";
@@ -44,15 +45,9 @@ export default async function page() {
   const data = await getData();
 
   return (
-    <div className="container mx-auto py-10">
-      {/* Header with Title and Create Button */}
-      <div className="flex items-center justify-between mb-6">
-        <div className="bg-orange-500 text-white px-4 py-2 rounded-t-lg w-full">
-          <h1 className="text-lg font-semibold">SUB-ADMIN-INDEX</h1>
-        </div>
-      </div>
-
-      <div className="flex justify-end mb-4">
+    <div className="w-full dark:bg-gray-900 p-5 space-y-4 rounded-lg mb-7">
+      <div className="flex items-center justify-between">
+        <PageTitle title="Sub Admin Management" />
         <CreateSubAdminDialog />
       </div>
 

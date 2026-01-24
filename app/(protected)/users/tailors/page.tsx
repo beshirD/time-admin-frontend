@@ -1,3 +1,4 @@
+import PageTitle from "@/components/common/PageTitle";
 import { columns, Tailor } from "./_components/columns";
 import { DataTable } from "./_components/data-table";
 
@@ -65,7 +66,8 @@ export default async function page() {
   const data = await getData();
 
   return (
-    <div className="container mx-auto py-10">
+    <div className="w-full dark:bg-gray-900 p-5 space-y-4 rounded-lg mb-7">
+      <PageTitle title="Tailors Management" />
       <DataTable
         columns={columns}
         data={data}
