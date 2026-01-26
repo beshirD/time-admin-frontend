@@ -5,16 +5,7 @@ import { ArrowUpDown, Eye, Pencil, Trash2 } from "lucide-react";
 import Link from "next/link";
 import IconButton from "@/components/ui/IconButton";
 
-// Customer type definition
-export type Customer = {
-  id: number;
-  fullName: string;
-  email: string;
-  contactNo: string;
-  stateId: string;
-  createdOn: string;
-  createdById: string;
-};
+import { Customer } from "@/types/entities";
 
 // Status badge component
 const StatusBadge = ({ status }: { status: string }) => {
@@ -33,7 +24,7 @@ const StatusBadge = ({ status }: { status: string }) => {
   );
 };
 
-import { DeleteCustomerDialog } from "./DeleteCustomerDialog";
+import { DeleteConfirmationDialog } from "@/components/common/DeleteConfirmationDialog";
 
 // Action buttons component
 const ActionButtons = ({ customer }: { customer: Customer }) => {
@@ -53,19 +44,21 @@ const ActionButtons = ({ customer }: { customer: Customer }) => {
           <Pencil className="h-4 w-4" />
         </IconButton>
       </Link>
-      <DeleteCustomerDialog
-        customerId={customer.id}
-        customerName={customer.fullName}
-        onDeleteSuccess={() => {
+      <DeleteConfirmationDialog
+        itemType="Customer"
+        itemName={customer.fullName}
+        onSuccess={() => {
           // Refresh table data
           window.location.reload();
-        }}>
-        <IconButton
-          variant="delete"
-          title="Delete">
-          <Trash2 className="h-4 w-4" />
-        </IconButton>
-      </DeleteCustomerDialog>
+        }}
+        trigger={
+          <IconButton
+            variant="delete"
+            title="Delete">
+            <Trash2 className="h-4 w-4" />
+          </IconButton>
+        }
+      />
     </div>
   );
 };

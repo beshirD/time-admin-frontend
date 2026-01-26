@@ -4,17 +4,9 @@ import { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown, Eye, Pencil, Trash2 } from "lucide-react";
 import Link from "next/link";
 import IconButton from "@/components/ui/IconButton";
-import { DeleteSubAdminDialog } from "./DeleteSubAdminDialog";
+import { DeleteConfirmationDialog } from "@/components/common/DeleteConfirmationDialog";
 
-// SubAdmin type definition
-export type SubAdmin = {
-  id: number;
-  fullName: string;
-  email: string;
-  stateId: string;
-  createdOn: string;
-  createdById: string;
-};
+import { SubAdmin } from "@/types/entities";
 
 // Status badge component
 const StatusBadge = ({ status }: { status: string }) => {
@@ -51,19 +43,21 @@ const ActionButtons = ({ subAdmin }: { subAdmin: SubAdmin }) => {
           <Pencil className="h-4 w-4" />
         </IconButton>
       </Link>
-      <DeleteSubAdminDialog
-        subAdminId={subAdmin.id}
-        subAdminName={subAdmin.fullName}
-        onDeleteSuccess={() => {
+      <DeleteConfirmationDialog
+        itemType="Sub Admin"
+        itemName={subAdmin.fullName}
+        onSuccess={() => {
           // Refresh table data
           window.location.reload();
-        }}>
-        <IconButton
-          variant="delete"
-          title="Delete">
-          <Trash2 className="h-4 w-4" />
-        </IconButton>
-      </DeleteSubAdminDialog>
+        }}
+        trigger={
+          <IconButton
+            variant="delete"
+            title="Delete">
+            <Trash2 className="h-4 w-4" />
+          </IconButton>
+        }
+      />
     </div>
   );
 };

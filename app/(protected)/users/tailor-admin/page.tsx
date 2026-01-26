@@ -1,6 +1,7 @@
 import PageTitle from "@/components/common/PageTitle";
-import { columns, TailorAdmin } from "./_components/columns";
-import { DataTable } from "./_components/data-table";
+import { columns } from "./_components/columns";
+import { TailorAdmin } from "@/types/entities";
+import { DataTable } from "@/components/shared/DataTable";
 import { CreateTailorAdminDialog } from "./_components/CreateTailorAdminDialog";
 
 async function getData(): Promise<TailorAdmin[]> {
@@ -54,6 +55,8 @@ export default async function page() {
       <DataTable
         columns={columns}
         data={data}
+        searchPlaceholder="Search by name, email, id..."
+        searchableColumns={["id", "firstName", "lastName", "email"]}
       />
     </div>
   );

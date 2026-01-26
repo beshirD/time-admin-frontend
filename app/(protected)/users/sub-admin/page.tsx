@@ -1,6 +1,7 @@
 import PageTitle from "@/components/common/PageTitle";
-import { columns, SubAdmin } from "./_components/columns";
-import { DataTable } from "./_components/data-table";
+import { columns } from "./_components/columns";
+import { SubAdmin } from "@/types/entities";
+import { DataTable } from "@/components/shared/DataTable";
 import { CreateSubAdminDialog } from "./_components/CreateSubAdminDialog";
 
 async function getData(): Promise<SubAdmin[]> {
@@ -54,6 +55,8 @@ export default async function page() {
       <DataTable
         columns={columns}
         data={data}
+        searchPlaceholder="Search by name, email, id..."
+        searchableColumns={["id", "fullName", "email"]}
       />
     </div>
   );

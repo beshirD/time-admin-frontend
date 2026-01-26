@@ -1,48 +1,23 @@
+import { SimpleTable } from "@/components/shared/SimpleTable";
+
 export function AdditionalAddressTable() {
+  const columns = [
+    { header: "ID", accessorKey: "id" },
+    { header: "Title", accessorKey: "title" },
+    { header: "Address", accessorKey: "address" },
+    { header: "Pincode", accessorKey: "pincode" },
+    { header: "Default Address", accessorKey: "defaultAddress" },
+    { header: "Type", accessorKey: "type" },
+    { header: "Created On", accessorKey: "createdOn" },
+    { header: "Created By", accessorKey: "createdBy" },
+    { header: "Actions", cell: () => <span>Actions</span> }, // Placeholder for actions
+  ];
+
   return (
-    <div className="overflow-x-auto">
-      <table className="w-full">
-        <thead className="bg-blue-light-100 dark:bg-blue-light-900/20">
-          <tr>
-            <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider">
-              ID
-            </th>
-            <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider">
-              Title
-            </th>
-            <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider">
-              Address
-            </th>
-            <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider">
-              Pincode
-            </th>
-            <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider">
-              Default Address
-            </th>
-            <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider">
-              Type
-            </th>
-            <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider">
-              Created On
-            </th>
-            <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider">
-              Created By
-            </th>
-            <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider">
-              Actions
-            </th>
-          </tr>
-        </thead>
-        <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
-          <tr>
-            <td
-              colSpan={9}
-              className="px-4 py-8 text-center text-sm text-gray-500 dark:text-gray-400">
-              No results found.
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+    <SimpleTable
+      data={[]} // Pass actual data here when available
+      columns={columns}
+      emptyMessage="No results found."
+    />
   );
 }

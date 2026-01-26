@@ -1,6 +1,7 @@
 import PageTitle from "@/components/common/PageTitle";
-import { columns, Tailor } from "./_components/columns";
-import { DataTable } from "./_components/data-table";
+import { columns } from "./_components/columns";
+import { Tailor } from "@/types/entities";
+import { DataTable } from "@/components/shared/DataTable";
 
 async function getData(): Promise<Tailor[]> {
   // Fetch data from your API here.
@@ -71,6 +72,8 @@ export default async function page() {
       <DataTable
         columns={columns}
         data={data}
+        searchPlaceholder="Search by name, id, contact..."
+        searchableColumns={["id", "fullName", "contactNo"]}
       />
     </div>
   );

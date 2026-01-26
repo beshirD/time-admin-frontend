@@ -1,6 +1,7 @@
 import PageTitle from "@/components/common/PageTitle";
-import { columns, Customer } from "./_components/columns";
-import { DataTable } from "./_components/data-table";
+import { columns } from "./_components/columns";
+import { Customer } from "@/types/entities";
+import { DataTable } from "@/components/shared/DataTable";
 
 async function getData(): Promise<Customer[]> {
   // just mock data
@@ -125,6 +126,8 @@ export default async function page() {
       <DataTable
         columns={columns}
         data={data}
+        searchPlaceholder="Search by name, email, id, contact..."
+        searchableColumns={["id", "fullName", "email", "contactNo"]}
       />
     </div>
   );

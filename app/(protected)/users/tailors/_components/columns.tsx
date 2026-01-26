@@ -4,18 +4,9 @@ import { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown, Eye, Pencil, Trash2 } from "lucide-react";
 import Link from "next/link";
 import IconButton from "@/components/ui/IconButton";
-import { DeleteTailorDialog } from "./DeleteTailorDialog";
+import { DeleteConfirmationDialog } from "@/components/common/DeleteConfirmationDialog";
 
-// Tailor type definition
-export type Tailor = {
-  id: number;
-  fullName: string;
-  email: string;
-  contactNo: string;
-  stateId: string;
-  createdOn: string;
-  createdById: string;
-};
+import { Tailor } from "@/types/entities";
 
 // Status badge component
 const StatusBadge = ({ status }: { status: string }) => {
@@ -52,19 +43,21 @@ const ActionButtons = ({ tailor }: { tailor: Tailor }) => {
           <Pencil className="h-4 w-4" />
         </IconButton>
       </Link>
-      <DeleteTailorDialog
-        tailorId={tailor.id}
-        tailorName={tailor.fullName}
-        onDeleteSuccess={() => {
+      <DeleteConfirmationDialog
+        itemType="Tailor"
+        itemName={tailor.fullName}
+        onSuccess={() => {
           // Refresh table data
           window.location.reload();
-        }}>
-        <IconButton
-          variant="delete"
-          title="Delete">
-          <Trash2 className="h-4 w-4" />
-        </IconButton>
-      </DeleteTailorDialog>
+        }}
+        trigger={
+          <IconButton
+            variant="delete"
+            title="Delete">
+            <Trash2 className="h-4 w-4" />
+          </IconButton>
+        }
+      />
     </div>
   );
 };
