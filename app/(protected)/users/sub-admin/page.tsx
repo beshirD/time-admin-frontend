@@ -57,6 +57,7 @@ export default async function page() {
         data={data}
         searchPlaceholder="Search by name, email, id..."
         searchableColumns={["id", "fullName", "email"]}
+        detailsLink="/users/sub-admin"
       />
     </div>
   );

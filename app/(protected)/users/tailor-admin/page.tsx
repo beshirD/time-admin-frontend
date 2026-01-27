@@ -57,6 +57,7 @@ export default async function page() {
         data={data}
         searchPlaceholder="Search by name, email, id..."
         searchableColumns={["id", "firstName", "lastName", "email"]}
+        detailsLink="/users/tailor-admin"
       />
     </div>
   );

@@ -3,8 +3,9 @@
 import * as React from "react";
 import { useState } from "react";
 import { CustomerHeader } from "./_components/CustomerHeader";
-import { CustomerProfile } from "./_components/CustomerProfile";
-import { DetailField } from "./_components/DetailField";
+import UserProfileCard from "@/components/shared/UserProfileCard";
+import UserInfoCard from "@/components/shared/UserInfoCard";
+import UserAddressCard from "@/components/shared/UserAddressCard";
 import { Tabs } from "./_components/Tabs";
 import { AccessTokenTable } from "./_components/AccessTokenTable";
 import { AdditionalAddressTable } from "./_components/AdditionalAddressTable";
@@ -41,7 +42,7 @@ export default function CustomerDetailsPage({
   const customer = mockCustomer; // In real app, fetch based on id
 
   return (
-    <div className="p-6 w-full bg-white dark:bg-gray-900 space-y-4 rounded-lg mb-7">
+    <div className="w-full dark:bg-gray-900 space-y-4 rounded-lg mb-7">
       <div className="mx-auto">
         {/* Header */}
         <CustomerHeader
@@ -52,83 +53,10 @@ export default function CustomerDetailsPage({
         />
 
         {/* Main Content */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-            {/* Profile Image */}
-            <div className="lg:col-span-1">
-              <CustomerProfile
-                fullName={customer.fullName}
-                profileImage={customer.profileImage}
-              />
-            </div>
-
-            {/* Customer Details */}
-            <div className="lg:col-span-3">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
-                {/* Left Column */}
-                <div className="space-y-4">
-                  <DetailField
-                    label="Id"
-                    value={customer.id}
-                  />
-                  <DetailField
-                    label="First Name"
-                    value={customer.firstName}
-                  />
-                  <DetailField
-                    label="Is Email Verified"
-                    value=""
-                    badge={{
-                      text: customer.isEmailVerified
-                        ? "Email verified"
-                        : "Not verified",
-                      variant: customer.isEmailVerified ? "success" : "error",
-                    }}
-                  />
-                  <DetailField
-                    label="Contact No"
-                    value={customer.contactNo}
-                  />
-                  <DetailField
-                    label="Role"
-                    value={customer.role}
-                  />
-                  <DetailField
-                    label="Created By"
-                    value={customer.createdBy}
-                  />
-                </div>
-
-                {/* Right Column */}
-                <div className="space-y-4">
-                  <DetailField
-                    label="Email"
-                    value={customer.email}
-                  />
-                  <DetailField
-                    label="Last Name"
-                    value={customer.lastName}
-                  />
-                  <DetailField
-                    label="Is approve"
-                    value=""
-                    badge={{
-                      text: customer.isApprove ? "Approved" : "Not approve",
-                      variant: customer.isApprove ? "success" : "error",
-                    }}
-                  />
-                  <DetailField
-                    label="Gender"
-                    value={customer.gender}
-                  />
-                  <DetailField
-                    label="Created On"
-                    value={customer.createdOn}
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
+        <div className="space-y-6">
+          <UserProfileCard customer={customer} />
+          <UserInfoCard customer={customer} />
+          <UserAddressCard />
         </div>
 
         {/* User Actions Section */}

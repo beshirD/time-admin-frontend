@@ -74,6 +74,7 @@ export default async function page() {
         data={data}
         searchPlaceholder="Search by name, id, contact..."
         searchableColumns={["id", "fullName", "contactNo"]}
+        detailsLink="/users/tailors"
       />
     </div>
   );

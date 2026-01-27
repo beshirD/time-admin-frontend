@@ -20,6 +20,9 @@ import {
   ChevronsRight,
   Settings2,
 } from "lucide-react";
+import { useRouter } from "next/navigation";
+
+import { cn } from "@/lib/utils";
 
 import {
   Table,
@@ -59,6 +62,10 @@ interface DataTableProps<TData, TValue> {
 
   // Loading state
   isLoading?: boolean;
+
+  // Row interaction
+  onRowClick?: (row: TData) => void;
+  detailsLink?: string;
 }
 
 export function DataTable<TData, TValue>({
@@ -77,7 +84,10 @@ export function DataTable<TData, TValue>({
   manualSorting = false,
   onSortingChange: externalSortingChange,
   isLoading = false,
+  onRowClick,
+  detailsLink,
 }: DataTableProps<TData, TValue>) {
+  const router = useRouter();
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     [],
@@ -290,7 +300,30 @@ export function DataTable<TData, TValue>({
               table.getRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}
-                  data-state={row.getIsSelected() && "selected"}>
+                  data-state={row.getIsSelected() && "selected"}
+                  className={cn(
+                    (onRowClick || detailsLink) &&
+                      "cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors",
+                  )}
+                  onClick={(e) => {
+                    // Prevent navigation if clicking on interactive elements
+                    if (
+                      (e.target as HTMLElement).closest(
+                        "button, a, [role='checkbox']",
+                      )
+                    ) {
+                      return;
+                    }
+
+                    if (onRowClick) {
+                      onRowClick(row.original);
+                    } else if (detailsLink) {
+                      const id = (row.original as any).id;
+                      if (id) {
+                        router.push(`${detailsLink}/${id}`);
+                      }
+                    }
+                  }}>
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
                       {flexRender(
