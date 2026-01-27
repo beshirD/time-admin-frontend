@@ -35,6 +35,7 @@ import {
 import Input from "@/components/ui/Input";
 import Checkbox from "@/components/ui/Checkbox";
 import { Dropdown } from "@/components/ui/dropdown/Dropdown";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -66,6 +67,11 @@ interface DataTableProps<TData, TValue> {
   // Row interaction
   onRowClick?: (row: TData) => void;
   detailsLink?: string;
+
+  // Scrollable container with sticky header
+  scrollableContainer?: boolean;
+  maxHeight?: string; // e.g., "500px", "60vh"
+  stickyHeader?: boolean;
 }
 
 export function DataTable<TData, TValue>({
@@ -86,6 +92,9 @@ export function DataTable<TData, TValue>({
   isLoading = false,
   onRowClick,
   detailsLink,
+  scrollableContainer = false,
+  maxHeight = "500px",
+  stickyHeader = false,
 }: DataTableProps<TData, TValue>) {
   const router = useRouter();
   const [sorting, setSorting] = React.useState<SortingState>([]);
@@ -223,7 +232,7 @@ export function DataTable<TData, TValue>({
             placeholder={searchPlaceholder}
             value={globalFilter ?? ""}
             onChange={(e) => setGlobalFilter(e.target.value)}
-            className="w-xl"
+            className="w-xl outline-primary"
             disabled={isLoading}
           />
         )}
@@ -267,84 +276,182 @@ export function DataTable<TData, TValue>({
       </div>
 
       {/* Table */}
-      <div className="overflow-hidden rounded-md border border-gray-200 dark:border-gray-700/90">
-        <Table>
-          <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
-                  return (
-                    <TableHead key={header.id}>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext(),
-                          )}
-                    </TableHead>
-                  );
-                })}
-              </TableRow>
-            ))}
-          </TableHeader>
-          <TableBody>
-            {isLoading ? (
-              <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center">
-                  Loading...
-                </TableCell>
-              </TableRow>
-            ) : table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
+      <div className="rounded-md border border-gray-200 dark:border-gray-700/90">
+        {scrollableContainer ? (
+          <ScrollArea
+            className="w-full"
+            style={{ height: maxHeight }}>
+            <div className="w-full">
+              <table className="w-full caption-bottom text-sm">
+                <thead
                   className={cn(
-                    (onRowClick || detailsLink) &&
-                      "cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors",
-                  )}
-                  onClick={(e) => {
-                    // Prevent navigation if clicking on interactive elements
-                    if (
-                      (e.target as HTMLElement).closest(
-                        "button, a, [role='checkbox']",
-                      )
-                    ) {
-                      return;
-                    }
-
-                    if (onRowClick) {
-                      onRowClick(row.original);
-                    } else if (detailsLink) {
-                      const id = (row.original as any).id;
-                      if (id) {
-                        router.push(`${detailsLink}/${id}`);
-                      }
-                    }
-                  }}>
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext(),
-                      )}
-                    </TableCell>
+                    "[&_tr]:border-b bg-muted h-12",
+                    stickyHeader &&
+                      "sticky top-0 z-10 bg-white dark:bg-gray-900",
+                  )}>
+                  {table.getHeaderGroups().map((headerGroup) => (
+                    <tr
+                      key={headerGroup.id}
+                      className="hover:bg-muted/50 data-[state=selected]:bg-muted border-b transition-colors">
+                      {headerGroup.headers.map((header) => {
+                        return (
+                          <th
+                            key={header.id}
+                            className="text-foreground h-12 px-4 text-left align-middle font-medium whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]">
+                            {header.isPlaceholder
+                              ? null
+                              : flexRender(
+                                  header.column.columnDef.header,
+                                  header.getContext(),
+                                )}
+                          </th>
+                        );
+                      })}
+                    </tr>
                   ))}
+                </thead>
+                <tbody className="[&_tr:last-child]:border-0">
+                  {isLoading ? (
+                    <tr className="hover:bg-muted/50 data-[state=selected]:bg-muted border-b transition-colors">
+                      <td
+                        colSpan={columns.length}
+                        className="p-4 align-middle whitespace-nowrap h-24 text-center">
+                        Loading...
+                      </td>
+                    </tr>
+                  ) : table.getRowModel().rows?.length ? (
+                    table.getRowModel().rows.map((row) => (
+                      <tr
+                        key={row.id}
+                        data-state={row.getIsSelected() && "selected"}
+                        className={cn(
+                          "hover:bg-muted/50 data-[state=selected]:bg-muted border-b transition-colors",
+                          (onRowClick || detailsLink) &&
+                            "cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800/50",
+                        )}
+                        onClick={(e) => {
+                          // Prevent navigation if clicking on interactive elements
+                          if (
+                            (e.target as HTMLElement).closest(
+                              "button, a, [role='checkbox']",
+                            )
+                          ) {
+                            return;
+                          }
+
+                          if (onRowClick) {
+                            onRowClick(row.original);
+                          } else if (detailsLink) {
+                            const id = (row.original as any).id;
+                            if (id) {
+                              router.push(`${detailsLink}/${id}`);
+                            }
+                          }
+                        }}>
+                        {row.getVisibleCells().map((cell) => (
+                          <td
+                            key={cell.id}
+                            className="p-4 align-middle whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]">
+                            {flexRender(
+                              cell.column.columnDef.cell,
+                              cell.getContext(),
+                            )}
+                          </td>
+                        ))}
+                      </tr>
+                    ))
+                  ) : (
+                    <tr className="hover:bg-muted/50 data-[state=selected]:bg-muted border-b transition-colors">
+                      <td
+                        colSpan={columns.length}
+                        className="p-4 align-middle whitespace-nowrap h-24 text-center">
+                        No results.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </ScrollArea>
+        ) : (
+          <Table>
+            <TableHeader>
+              {table.getHeaderGroups().map((headerGroup) => (
+                <TableRow key={headerGroup.id}>
+                  {headerGroup.headers.map((header) => {
+                    return (
+                      <TableHead key={header.id}>
+                        {header.isPlaceholder
+                          ? null
+                          : flexRender(
+                              header.column.columnDef.header,
+                              header.getContext(),
+                            )}
+                      </TableHead>
+                    );
+                  })}
                 </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center">
-                  No results.
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
+              ))}
+            </TableHeader>
+            <TableBody>
+              {isLoading ? (
+                <TableRow>
+                  <TableCell
+                    colSpan={columns.length}
+                    className="h-24 text-center">
+                    Loading...
+                  </TableCell>
+                </TableRow>
+              ) : table.getRowModel().rows?.length ? (
+                table.getRowModel().rows.map((row) => (
+                  <TableRow
+                    key={row.id}
+                    data-state={row.getIsSelected() && "selected"}
+                    className={cn(
+                      (onRowClick || detailsLink) &&
+                        "cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors",
+                    )}
+                    onClick={(e) => {
+                      // Prevent navigation if clicking on interactive elements
+                      if (
+                        (e.target as HTMLElement).closest(
+                          "button, a, [role='checkbox']",
+                        )
+                      ) {
+                        return;
+                      }
+
+                      if (onRowClick) {
+                        onRowClick(row.original);
+                      } else if (detailsLink) {
+                        const id = (row.original as any).id;
+                        if (id) {
+                          router.push(`${detailsLink}/${id}`);
+                        }
+                      }
+                    }}>
+                    {row.getVisibleCells().map((cell) => (
+                      <TableCell key={cell.id}>
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext(),
+                        )}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell
+                    colSpan={columns.length}
+                    className="h-24 text-center">
+                    No results.
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        )}
       </div>
 
       {/* Pagination */}

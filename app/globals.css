@@ -283,6 +283,32 @@
   }
 }
 
+@utility table-scrollbar {
+  &::-webkit-scrollbar {
+    @apply w-1.5;
+  }
+
+  &::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    @apply bg-gray-300 rounded-full dark:bg-gray-600;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    @apply bg-gray-400 dark:bg-gray-500;
+  }
+
+  /* Firefox */
+  scrollbar-width: thin;
+  scrollbar-color: rgb(209 213 219) transparent; /* gray-300 transparent */
+}
+
+.dark .table-scrollbar {
+  scrollbar-color: rgb(75 85 99) transparent; /* gray-600 transparent */
+}
+
 .dark .custom-scrollbar::-webkit-scrollbar-thumb {
   background-color: #344054;
 }
