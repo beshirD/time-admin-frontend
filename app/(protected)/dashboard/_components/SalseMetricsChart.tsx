@@ -117,7 +117,7 @@ const SalesMetricsCard = ({ className }: { className?: string }) => {
                 <ShoppingBagIcon className="size-6 text-primary" />
               </div>
               <div className="flex flex-col gap-0.5">
-                <span className="text-xl font-medium">GrowzTech Delivery</span>
+                <span className="text-xl font-medium">Time Delivery</span>
                 <span className="text-muted-foreground text-sm">
                   Order Management Dashboard
                 </span>
