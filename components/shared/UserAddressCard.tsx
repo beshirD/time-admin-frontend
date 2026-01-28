@@ -101,7 +101,7 @@ export default function UserAddressCard({
             <h4 className="mb-2 text-2xl font-semibold text-gray-800 dark:text-white/90">
               Edit Address
             </h4>
-            <p className="mb-6 text-sm text-gray-500 dark:text-gray-400 lg:mb-7">
+            <p className="mb-6 text-sm text-gray-500 dark:text-gray-400 lg: ">
               Update your details to keep your profile up-to-date.
             </p>
           </div>

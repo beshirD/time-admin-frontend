@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowLeft, Pencil, Trash2 } from "lucide-react";
+import { ArrowLeft, Trash2 } from "lucide-react";
 import { DeleteCustomerDialog } from "../../_components/DeleteCustomerDialog";
 
 interface CustomerHeaderProps {
@@ -16,7 +16,7 @@ export function CustomerHeader({
   role,
 }: CustomerHeaderProps) {
   return (
-    <div className="mb-6 flex items-center justify-between">
+    <div className="py-3 flex items-center px-5 justify-between">
       <div className="flex items-center gap-4">
         <Link
           href="/users/customers"
@@ -36,12 +36,6 @@ export function CustomerHeader({
         </div>
       </div>
       <div className="flex items-center gap-3">
-        <Link
-          href={`/users/customers/${customerId}/edit`}
-          className="flex items-center gap-2 px-3 py-1.5 border border-blue-500 text-blue-600 dark:text-blue-400 hover:bg-blue-500/20 dark:hover:bg-blue-500/20 rounded-lg transition-colors duration-200">
-          <Pencil className="h-4 w-4" />
-          Edit
-        </Link>
         <DeleteCustomerDialog
           customerId={customerId}
           customerName={fullName}>

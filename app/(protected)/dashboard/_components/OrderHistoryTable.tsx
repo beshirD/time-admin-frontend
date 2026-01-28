@@ -417,7 +417,7 @@ const mockOrders: Order[] = [
 // Main component
 export function OrderHistoryTable() {
   return (
-    <div className="w-full bg-white dark:bg-gray-900 p-5 space-y-4 rounded-lg">
+    <div className="w-full bg-white dark:bg-gray-900 p-5 space-y-4 rounded-lg border border-gray-200 dark:border-gray-700/90">
       <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
         Order History Table
       </h2>

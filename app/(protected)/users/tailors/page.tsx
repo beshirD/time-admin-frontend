@@ -67,7 +67,7 @@ export default async function page() {
   const data = await getData();
 
   return (
-    <div className="w-full dark:bg-gray-900 p-5 space-y-4 rounded-lg mb-7">
+    <div className="w-full bg-white dark:bg-gray-900 p-5 space-y-4 rounded-lg mb-7">
       <PageTitle title="Tailors Management" />
       <DataTable
         columns={columns}

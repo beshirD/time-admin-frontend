@@ -12,6 +12,9 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
+  Row,
+  Updater,
+  PaginationState,
 } from "@tanstack/react-table";
 import {
   ChevronLeft,
@@ -128,7 +131,7 @@ export function DataTable<TData, TValue>({
 
   // Handle sorting changes
   const handleSortingChange = React.useCallback(
-    (updater: any) => {
+    (updater: Updater<SortingState>) => {
       const newSorting =
         typeof updater === "function" ? updater(sorting) : updater;
       setSorting(newSorting);
@@ -141,7 +144,7 @@ export function DataTable<TData, TValue>({
 
   // Handle pagination changes
   const handlePaginationChange = React.useCallback(
-    (updater: any) => {
+    (updater: Updater<PaginationState>) => {
       const newPagination =
         typeof updater === "function" ? updater(pagination) : updater;
       setPagination(newPagination);
@@ -154,7 +157,7 @@ export function DataTable<TData, TValue>({
 
   // Global filter function
   const globalFilterFn = React.useCallback(
-    (row: any, columnId: string, filterValue: string) => {
+    (row: Row<TData>, columnId: string, filterValue: string) => {
       const searchValue = filterValue.toLowerCase();
 
       // If no searchable columns specified, search all columns
@@ -232,7 +235,7 @@ export function DataTable<TData, TValue>({
             placeholder={searchPlaceholder}
             value={globalFilter ?? ""}
             onChange={(e) => setGlobalFilter(e.target.value)}
-            className="w-xl outline-primary"
+            className="flex min-w-4xl border-2 outline-primary border-primary"
             disabled={isLoading}
           />
         )}
@@ -342,7 +345,8 @@ export function DataTable<TData, TValue>({
                           if (onRowClick) {
                             onRowClick(row.original);
                           } else if (detailsLink) {
-                            const id = (row.original as any).id;
+                            const id = (row.original as Record<string, unknown>)
+                              .id;
                             if (id) {
                               router.push(`${detailsLink}/${id}`);
                             }
@@ -424,7 +428,7 @@ export function DataTable<TData, TValue>({
                       if (onRowClick) {
                         onRowClick(row.original);
                       } else if (detailsLink) {
-                        const id = (row.original as any).id;
+                        const id = (row.original as Record<string, unknown>).id;
                         if (id) {
                           router.push(`${detailsLink}/${id}`);
                         }

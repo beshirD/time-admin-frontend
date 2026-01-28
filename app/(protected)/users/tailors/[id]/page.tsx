@@ -29,7 +29,7 @@ export default function TailorDetailsPage({
   const tailor = mockTailor; // In real app, fetch based on id
 
   return (
-    <div className="w-full dark:bg-gray-900 space-y-4 rounded-lg mb-7">
+    <div className="w-full dark:bg-gray-900 space-y-4 rounded-lg  ">
       <div className="mx-auto">
         {/* Header */}
         <TailorHeader

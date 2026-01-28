@@ -29,9 +29,9 @@ export type Tailor = {
 
 export type TailorAdmin = {
   id: number;
-  firstName: string;
-  lastName: string;
+  fullName: string;
   email: string;
   stateId: string;
   createdOn: string;
+  createdById: string;
 };

@@ -1,3 +1,4 @@
+import * as React from "react";
 import {
   Table,
   TableBody,
@@ -19,6 +20,7 @@ interface SimpleTableProps<T> {
   columns: Column<T>[];
   keyField?: keyof T;
   emptyMessage?: string;
+  renderExpandedRow?: (item: T) => React.ReactNode;
 }
 
 export function SimpleTable<T>({
@@ -26,7 +28,18 @@ export function SimpleTable<T>({
   columns,
   keyField = "id" as keyof T,
   emptyMessage = "No results found.",
+  renderExpandedRow,
 }: SimpleTableProps<T>) {
+  const [expandedRowId, setExpandedRowId] = React.useState<string | null>(null);
+
+  const toggleRow = (id: string) => {
+    if (expandedRowId === id) {
+      setExpandedRowId(null);
+    } else {
+      setExpandedRowId(id);
+    }
+  };
+
   return (
     <div className="overflow-x-auto">
       <Table className="w-full">
@@ -43,23 +56,39 @@ export function SimpleTable<T>({
         </TableHeader>
         <TableBody className="divide-y divide-gray-200 dark:divide-gray-700">
           {data.length > 0 ? (
-            data.map((item, rowIndex) => (
-              <TableRow
-                key={String(item[keyField] || rowIndex)}
-                className="hover:bg-gray-50 dark:hover:bg-gray-700/50">
-                {columns.map((col, colIndex) => (
-                  <TableCell
-                    key={colIndex}
-                    className="px-4 py-3 text-sm text-gray-900 dark:text-white">
-                    {col.cell
-                      ? col.cell(item)
-                      : col.accessorKey
-                        ? String(item[col.accessorKey])
-                        : null}
-                  </TableCell>
-                ))}
-              </TableRow>
-            ))
+            data.map((item, rowIndex) => {
+              const rowId = String(item[keyField] || rowIndex);
+              const isExpanded = expandedRowId === rowId;
+
+              return (
+                <React.Fragment key={rowId}>
+                  <TableRow
+                    className={`hover:bg-gray-50 dark:hover:bg-gray-700/50 ${renderExpandedRow ? "cursor-pointer" : ""}`}
+                    onClick={() => renderExpandedRow && toggleRow(rowId)}>
+                    {columns.map((col, colIndex) => (
+                      <TableCell
+                        key={colIndex}
+                        className="px-4 py-3 text-sm text-gray-900 dark:text-white">
+                        {col.cell
+                          ? col.cell(item)
+                          : col.accessorKey
+                            ? String(item[col.accessorKey])
+                            : null}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                  {isExpanded && renderExpandedRow && (
+                    <TableRow className="bg-gray-50 dark:bg-gray-800/50">
+                      <TableCell
+                        colSpan={columns.length}
+                        className="p-4">
+                        {renderExpandedRow(item)}
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </React.Fragment>
+              );
+            })
           ) : (
             <TableRow>
               <TableCell

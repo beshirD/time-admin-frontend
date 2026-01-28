@@ -1,14 +1,17 @@
 "use client";
 
 import React from "react";
-import { Dialog, DialogContent } from "../dialog";
+import { Dialog, DialogContent, DialogTitle } from "../dialog";
 import { cn } from "@/lib/utils";
+import * as VisuallyHidden from "@radix-ui/react-visually-hidden";
 
 interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
   className?: string;
   children: React.ReactNode;
+  title?: string;
+  hideTitle?: boolean;
 }
 
 export const Modal: React.FC<ModalProps> = ({
@@ -16,6 +19,8 @@ export const Modal: React.FC<ModalProps> = ({
   onClose,
   className,
   children,
+  title,
+  hideTitle = false,
 }) => {
   return (
     <Dialog
@@ -27,6 +32,13 @@ export const Modal: React.FC<ModalProps> = ({
           className,
         )}
         showCloseButton={false}>
+        {hideTitle && title ? (
+          <VisuallyHidden.Root>
+            <DialogTitle>{title}</DialogTitle>
+          </VisuallyHidden.Root>
+        ) : title ? (
+          <DialogTitle className="sr-only">{title}</DialogTitle>
+        ) : null}
         {children}
       </DialogContent>
     </Dialog>

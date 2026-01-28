@@ -3,7 +3,6 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown, Eye, Pencil, Trash2, MoreHorizontal } from "lucide-react";
 import Link from "next/link";
-import IconButton from "@/components/ui/IconButton";
 import { Dropdown } from "@/components/ui/dropdown/Dropdown";
 import { useState } from "react";
 import { DeleteConfirmationDialog } from "@/components/common/DeleteConfirmationDialog";
@@ -30,7 +29,6 @@ const StatusBadge = ({ status }: { status: string }) => {
 // Action buttons component
 // Action buttons component
 const ActionButtons = ({ tailorAdmin }: { tailorAdmin: TailorAdmin }) => {
-  const fullName = `${tailorAdmin.firstName} ${tailorAdmin.lastName}`;
   const [isOpen, setIsOpen] = useState(false);
 
   return (
@@ -64,7 +62,7 @@ const ActionButtons = ({ tailorAdmin }: { tailorAdmin: TailorAdmin }) => {
           </Link>
           <DeleteConfirmationDialog
             itemType="Tailor Admin"
-            itemName={fullName}
+            itemName={tailorAdmin.fullName}
             onSuccess={() => {
               window.location.reload();
             }}
@@ -93,32 +91,18 @@ export const columns: ColumnDef<TailorAdmin>[] = [
     cell: ({ row }) => <div className="font-medium">{row.getValue("id")}</div>,
   },
   {
-    accessorKey: "firstName",
+    accessorKey: "fullName",
     header: ({ column }) => {
       return (
         <button
           className="flex items-center gap-2 hover:text-gray-900 dark:hover:text-gray-100 transition"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          First Name
+          Full Name
           <ArrowUpDown className="h-4 w-4" />
         </button>
       );
     },
-    cell: ({ row }) => <div>{row.getValue("firstName")}</div>,
-  },
-  {
-    accessorKey: "lastName",
-    header: ({ column }) => {
-      return (
-        <button
-          className="flex items-center gap-2 hover:text-gray-900 dark:hover:text-gray-100 transition"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          Last Name
-          <ArrowUpDown className="h-4 w-4" />
-        </button>
-      );
-    },
-    cell: ({ row }) => <div>{row.getValue("lastName")}</div>,
+    cell: ({ row }) => <div>{row.getValue("fullName")}</div>,
   },
   {
     accessorKey: "email",

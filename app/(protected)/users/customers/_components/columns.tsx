@@ -3,7 +3,6 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown, Eye, Pencil, Trash2, MoreHorizontal } from "lucide-react";
 import Link from "next/link";
-import IconButton from "@/components/ui/IconButton";
 import { Dropdown } from "@/components/ui/dropdown/Dropdown";
 import { useState } from "react";
 

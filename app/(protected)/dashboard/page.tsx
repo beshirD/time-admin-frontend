@@ -3,6 +3,8 @@ import MonthlyTarget from "./_components/MonthlyTarget";
 import SalesMetricsCard from "./_components/SalseMetricsChart";
 import { TimeSeriesChart } from "./_components/TimeSeriesChart";
 import { OrderHistoryTable } from "./_components/OrderHistoryTable";
+import { AnalyticsChart } from "./_components/AnalyticsChart";
+import { WeeklyComparisonChart } from "./_components/WeeklyComparisonChart";
 
 export default function DashboardPage() {
   return (
@@ -18,6 +20,15 @@ export default function DashboardPage() {
         </div>
       </div>
       <OrderHistoryTable />
+
+      <div className="flex flex-col xl:flex-row gap-5">
+        <div className="flex w-full xl:w-1/2">
+          <AnalyticsChart />
+        </div>
+        <div className="flex w-full xl:w-1/2">
+          <WeeklyComparisonChart />
+        </div>
+      </div>
     </div>
   );
 }

@@ -77,8 +77,12 @@ export default function SignInForm() {
       // Redirect to dashboard
       router.push("/dashboard");
       router.refresh(); // Refresh to update middleware state
-    } catch (err: any) {
-      setError(err.message || "Failed to sign in. Please try again.");
+    } catch (err: unknown) {
+      const errorMessage =
+        err instanceof Error
+          ? err.message
+          : "Failed to sign in. Please try again.";
+      setError(errorMessage);
       console.error("Login error:", err);
     } finally {
       setIsLoading(false);

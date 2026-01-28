@@ -1,8 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowLeft, Pencil, Trash2 } from "lucide-react";
-import IconButton from "@/components/ui/IconButton";
+import { ArrowLeft, Trash2 } from "lucide-react";
 import { DeleteTailorAdminDialog } from "../../_components/DeleteTailorAdminDialog";
 
 interface TailorAdminHeaderProps {
@@ -26,7 +25,7 @@ export function TailorAdminHeader({
   };
 
   return (
-    <div className="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div className="py-3 px-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
       <div className="flex items-center gap-4">
         <Link
           href="/users/tailor-admin"
@@ -51,13 +50,6 @@ export function TailorAdminHeader({
       </div>
 
       <div className="flex items-center gap-3">
-        <Link
-          className="flex items-center gap-2 px-3 py-1.5 border border-blue-500 text-blue-600 dark:text-blue-400 hover:bg-blue-500/20 dark:hover:bg-blue-500/20 rounded-lg transition-colors duration-200"
-          href={`/users/tailor-admin/${tailorAdminId}/edit`}>
-          <Pencil className="h-4 w-4" />
-          Edit
-        </Link>
-
         <DeleteTailorAdminDialog
           tailorAdminId={tailorAdminId}
           tailorAdminName={fullName}
