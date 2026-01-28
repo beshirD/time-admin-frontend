@@ -235,47 +235,52 @@ export function DataTable<TData, TValue>({
             placeholder={searchPlaceholder}
             value={globalFilter ?? ""}
             onChange={(e) => setGlobalFilter(e.target.value)}
-            className="flex min-w-4xl border-2 outline-primary border-primary"
+            className="flex min-w-4xl border-2 outline-primary border-primary/40 dark:border-primary/70"
             disabled={isLoading}
           />
         )}
-        {enableColumnVisibility && (
-          <div className="relative ml-auto">
-            <button
-              onClick={() => setColumnDropdownOpen(!columnDropdownOpen)}
-              className="dropdown-toggle inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition"
-              disabled={isLoading}>
-              <Settings2 className="h-4 w-4" />
-              Edit Columns
-            </button>
-            <Dropdown
-              isOpen={columnDropdownOpen}
-              onClose={() => setColumnDropdownOpen(false)}
-              className="w-48">
-              <div className="py-1">
-                <div className="px-4 py-2 text-xs font-medium text-gray-500 dark:text-gray-400 border-b border-gray-200 dark:border-gray-700">
-                  Toggle columns
+
+        <div className="flex items-center gap-4">
+          {enableColumnVisibility && (
+            <div className="relative">
+              <button
+                onClick={() => setColumnDropdownOpen(!columnDropdownOpen)}
+                className="dropdown-toggle inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-primary bg-white dark:bg-gray-800 border border-primary rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition"
+                disabled={isLoading}>
+                <Settings2 className="h-4 w-4" />
+                Edit Columns
+              </button>
+              <Dropdown
+                isOpen={columnDropdownOpen}
+                onClose={() => setColumnDropdownOpen(false)}
+                className="w-48">
+                <div className="py-1">
+                  <div className="px-4 py-2 text-xs font-medium text-gray-500 dark:text-gray-400 border-b border-gray-200 dark:border-gray-700">
+                    Toggle columns
+                  </div>
+                  {table
+                    .getAllColumns()
+                    .filter((column) => column.getCanHide())
+                    .map((column) => {
+                      return (
+                        <div
+                          key={column.id}
+                          className="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-800">
+                          <Checkbox
+                            label={column.id}
+                            checked={column.getIsVisible()}
+                            onChange={(value) =>
+                              column.toggleVisibility(!!value)
+                            }
+                          />
+                        </div>
+                      );
+                    })}
                 </div>
-                {table
-                  .getAllColumns()
-                  .filter((column) => column.getCanHide())
-                  .map((column) => {
-                    return (
-                      <div
-                        key={column.id}
-                        className="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-800">
-                        <Checkbox
-                          label={column.id}
-                          checked={column.getIsVisible()}
-                          onChange={(value) => column.toggleVisibility(!!value)}
-                        />
-                      </div>
-                    );
-                  })}
-              </div>
-            </Dropdown>
-          </div>
-        )}
+              </Dropdown>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Table */}
@@ -288,9 +293,9 @@ export function DataTable<TData, TValue>({
               <table className="w-full caption-bottom text-sm">
                 <thead
                   className={cn(
-                    "[&_tr]:border-b bg-muted h-12",
+                    "[&_tr]:border-b  h-12",
                     stickyHeader &&
-                      "sticky top-0 z-10 bg-white dark:bg-gray-900",
+                      "sticky top-0 z-10 bg-[#f8e8d6] dark:bg-[#704009]",
                   )}>
                   {table.getHeaderGroups().map((headerGroup) => (
                     <tr

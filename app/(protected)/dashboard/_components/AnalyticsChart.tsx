@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -10,38 +10,107 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 
-// Chart data for weekly revenue
-const chartData = [
-  { day: "Sun", revenue: 12000 },
-  { day: "Mon", revenue: 10000 },
-  { day: "Tue", revenue: 12000 },
-  { day: "Wed", revenue: 17000 },
-  { day: "Thu", revenue: 17000 },
-  { day: "Fri", revenue: 12000 },
-  { day: "Sat", revenue: 15000 },
-];
-
 const chartConfig = {
-  revenue: {
-    label: "Revenue",
+  value: {
+    label: "Value",
     color: "#ff7801",
   },
 } satisfies ChartConfig;
 
 type TimeFrame = "Weekly" | "Monthly" | "Yearly";
+type MetricType = "Revenue" | "Orders";
+
+// Generate dynamic data based on timeframe
+const generateData = (timeFrame: TimeFrame, metric: MetricType) => {
+  if (timeFrame === "Weekly") {
+    const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+    return days.map((day) => ({
+      label: day,
+      value:
+        metric === "Revenue"
+          ? Math.floor(Math.random() * 8000) + 10000 // 10k-18k for revenue
+          : Math.floor(Math.random() * 50) + 80, // 80-130 for orders
+    }));
+  } else if (timeFrame === "Monthly") {
+    const weeks = ["Week 1", "Week 2", "Week 3", "Week 4"];
+    return weeks.map((week) => ({
+      label: week,
+      value:
+        metric === "Revenue"
+          ? Math.floor(Math.random() * 30000) + 50000 // 50k-80k for revenue
+          : Math.floor(Math.random() * 200) + 400, // 400-600 for orders
+    }));
+  } else {
+    const months = [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec",
+    ];
+    return months.map((month) => ({
+      label: month,
+      value:
+        metric === "Revenue"
+          ? Math.floor(Math.random() * 100000) + 200000 // 200k-300k for revenue
+          : Math.floor(Math.random() * 800) + 1500, // 1500-2300 for orders
+    }));
+  }
+};
 
 export function AnalyticsChart() {
-  const [selectedMetric, setSelectedMetric] = useState<"Revenue" | "Sales">(
-    "Revenue",
-  );
+  const [selectedMetric, setSelectedMetric] = useState<MetricType>("Revenue");
   const [timeFrame, setTimeFrame] = useState<TimeFrame>("Weekly");
+  const [mounted, setMounted] = useState(false);
+
+  // Only run on client side to avoid hydration mismatch
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Generate data dynamically when metric or timeframe changes
+  const chartData = useMemo(() => {
+    if (!mounted) {
+      // Return empty/placeholder data during SSR
+      return [];
+    }
+    return generateData(timeFrame, selectedMetric);
+  }, [timeFrame, selectedMetric, mounted]);
+
+  // Calculate total for display
+  const total = useMemo(() => {
+    return chartData.reduce((sum, item) => sum + item.value, 0);
+  }, [chartData]);
+
+  // Format value based on metric type
+  const formatValue = (value: number) => {
+    if (selectedMetric === "Revenue") {
+      return `$${(value / 1000).toFixed(1)}k`;
+    }
+    return value.toString();
+  };
 
   return (
     <Card className="w-full bg-white border-gray-200 dark:border-gray-800 dark:bg-gray-900">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
-        <CardTitle className="text-xl font-semibold text-gray-900 dark:text-gray-100">
-          Weekly Analytics
-        </CardTitle>
+        <div>
+          <CardTitle className="text-xl font-semibold text-gray-900 dark:text-gray-100">
+            {timeFrame} Analytics
+          </CardTitle>
+          <p className="text-sm text-muted-foreground mt-1">
+            Total {selectedMetric}:{" "}
+            {selectedMetric === "Revenue"
+              ? `$${total.toLocaleString()}`
+              : total.toLocaleString()}
+          </p>
+        </div>
         <div className="flex items-center gap-3">
           {/* Metric Toggle */}
           <div className="flex items-center gap-2">
@@ -49,7 +118,7 @@ export function AnalyticsChart() {
             <button
               onClick={() =>
                 setSelectedMetric(
-                  selectedMetric === "Revenue" ? "Sales" : "Revenue",
+                  selectedMetric === "Revenue" ? "Orders" : "Revenue",
                 )
               }
               className="text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-[#ff7801] transition-colors">
@@ -100,7 +169,7 @@ export function AnalyticsChart() {
             }}>
             <defs>
               <linearGradient
-                id="colorRevenue"
+                id="colorValue"
                 x1="0"
                 y1="0"
                 x2="0"
@@ -124,7 +193,7 @@ export function AnalyticsChart() {
               strokeOpacity={0.3}
             />
             <XAxis
-              dataKey="day"
+              dataKey="label"
               tickLine={false}
               axisLine={false}
               tickMargin={12}
@@ -137,12 +206,11 @@ export function AnalyticsChart() {
               tickLine={false}
               axisLine={false}
               tickMargin={8}
-              tickFormatter={(value) => `${value / 1000}k`}
+              tickFormatter={formatValue}
               tick={{
                 fill: "hsl(var(--muted-foreground))",
                 fontSize: 12,
               }}
-              ticks={[0, 5000, 8000, 12000, 15000, 18000]}
             />
             <ChartTooltip
               content={
@@ -150,7 +218,9 @@ export function AnalyticsChart() {
                   className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700"
                   labelFormatter={(value) => `${value}`}
                   formatter={(value) => [
-                    `$${Number(value).toLocaleString()}`,
+                    selectedMetric === "Revenue"
+                      ? `$${Number(value).toLocaleString()}`
+                      : Number(value).toLocaleString(),
                     selectedMetric,
                   ]}
                 />
@@ -158,10 +228,10 @@ export function AnalyticsChart() {
             />
             <Area
               type="linear"
-              dataKey="revenue"
+              dataKey="value"
               stroke="#ff7801"
               strokeWidth={2.5}
-              fill="url(#colorRevenue)"
+              fill="url(#colorValue)"
               fillOpacity={1}
               dot={{
                 fill: "#ff7801",
