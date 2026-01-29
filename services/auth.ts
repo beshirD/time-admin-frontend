@@ -38,7 +38,7 @@ class AuthService {
       }
 
       throw new Error(response.data.message || 'Sign in failed');
-    } catch (error: any) {
+    } catch (error) {
       throw this.handleAuthError(error);
     }
   }
@@ -126,7 +126,7 @@ class AuthService {
       }
 
       return null;
-    } catch (error) {
+    } catch {
       this.clearTokens();
       await removeAuthCookie();
       return null;
@@ -168,6 +168,7 @@ class AuthService {
     localStorage.removeItem('refreshToken');
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private handleAuthError(error: any): Error {
     // Backend returns error in this format: { success: false, message: "error message" }
     if (error.response?.data?.message) {

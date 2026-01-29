@@ -6,15 +6,12 @@ import { usePathname } from "next/navigation";
 import { useSidebar } from "../context/SidebarContext";
 import {
   BoxCubeIcon,
-  CalenderIcon,
   ChevronDownIcon,
   GridIcon,
   HorizontaLDots,
   ListIcon,
-  PageIcon,
   PieChartIcon,
   PlugInIcon,
-  TableIcon,
   UserCircleIcon,
 } from "../components/icons/index";
 import SidebarWidget from "./SidebarWidget";
@@ -37,7 +34,7 @@ const navItems: NavItem[] = [
     name: "User Management",
     subItems: [
       { name: "Customers", path: "/users/customers" },
-      { name: "Sub Admins", path: "/users/sub-admins" },
+      { name: "Sub Admins", path: "/users/sub-admin" },
       { name: "Tailors", path: "/users/tailors" },
       { name: "Tailor Admin", path: "/users/tailor-admin" },
     ],
@@ -124,7 +121,7 @@ const AppSidebar: React.FC = () => {
 
   const renderMenuItems = (
     navItems: NavItem[],
-    menuType: "main" | "others"
+    menuType: "main" | "others",
   ) => (
     <ul className="flex flex-col gap-2">
       {navItems.map((nav, index) => (
@@ -140,15 +137,13 @@ const AppSidebar: React.FC = () => {
                 !isExpanded && !isHovered
                   ? "lg:justify-center"
                   : "lg:justify-start"
-              }`}
-            >
+              }`}>
               <span
                 className={` ${
                   openSubmenu?.type === menuType && openSubmenu?.index === index
                     ? "menu-item-icon-active"
                     : "menu-item-icon-inactive"
-                }`}
-              >
+                }`}>
                 {nav.icon}
               </span>
               {(isExpanded || isHovered || isMobileOpen) && (
@@ -159,7 +154,7 @@ const AppSidebar: React.FC = () => {
                   className={`ml-auto w-5 h-5 transition-transform duration-200  ${
                     openSubmenu?.type === menuType &&
                     openSubmenu?.index === index
-                      ? "rotate-180 text-brand-500"
+                      ? "rotate-180 text-primary"
                       : ""
                   }`}
                 />
@@ -171,15 +166,13 @@ const AppSidebar: React.FC = () => {
                 href={nav.path}
                 className={`menu-item group ${
                   isActive(nav.path) ? "menu-item-active" : "menu-item-inactive"
-                }`}
-              >
+                }`}>
                 <span
                   className={`${
                     isActive(nav.path)
                       ? "menu-item-icon-active"
                       : "menu-item-icon-inactive"
-                  }`}
-                >
+                  }`}>
                   {nav.icon}
                 </span>
                 {(isExpanded || isHovered || isMobileOpen) && (
@@ -193,14 +186,13 @@ const AppSidebar: React.FC = () => {
               ref={(el) => {
                 subMenuRefs.current[`${menuType}-${index}`] = el;
               }}
-              className="overflow-hidden transition-all duration-300"
+              className="overflow-hidden border-l-2 border-primary/70 bg-primary/10 ml-4 transition-all duration-300"
               style={{
                 height:
                   openSubmenu?.type === menuType && openSubmenu?.index === index
                     ? `${subMenuHeight[`${menuType}-${index}`]}px`
                     : "0px",
-              }}
-            >
+              }}>
               <ul className="mt-2 space-y-1 ml-9">
                 {nav.subItems.map((subItem) => (
                   <li key={subItem.name}>
@@ -210,8 +202,7 @@ const AppSidebar: React.FC = () => {
                         isActive(subItem.path)
                           ? "menu-dropdown-item-active"
                           : "menu-dropdown-item-inactive"
-                      }`}
-                    >
+                      }`}>
                       {subItem.name}
                     </Link>
                   </li>
@@ -229,11 +220,20 @@ const AppSidebar: React.FC = () => {
     index: number;
   } | null>(null);
   const [subMenuHeight, setSubMenuHeight] = useState<Record<string, number>>(
-    {}
+    {},
   );
   const subMenuRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
-  const isActive = useCallback((path: string) => path === pathname, [pathname]);
+  const isActive = useCallback(
+    (path: string) => {
+      // Exact match for root paths
+      if (path === pathname) return true;
+      // Check if current pathname starts with the menu path (for child routes)
+      // Add a trailing slash to prevent false matches (e.g., /users/customers vs /users/customers-archive)
+      return pathname.startsWith(path + "/");
+    },
+    [pathname],
+  );
 
   useEffect(() => {
     // Check if the current path matches any submenu item
@@ -257,6 +257,7 @@ const AppSidebar: React.FC = () => {
 
     // If no submenu item matches, close the open submenu
     if (!submenuMatched) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setOpenSubmenu(null);
     }
   }, [pathname, isActive]);
@@ -294,19 +295,17 @@ const AppSidebar: React.FC = () => {
           isExpanded || isMobileOpen
             ? "w-[290px]"
             : isHovered
-            ? "w-[290px]"
-            : "w-[90px]"
+              ? "w-[290px]"
+              : "w-[90px]"
         }
         ${isMobileOpen ? "translate-x-0" : "-translate-x-full"}
         lg:translate-x-0`}
       onMouseEnter={() => !isExpanded && setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-    >
+      onMouseLeave={() => setIsHovered(false)}>
       <div
         className={`py-8 flex  ${
           !isExpanded && !isHovered ? "lg:justify-center" : "justify-start"
-        }`}
-      >
+        }`}>
         <Link href="/">
           {isExpanded || isHovered || isMobileOpen ? (
             <>
@@ -344,8 +343,7 @@ const AppSidebar: React.FC = () => {
                   !isExpanded && !isHovered
                     ? "lg:justify-center"
                     : "justify-start"
-                }`}
-              >
+                }`}>
                 {isExpanded || isHovered || isMobileOpen ? (
                   "Main"
                 ) : (
@@ -361,8 +359,7 @@ const AppSidebar: React.FC = () => {
                   !isExpanded && !isHovered
                     ? "lg:justify-center"
                     : "justify-start"
-                }`}
-              >
+                }`}>
                 {isExpanded || isHovered || isMobileOpen ? (
                   "Others"
                 ) : (
@@ -380,4 +377,3 @@ const AppSidebar: React.FC = () => {
 };
 
 export default AppSidebar;
-

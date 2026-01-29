@@ -17,7 +17,7 @@ export default function SignInForm() {
   const [isChecked, setIsChecked] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string>("");
-  
+
   // Form state
   const [formData, setFormData] = useState({
     email: "",
@@ -68,17 +68,21 @@ export default function SignInForm() {
 
       // Successfully logged in
       console.log("Login successful:", response);
-      
+
       // Set auth cookie for middleware (keeps tokens in localStorage too)
       if (response.accessToken) {
         await setAuthCookie(response.accessToken);
       }
-      
+
       // Redirect to dashboard
       router.push("/dashboard");
       router.refresh(); // Refresh to update middleware state
-    } catch (err: any) {
-      setError(err.message || "Failed to sign in. Please try again.");
+    } catch (err: unknown) {
+      const errorMessage =
+        err instanceof Error
+          ? err.message
+          : "Failed to sign in. Please try again.";
+      setError(errorMessage);
       console.error("Login error:", err);
     } finally {
       setIsLoading(false);
@@ -91,7 +95,7 @@ export default function SignInForm() {
       ...prev,
       [name]: value,
     }));
-    
+
     // Clear validation error for this field
     if (validationErrors[name as keyof typeof validationErrors]) {
       setValidationErrors((prev) => ({
@@ -99,7 +103,7 @@ export default function SignInForm() {
         [name]: "",
       }));
     }
-    
+
     // Clear general error
     if (error) {
       setError("");
@@ -111,8 +115,7 @@ export default function SignInForm() {
       <div className="w-full max-w-md sm:pt-10 mx-auto mb-5">
         <Link
           href="/"
-          className="inline-flex items-center text-sm text-gray-500 transition-colors hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
-        >
+          className="inline-flex items-center text-sm text-gray-500 transition-colors hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300">
           <ChevronLeftIcon />
           Back to home
         </Link>
@@ -132,15 +135,13 @@ export default function SignInForm() {
               <button
                 type="button"
                 disabled={isLoading}
-                className="inline-flex items-center justify-center gap-3 py-3 text-sm font-normal text-gray-700 transition-colors bg-gray-100 rounded-lg px-7 hover:bg-gray-200 hover:text-gray-800 dark:bg-white/5 dark:text-white/90 dark:hover:bg-white/10 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
+                className="inline-flex items-center justify-center gap-3 py-3 text-sm font-normal text-gray-700 transition-colors bg-gray-100 rounded-lg px-7 hover:bg-gray-200 hover:text-gray-800 dark:bg-white/5 dark:text-white/90 dark:hover:bg-white/10 disabled:opacity-50 disabled:cursor-not-allowed">
                 <svg
                   width="20"
                   height="20"
                   viewBox="0 0 20 20"
                   fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
+                  xmlns="http://www.w3.org/2000/svg">
                   <path
                     d="M18.7511 10.1944C18.7511 9.47495 18.6915 8.94995 18.5626 8.40552H10.1797V11.6527H15.1003C15.0011 12.4597 14.4654 13.675 13.2749 14.4916L13.2582 14.6003L15.9087 16.6126L16.0924 16.6305C17.7788 15.1041 18.7511 12.8583 18.7511 10.1944Z"
                     fill="#4285F4"
@@ -163,16 +164,14 @@ export default function SignInForm() {
               <button
                 type="button"
                 disabled={isLoading}
-                className="inline-flex items-center justify-center gap-3 py-3 text-sm font-normal text-gray-700 transition-colors bg-gray-100 rounded-lg px-7 hover:bg-gray-200 hover:text-gray-800 dark:bg-white/5 dark:text-white/90 dark:hover:bg-white/10 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
+                className="inline-flex items-center justify-center gap-3 py-3 text-sm font-normal text-gray-700 transition-colors bg-gray-100 rounded-lg px-7 hover:bg-gray-200 hover:text-gray-800 dark:bg-white/5 dark:text-white/90 dark:hover:bg-white/10 disabled:opacity-50 disabled:cursor-not-allowed">
                 <svg
                   width="21"
                   className="fill-current"
                   height="20"
                   viewBox="0 0 21 20"
                   fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
+                  xmlns="http://www.w3.org/2000/svg">
                   <path d="M15.6705 1.875H18.4272L12.4047 8.75833L19.4897 18.125H13.9422L9.59717 12.4442L4.62554 18.125H1.86721L8.30887 10.7625L1.51221 1.875H7.20054L11.128 7.0675L15.6705 1.875ZM14.703 16.475H16.2305L6.37054 3.43833H4.73137L14.703 16.475Z" />
                 </svg>
                 Sign in with X
@@ -197,7 +196,7 @@ export default function SignInForm() {
                   </p>
                 </div>
               )}
-              
+
               <div className="space-y-6">
                 <div>
                   <Label htmlFor="email">
@@ -235,8 +234,7 @@ export default function SignInForm() {
                     />
                     <span
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute z-30 -translate-y-1/2 cursor-pointer right-4 top-1/2"
-                    >
+                      className="absolute z-30 -translate-y-1/2 cursor-pointer right-4 top-1/2">
                       {showPassword ? (
                         <EyeIcon className="fill-gray-500 dark:fill-gray-400" />
                       ) : (
@@ -258,8 +256,7 @@ export default function SignInForm() {
                   </div>
                   <Link
                     href="/forgot-password"
-                    className="text-sm text-brand-500 hover:text-brand-600 dark:text-brand-400"
-                  >
+                    className="text-sm text-brand-500 hover:text-brand-600 dark:text-brand-400">
                     Forgot password?
                   </Link>
                 </div>
@@ -268,8 +265,7 @@ export default function SignInForm() {
                     type="submit"
                     className="w-full"
                     size="sm"
-                    disabled={isLoading}
-                  >
+                    disabled={isLoading}>
                     {isLoading ? "Signing in..." : "Sign in"}
                   </Button>
                 </div>
@@ -281,8 +277,7 @@ export default function SignInForm() {
                 Don&apos;t have an account?{" "}
                 <Link
                   href="/signup"
-                  className="text-brand-500 hover:text-brand-600 dark:text-brand-400"
-                >
+                  className="text-brand-500 hover:text-brand-600 dark:text-brand-400">
                   Sign Up
                 </Link>
               </p>
@@ -293,4 +288,3 @@ export default function SignInForm() {
     </div>
   );
 }
-

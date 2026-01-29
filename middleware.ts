@@ -1,30 +1,32 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
-// Define protected and public routes
-const protectedRoutes = ['/dashboard', '/profile', '/settings', '/orders', '/restaurants', '/riders'];
-const authRoutes = ['/login', '/signup', '/forgot-password'];
+// Define public routes that don't require authentication
+const publicRoutes = ['/login', '/signup', '/forgot-password', '/reset-password'];
 
 export default function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   
-  // Get token from cookies or check if user has token
+  // Get token from cookies
   const token = request.cookies.get('accessToken')?.value;
   
-  // Check if the route is protected
-  const isProtectedRoute = protectedRoutes.some(route => pathname.startsWith(route));
-  const isAuthRoute = authRoutes.some(route => pathname.startsWith(route));
+  // Check if the route is public
+  const isPublicRoute = publicRoutes.some(route => pathname.startsWith(route));
   
-  // Redirect to login if accessing protected route without token
-  if (isProtectedRoute && !token) {
+  // Allow access to public routes and root
+  if (isPublicRoute || pathname === '/') {
+    // If user has token and tries to access auth pages, redirect to dashboard
+    if (token && isPublicRoute) {
+      return NextResponse.redirect(new URL('/dashboard', request.url));
+    }
+    return NextResponse.next();
+  }
+  
+  // All other routes are protected - require authentication
+  if (!token) {
     const url = new URL('/login', request.url);
     url.searchParams.set('redirect', pathname);
     return NextResponse.redirect(url);
-  }
-  
-  // Redirect to dashboard if accessing auth routes with token
-  if (isAuthRoute && token) {
-    return NextResponse.redirect(new URL('/dashboard', request.url));
   }
   
   return NextResponse.next();
@@ -39,7 +41,7 @@ export const config = {
      * - _next/static (static files)
      * - _next/image (image optimization files)
      * - favicon.ico (favicon file)
-     * - public files (public folder)
+     * - public files (images, etc.)
      */
     '/((?!api|_next/static|_next/image|favicon.ico|.*\\..*|public).*)',
   ],

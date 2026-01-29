@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-const BACKEND_URL =  process.env.BACKEND_API_URL;
+const BACKEND_URL = 'http://46.202.191.177:8080';
 
 export async function GET(
   request: NextRequest,
@@ -104,14 +104,15 @@ async function proxyRequest(
     console.log(`[Proxy] Response data:`, data);
 
     return NextResponse.json(data, { status: response.status });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('[Proxy] Error:', error);
+    const errorMessage = error instanceof Error ? error.message : 'Failed to connect to backend';
     return NextResponse.json(
       { 
         success: false, 
         error: { 
           code: 'PROXY_ERROR',
-          message: error.message || 'Failed to connect to backend' 
+          message: errorMessage
         } 
       },
       { status: 500 }

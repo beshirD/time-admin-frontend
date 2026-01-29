@@ -85,8 +85,26 @@ class ApiService {
   }
 
   private async refreshAccessToken(): Promise<string | null> {
-    const { authService } = await import('./auth');
-    return await authService.refreshToken();
+    const refreshToken = this.getRefreshToken();
+    
+    if (!refreshToken) {
+      return null;
+    }
+
+    try {
+      // Placeholder - will use actual refresh endpoint
+      const response = await axios.post(`${API_BASE_URL}/auth/refresh`, {
+        refreshToken,
+      });
+
+      const newAccessToken = response.data.data.accessToken;
+      this.setAccessToken(newAccessToken);
+      
+      return newAccessToken;
+    } catch {
+      this.clearTokens();
+      return null;
+    }
   }
 
   private handleAuthFailure(): void {
