@@ -95,7 +95,7 @@ export function CreateBannerDialog() {
         title="Create New Banner"
         hideTitle={true}
         className="max-w-[100px] m-1">
-        <div className="no-scrollbar relative border w-full lg:w-[650px] overflow-y-auto rounded-3xl bg-white p-4 dark:bg-gray-900 lg:p-8">
+        <div className="no-scrollbar relative border w-full lg:w-[650px] overflow-y-auto rou  nded-3xl bg-white p-4 dark:bg-gray-900 lg:p-8">
           <div className="px-2 pr-14">
             <h4 className="mb-2 text-2xl font-semibold text-gray-800 dark:text-white/90">
               Create New Banner
@@ -154,6 +154,7 @@ export function CreateBannerDialog() {
                             {restaurant.name}
                           </SelectItem>
                         ))}
+                        feat:
                       </SelectContent>
                     </Select>
                   </div>

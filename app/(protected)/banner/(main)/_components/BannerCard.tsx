@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 
 type BannerStatus = "active" | "pending" | "archive";
@@ -39,13 +40,19 @@ const statusConfig: Record<BannerStatus, { label: string; className: string }> =
 
 export default function BannerCard({ banner }: BannerCardProps) {
   const [isHovered, setIsHovered] = useState(false);
+  const router = useRouter();
   const statusInfo = statusConfig[banner.status];
+
+  const handleClick = () => {
+    router.push(`/banner/${banner.id}`);
+  };
 
   return (
     <div
       className="group relative overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700/90 bg-white dark:bg-gray-800 shadow-sm hover:shadow-lg transition-all duration-300 cursor-pointer"
       onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}>
+      onMouseLeave={() => setIsHovered(false)}
+      onClick={handleClick}>
       {/* Banner Image Container with 4:3 aspect ratio */}
       <div className="relative w-full aspect-[8/5] overflow-hidden bg-gray-100 dark:bg-gray-900">
         <Image

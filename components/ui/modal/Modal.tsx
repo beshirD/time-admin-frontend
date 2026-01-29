@@ -32,6 +32,8 @@ export const Modal: React.FC<ModalProps> = ({
           className,
         )}
         showCloseButton={false}>
+        <DialogTitle className="hidden">{title}</DialogTitle>
+
         {hideTitle && title ? (
           <VisuallyHidden.Root>
             <DialogTitle>{title}</DialogTitle>
