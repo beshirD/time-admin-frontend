@@ -2,10 +2,10 @@
 
 import React from "react";
 import PageTitle from "@/components/common/PageTitle";
-import { Button } from "@/components/ui/button";
 import Input from "@/components/ui/Input";
 import { CreditCard, Search } from "lucide-react";
 import { CreateBannerDialog } from "./CreateBannerDialog";
+import Link from "next/link";
 
 interface BannerHeaderProps {
   searchQuery: string;
@@ -34,14 +34,13 @@ export default function BannerHeader({
         </div>
       </div>
 
-      <div className="flex justify-end items-center gap-3 w-full">
-        <Button
-          variant="outline"
-          className="gap-2"
-          onClick={() => console.log("Banner subscriptions clicked")}>
+      <div className="flex justify-end items-center gap-4 w-full">
+        <Link
+          href="/banner/packages"
+          className="gap-3 flex items-center px-4 py-2 text-base font-medium text-gray-600 dark:text-gray-300 border border-gray-200 bg-slate-100 dark:bg-background/50 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
           <CreditCard className="w-4 h-4" />
-          Banner Subscriptions
-        </Button>
+          Banner Packages
+        </Link>
         <CreateBannerDialog />
       </div>
     </div>

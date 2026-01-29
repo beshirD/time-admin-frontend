@@ -44,9 +44,8 @@ const navItems: NavItem[] = [
     name: "Banner Management",
     subItems: [
       { name: "Banners", path: "/banner" },
-      { name: "Banner Packages", path: "/banner-packages" },
-      { name: "Subscriptions", path: "/subscriptions" },
-      { name: "Approval Queue", path: "/approval-queue" },
+      { name: "Subscriptions", path: "/banner/subscriptions" },
+      { name: "Approval Queue", path: "/banner/approval-queue" },
     ],
   },
   {
