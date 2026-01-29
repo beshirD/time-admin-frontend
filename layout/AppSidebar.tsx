@@ -43,12 +43,10 @@ const navItems: NavItem[] = [
     icon: <GridIcon />,
     name: "Banner Management",
     subItems: [
-      { name: "Create Banner (Admin)", path: "/banners/create" },
-      { name: "All Banners", path: "/banners" },
-      { name: "Banner Packages", path: "/banners/packages" },
-      { name: "Create Subscription", path: "/banners/subscriptions/create" },
-      { name: "Manage Subscriptions", path: "/banners/subscriptions" },
-      { name: "Approval Queue", path: "/banners/approval-queue" },
+      { name: "Banners", path: "/banner" },
+      { name: "Banner Packages", path: "/banner-packages" },
+      { name: "Subscriptions", path: "/subscriptions" },
+      { name: "Approval Queue", path: "/approval-queue" },
     ],
   },
   {
