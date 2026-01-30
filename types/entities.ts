@@ -86,3 +86,22 @@ export type SubscriptionQueue = {
   startDate?: string;
   endDate?: string;
 };
+
+export type Driver = {
+  id: number;
+  fullName: string;
+  email: string;
+  contactNo: string;
+  stateId: string;
+  createdOn: string;
+  createdById: string;
+  // Detail fields
+  firstName?: string;
+  lastName?: string;
+  riderId?: string;
+  isEmailVerified?: string;
+  isApprove?: string;
+  status?: string;
+  role?: string;
+  profilePicture?: string;
+};

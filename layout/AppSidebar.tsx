@@ -53,7 +53,7 @@ const navItems: NavItem[] = [
     name: "Driver Management",
     subItems: [
       { name: "Driver List", path: "/drivers" },
-      { name: "Driver Assignment", path: "/drivers/assignment" },
+      { name: "Driver Assignment", path: "/drivers/assignments" },
       { name: "Driver Advances", path: "/drivers/advances" },
     ],
   },
