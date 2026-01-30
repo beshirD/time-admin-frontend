@@ -191,19 +191,29 @@ const AppSidebar: React.FC = () => {
                     : "0px",
               }}>
               <ul className="mt-2 space-y-1 ml-9">
-                {nav.subItems.map((subItem) => (
-                  <li key={subItem.name}>
-                    <Link
-                      href={subItem.path}
-                      className={`menu-dropdown-item ${
-                        isActive(subItem.path)
-                          ? "menu-dropdown-item-active"
-                          : "menu-dropdown-item-inactive"
-                      }`}>
-                      {subItem.name}
-                    </Link>
-                  </li>
-                ))}
+                {(() => {
+                  const activeSubItemPath = nav.subItems
+                    .filter((item) => isActive(item.path))
+                    .sort((a, b) => b.path.length - a.path.length)[0]?.path;
+
+                  return nav.subItems.map((subItem) => (
+                    <li key={subItem.name}>
+                      <Link
+                        href={subItem.path}
+                        className={`menu-dropdown-item ${
+                          (
+                            activeSubItemPath
+                              ? subItem.path === activeSubItemPath
+                              : isActive(subItem.path)
+                          )
+                            ? "menu-dropdown-item-active"
+                            : "menu-dropdown-item-inactive"
+                        }`}>
+                        {subItem.name}
+                      </Link>
+                    </li>
+                  ));
+                })()}
               </ul>
             </div>
           )}

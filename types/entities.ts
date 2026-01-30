@@ -50,3 +50,39 @@ export type BannerPackages = {
   createdOn: string;
   createdBy: string;
 };
+
+export type Subscription = {
+  id: number;
+  restaurant: string;
+  restaurantPhone?: string;
+  restaurantEmail?: string;
+  package: string;
+  packageDetails?: string;
+  startDate: string;
+  endDate: string;
+  duration?: string;
+  status: string;
+  banners: string;
+  bannerUsagePercent?: number;
+  amount: number;
+  paymentMethod?: string;
+  paymentStatus?: string;
+  approvalStatus?: string;
+  created: string;
+  createdBy?: string;
+};
+
+export type SubscriptionQueue = {
+  id: number;
+  restaurant: string;
+  package: string;
+  paymentMethod: string;
+  amount: number;
+  merchant: string;
+  merchantEmail?: string;
+  requestedOn: string;
+  paymentProof: string;
+  paymentNotes?: string;
+  startDate?: string;
+  endDate?: string;
+};
