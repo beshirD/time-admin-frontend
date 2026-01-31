@@ -55,7 +55,7 @@ export function DriverHeader({
           </div>
           {/* Approval Status Message */}
           {isApprove === "Approve" && (
-            <div className="px-2 py-1 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
+            <div className="px-2 py-1 bg-green-50 dark:bg-green-900/20 border border-green-400 dark:border-green-800 rounded-lg">
               <p className="text-base text-green-800 dark:text-green-400 font-medium">
                 This driver is already approved.
               </p>
@@ -73,7 +73,7 @@ export function DriverHeader({
                 <Link
                   key={tab.id}
                   href={`/drivers/${driverId}?tab=${tab.id}`}
-                  className={`px-4 py-2 text-sm font-medium transition-colors rounded-md border flex items-center gap-2 ${
+                  className={`px-4 py-2 text-sm font-medium transition-colors rounded-md border-2 flex items-center gap-2 ${
                     isActive
                       ? "bg-primary text-white border-primary"
                       : "text-gray-600 dark:text-gray-400 border-primary hover:bg-primary/10 dark:hover:bg-primary/20"

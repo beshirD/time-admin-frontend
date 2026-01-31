@@ -78,11 +78,10 @@ export default async function DriversPage() {
 
   return (
     <div className="w-full space-y-5 mb-7">
-      <div className="flex flex-col gap-5 bg-white dark:bg-gray-900 rounded-lg px-5 py-3 border">
-        <PageTitle title="Drivers Management" />
+      {/* <div className="flex flex-col gap-5 bg-white dark:bg-gray-900 rounded-lg px-5 py-3 border"> */}
+      {/* <PageTitle title="Drivers Management" /> */}
 
-        {/* Metrics Cards */}
-      </div>
+      {/* </div> */}
       <DriversMetrics />
 
       {/* Drivers Table */}
@@ -90,7 +89,7 @@ export default async function DriversPage() {
         <DataTable
           columns={columns}
           data={data}
-          searchPlaceholder="Search by name, email, contact, id..."
+          searchPlaceholder="Search driver by name, email, contact, id..."
           searchableColumns={["id", "fullName", "email", "contactNo"]}
           detailsLink="/drivers"
         />
