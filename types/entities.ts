@@ -105,3 +105,33 @@ export type Driver = {
   role?: string;
   profilePicture?: string;
 };
+
+export type Manager = {
+  id: number;
+  fullName: string;
+  email: string;
+  profilePicture?: string;
+  assignedDrivers: number;
+  status: "high" | "low";
+};
+
+export type UnassignedDriver = {
+  id: number;
+  fullName: string;
+  email: string;
+  profilePicture?: string;
+};
+
+export type AssignedDriver = {
+  id: number;
+  fullName: string;
+  email: string;
+  contactNo: string;
+  stateId: string;
+  assignedTo: string;
+  assignedToId: number;
+  joinedDate: string;
+  profilePicture?: string;
+};
+
+

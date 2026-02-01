@@ -57,6 +57,7 @@ interface DataTableProps<TData, TValue> {
   pageCount?: number;
   pageIndex?: number;
   pageSize?: number;
+  hasPagination?: boolean;
   totalItems?: number;
   onPaginationChange?: (pageIndex: number, pageSize: number) => void;
 
@@ -88,6 +89,7 @@ export function DataTable<TData, TValue>({
   pageCount: controlledPageCount,
   pageIndex: controlledPageIndex,
   pageSize: controlledPageSize,
+  hasPagination = true,
   totalItems,
   onPaginationChange,
   manualSorting = false,
@@ -235,7 +237,10 @@ export function DataTable<TData, TValue>({
             placeholder={searchPlaceholder}
             value={globalFilter ?? ""}
             onChange={(e) => setGlobalFilter(e.target.value)}
-            className="flex min-w-4xl border-2 outline-primary border-primary/40 dark:border-primary/70"
+            className={cn(
+              "flex min-w-4xl border-2 outline-primary border-primary/40 dark:border-primary/70",
+              maxHeight === "600px" ? "min-w-2xl" : "",
+            )}
             disabled={isLoading}
           />
         )}
@@ -464,72 +469,74 @@ export function DataTable<TData, TValue>({
       </div>
 
       {/* Pagination */}
-      <div className="flex items-center justify-between px-2">
-        <div className="flex-1 text-sm text-gray-500 dark:text-gray-400">
-          {totalDisplayItems > 0 ? (
-            <>
-              Showing {startItem} to {endItem} of {totalDisplayItems} entries
-            </>
-          ) : (
-            "No entries"
-          )}
+      {hasPagination && (
+        <div className="flex items-center justify-between px-2">
+          <div className="flex-1 text-sm text-gray-500 dark:text-gray-400">
+            {totalDisplayItems > 0 ? (
+              <>
+                Showing {startItem} to {endItem} of {totalDisplayItems} entries
+              </>
+            ) : (
+              "No entries"
+            )}
+          </div>
+          <div className="flex items-center gap-6 lg:gap-8">
+            <div className="flex items-center gap-2">
+              <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                Rows per page
+              </p>
+              <select
+                value={currentPageSize}
+                onChange={(e) => {
+                  table.setPageSize(Number(e.target.value));
+                }}
+                disabled={isLoading}
+                className="h-8 w-[70px] rounded-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm text-gray-700 dark:text-gray-300 px-2 focus:outline-none focus:ring-2 focus:ring-brand-500">
+                {[10, 20, 30, 40, 50].map((pageSize) => (
+                  <option
+                    key={pageSize}
+                    value={pageSize}>
+                    {pageSize}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="flex w-[100px] items-center justify-center text-sm font-medium text-gray-700 dark:text-gray-300">
+              Page {currentPageIndex + 1} of {totalPages || 1}
+            </div>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => table.setPageIndex(0)}
+                disabled={!table.getCanPreviousPage() || isLoading}
+                className="hidden lg:flex h-8 w-8 items-center justify-center rounded-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition">
+                <span className="sr-only">Go to first page</span>
+                <ChevronsLeft className="h-4 w-4" />
+              </button>
+              <button
+                onClick={() => table.previousPage()}
+                disabled={!table.getCanPreviousPage() || isLoading}
+                className="flex h-8 w-8 items-center justify-center rounded-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition">
+                <span className="sr-only">Go to previous page</span>
+                <ChevronLeft className="h-4 w-4" />
+              </button>
+              <button
+                onClick={() => table.nextPage()}
+                disabled={!table.getCanNextPage() || isLoading}
+                className="flex h-8 w-8 items-center justify-center rounded-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition">
+                <span className="sr-only">Go to next page</span>
+                <ChevronRight className="h-4 w-4" />
+              </button>
+              <button
+                onClick={() => table.setPageIndex(totalPages - 1)}
+                disabled={!table.getCanNextPage() || isLoading}
+                className="hidden lg:flex h-8 w-8 items-center justify-center rounded-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition">
+                <span className="sr-only">Go to last page</span>
+                <ChevronsRight className="h-4 w-4" />
+              </button>
+            </div>
+          </div>
         </div>
-        <div className="flex items-center gap-6 lg:gap-8">
-          <div className="flex items-center gap-2">
-            <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
-              Rows per page
-            </p>
-            <select
-              value={currentPageSize}
-              onChange={(e) => {
-                table.setPageSize(Number(e.target.value));
-              }}
-              disabled={isLoading}
-              className="h-8 w-[70px] rounded-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm text-gray-700 dark:text-gray-300 px-2 focus:outline-none focus:ring-2 focus:ring-brand-500">
-              {[10, 20, 30, 40, 50].map((pageSize) => (
-                <option
-                  key={pageSize}
-                  value={pageSize}>
-                  {pageSize}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className="flex w-[100px] items-center justify-center text-sm font-medium text-gray-700 dark:text-gray-300">
-            Page {currentPageIndex + 1} of {totalPages || 1}
-          </div>
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => table.setPageIndex(0)}
-              disabled={!table.getCanPreviousPage() || isLoading}
-              className="hidden lg:flex h-8 w-8 items-center justify-center rounded-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition">
-              <span className="sr-only">Go to first page</span>
-              <ChevronsLeft className="h-4 w-4" />
-            </button>
-            <button
-              onClick={() => table.previousPage()}
-              disabled={!table.getCanPreviousPage() || isLoading}
-              className="flex h-8 w-8 items-center justify-center rounded-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition">
-              <span className="sr-only">Go to previous page</span>
-              <ChevronLeft className="h-4 w-4" />
-            </button>
-            <button
-              onClick={() => table.nextPage()}
-              disabled={!table.getCanNextPage() || isLoading}
-              className="flex h-8 w-8 items-center justify-center rounded-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition">
-              <span className="sr-only">Go to next page</span>
-              <ChevronRight className="h-4 w-4" />
-            </button>
-            <button
-              onClick={() => table.setPageIndex(totalPages - 1)}
-              disabled={!table.getCanNextPage() || isLoading}
-              className="hidden lg:flex h-8 w-8 items-center justify-center rounded-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition">
-              <span className="sr-only">Go to last page</span>
-              <ChevronsRight className="h-4 w-4" />
-            </button>
-          </div>
-        </div>
-      </div>
+      )}
     </div>
   );
 }

@@ -39,18 +39,18 @@ const ActionButtons = ({ driver }: { driver: Driver }) => {
     <div className="flex items-center gap-2">
       <button
         onClick={handleApprove}
-        className="px-3 py-1.5 text-xs font-medium text-white bg-green-600 hover:bg-green-700 dark:bg-green-700 dark:hover:bg-green-600 rounded-md transition-colors">
+        className="px-3 py-1.5 text-sm font-medium text-white bg-green-600 hover:bg-green-700 dark:bg-green-700 dark:hover:bg-green-600 rounded-md transition-colors">
         Approve
       </button>
       <button
         onClick={handleReject}
-        className="px-3 py-1.5 text-xs font-medium text-white bg-red-600 hover:bg-red-700 dark:bg-red-700 dark:hover:bg-red-600 rounded-md transition-colors">
+        className="px-3 py-1.5 text-sm font-medium text-white bg-red-600 hover:bg-red-700 dark:bg-red-700 dark:hover:bg-red-600 rounded-md transition-colors">
         Reject
       </button>
       <Link
         href={`/drivers/${driver.id}`}
         onClick={(e) => e.stopPropagation()}>
-        <button className="px-3 py-1.5 text-xs font-medium text-white bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600 rounded-md transition-colors flex items-center gap-1">
+        <button className="px-3 py-1.5 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600 rounded-md transition-colors flex items-center gap-1">
           <Eye className="h-3 w-3" />
           Details
         </button>
