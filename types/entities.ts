@@ -134,4 +134,15 @@ export type AssignedDriver = {
   profilePicture?: string;
 };
 
+export type DriverAdvance = {
+  id: number;
+  driverId: number;
+  driverName: string;
+  date: string;
+  advanceAmount: number;
+  status: "Active" | "Settled" | "Cancelled";
+  paidToRestaurants?: number;
+  collectedFromCustomers?: number;
+  expectedReturn?: number;
+};
 

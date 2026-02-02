@@ -15,3 +15,4 @@ export { PieChartIcon } from "./PieChartIcon";
 export { BoxCubeIcon } from "./BoxCubeIcon";
 export { PlugInIcon } from "./PlugInIcon";
 export { HorizontalDotsIcon as HorizontaLDots } from "./HorizontalDotsIcon";
+export {RestaurantIcon} from "./RestaurantIcon"

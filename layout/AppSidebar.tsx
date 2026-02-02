@@ -13,6 +13,7 @@ import {
   PieChartIcon,
   PlugInIcon,
   UserCircleIcon,
+  RestaurantIcon,
 } from "../components/icons/index";
 import SidebarWidget from "./SidebarWidget";
 
@@ -58,6 +59,15 @@ const navItems: NavItem[] = [
     ],
   },
   {
+    icon: <RestaurantIcon />,
+    name: "Restaurant Management",
+    subItems: [
+      { name: "Restaurants", path: "/restaurants" },
+      { name: "Driver Assignment", path: "/drivers/assignments" },
+      { name: "Driver Advances", path: "/drivers/advances" },
+    ],
+  },
+  {
     icon: <BoxCubeIcon />,
     name: "Orders",
     path: "/orders",
@@ -67,11 +77,7 @@ const navItems: NavItem[] = [
     name: "Deliveries",
     path: "/deliveries",
   },
-  {
-    icon: <GridIcon />,
-    name: "Restaurant Management",
-    path: "/restaurants",
-  },
+
   {
     icon: <GridIcon />,
     name: "Tailor Management",
