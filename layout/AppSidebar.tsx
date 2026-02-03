@@ -63,8 +63,9 @@ const navItems: NavItem[] = [
     name: "Restaurant Management",
     subItems: [
       { name: "Restaurants", path: "/restaurants" },
-      { name: "Driver Assignment", path: "/drivers/assignments" },
-      { name: "Driver Advances", path: "/drivers/advances" },
+      { name: "Cuisines", path: "/restaurants/cuisines" },
+      { name: "Transactions", path: "/restaurants/transactions" },
+      { name: "Offers", path: "/restaurants/offers" },
     ],
   },
   {

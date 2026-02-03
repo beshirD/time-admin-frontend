@@ -146,3 +146,12 @@ export type DriverAdvance = {
   expectedReturn?: number;
 };
 
+export type Restaurant = {
+  id: number;
+  restaurantName: string;
+  fee?: string;
+  location: string;
+  image: string;
+  stateId: string;
+  createdOn: string;
+};
