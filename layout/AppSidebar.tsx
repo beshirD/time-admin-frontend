@@ -64,6 +64,7 @@ const navItems: NavItem[] = [
     subItems: [
       { name: "Restaurants", path: "/restaurants" },
       { name: "Cuisines", path: "/restaurants/cuisines" },
+      { name: "Addons Category", path: "/restaurants/addons-category" },
       { name: "Transactions", path: "/restaurants/transactions" },
       { name: "Offers", path: "/restaurants/offers" },
     ],

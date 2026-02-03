@@ -155,3 +155,10 @@ export type Restaurant = {
   stateId: string;
   createdOn: string;
 };
+
+export type Cuisine = {
+  id: number;
+  title: string;
+  stateId: string;
+  createdOn: string;
+};
