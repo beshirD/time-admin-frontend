@@ -1,42 +1,44 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { DataTable } from "@/components/shared/DataTable";
 import { createColumns } from "./columns";
-import { Cuisine } from "@/types/entities";
-import { CuisineDialog } from "./CuisineDialog";
-import { CuisineDetailsDialog } from "./CuisineDetailsDialog";
+import { AddOnCategory } from "@/types/entities";
+import { AddOnsCategoryDialog } from "./AddOnsCategoryDialog";
 import Button from "@/components/ui/Button";
 import { Plus } from "lucide-react";
 import PageTitle from "@/components/common/PageTitle";
 
-interface CuisinesContentProps {
-  initialData: Cuisine[];
+interface AddOnsCategoryContentProps {
+  initialData: AddOnCategory[];
 }
 
-export function CuisinesContent({ initialData }: CuisinesContentProps) {
+export function AddOnsCategoryContent({
+  initialData,
+}: AddOnsCategoryContentProps) {
+  const router = useRouter();
   const [isCreateOpen, setIsCreateOpen] = useState(false);
-  const [editingCuisine, setEditingCuisine] = useState<Cuisine | null>(null);
-  const [detailsCuisine, setDetailsCuisine] = useState<Cuisine | null>(null);
+  const [editingCategory, setEditingCategory] = useState<AddOnCategory | null>(
+    null,
+  );
 
-  const handleEdit = (cuisine: Cuisine) => {
-    setEditingCuisine(cuisine);
+  const handleEdit = (category: AddOnCategory) => {
+    setEditingCategory(category);
   };
 
-  const handleRowClick = (cuisine: Cuisine) => {
-    setDetailsCuisine(cuisine);
+  const handleRowClick = (category: AddOnCategory) => {
+    router.push(`/restaurants/addons-category/${category.id}`);
   };
 
   const handleCreate = (title: string) => {
-    console.log("Creating cuisine:", title);
-    // TODO: Implement API call to create cuisine
-    // For now, just close the dialog
+    console.log("Creating add-on category:", title);
+    // TODO: Implement API call to create category
   };
 
   const handleUpdate = (title: string) => {
-    console.log("Updating cuisine:", editingCuisine?.id, title);
-    // TODO: Implement API call to update cuisine
-    // For now, just close the dialog
+    console.log("Updating add-on category:", editingCategory?.id, title);
+    // TODO: Implement API call to update category
   };
 
   const columns = createColumns(handleEdit);
@@ -45,44 +47,37 @@ export function CuisinesContent({ initialData }: CuisinesContentProps) {
     <>
       <div className="flex flex-col gap-5">
         <div className="flex px-5 py-2 rounded-lg border bg-white dark:bg-gray-900 items-center justify-between">
-          <PageTitle title="Cuisines Management" />
+          <PageTitle title="Add-Ons Categories Management" />
           <Button
             onClick={() => setIsCreateOpen(true)}
             className="gap-2 bg-primary text-white py-2.5 px-4">
             <Plus className="w-4 h-4" />
-            Create Cuisine
+            Create Add-On Category
           </Button>
         </div>
         <div className="flex bg-white dark:bg-gray-900 p-5 rounded-lg">
           <DataTable
             columns={columns}
             data={initialData}
-            searchPlaceholder="Search cuisine by title, id..."
+            searchPlaceholder="Search by title, id..."
             searchableColumns={["id", "title"]}
             onRowClick={handleRowClick}
           />
         </div>
       </div>
 
-      {/* Details Dialog */}
-      <CuisineDetailsDialog
-        isOpen={!!detailsCuisine}
-        onClose={() => setDetailsCuisine(null)}
-        cuisine={detailsCuisine}
-      />
-
       {/* Create Dialog */}
-      <CuisineDialog
+      <AddOnsCategoryDialog
         isOpen={isCreateOpen}
         onClose={() => setIsCreateOpen(false)}
         onSave={handleCreate}
       />
 
       {/* Edit Dialog */}
-      <CuisineDialog
-        isOpen={!!editingCuisine}
-        onClose={() => setEditingCuisine(null)}
-        cuisine={editingCuisine}
+      <AddOnsCategoryDialog
+        isOpen={!!editingCategory}
+        onClose={() => setEditingCategory(null)}
+        category={editingCategory}
         onSave={handleUpdate}
       />
     </>

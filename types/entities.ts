@@ -162,3 +162,17 @@ export type Cuisine = {
   stateId: string;
   createdOn: string;
 };
+
+export type AddOnCategory = {
+  id: number;
+  title: string;
+  createdOn: string;
+  createdBy: string;
+};
+
+export type Feed = {
+  id: number;
+  content: string;
+  createdOn: string;
+  createdBy: string;
+};

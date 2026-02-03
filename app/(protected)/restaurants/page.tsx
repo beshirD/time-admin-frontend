@@ -1,11 +1,12 @@
 import PageTitle from "@/components/common/PageTitle";
-import { columns } from "./_components/columns";
+import { columns } from "./(main)/_components/columns";
 import { Restaurant } from "@/types/entities";
 import { DataTable } from "@/components/shared/DataTable";
-import { RestaurantsMetrics } from "./_components/RestaurantsMetrics";
+// import { RestaurantsMetrics } from "./(main)/_components/RestaurantsMetrics";
 import Button from "@/components/ui/Button";
 import { Plus } from "lucide-react";
 import Link from "next/link";
+import { RestaurantsMetrics } from "./(main)/_components/RestaurantsMetrics";
 
 async function getData(): Promise<Restaurant[]> {
   // Mock data for restaurants

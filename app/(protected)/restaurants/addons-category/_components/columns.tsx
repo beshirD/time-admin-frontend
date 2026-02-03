@@ -2,49 +2,32 @@
 
 import { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown, Pencil, Trash2 } from "lucide-react";
-import { Cuisine } from "@/types/entities";
+import { AddOnCategory } from "@/types/entities";
 import { DeleteConfirmationDialog } from "@/components/common/DeleteConfirmationDialog";
 import Button from "@/components/ui/Button";
 
-// Status badge component
-const StatusBadge = ({ status }: { status: string }) => {
-  const statusStyles = {
-    Active:
-      "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400",
-    Inactive:
-      "bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400",
-  };
-
-  return (
-    <span
-      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusStyles[status as keyof typeof statusStyles] || statusStyles.Inactive}`}>
-      {status}
-    </span>
-  );
-};
-
 // Action buttons component
 const ActionButtons = ({
-  cuisine,
+  category,
   onEdit,
 }: {
-  cuisine: Cuisine;
-  onEdit: (cuisine: Cuisine) => void;
+  category: AddOnCategory;
+  onEdit: (category: AddOnCategory) => void;
 }) => {
   return (
-    <div className="flex items-center gap-2 justify-start">
+    <div className="flex items-center gap-2 justify-end">
       <button
         onClick={(e) => {
           e.stopPropagation();
-          onEdit(cuisine);
+          onEdit(category);
         }}
         className="px-3 py-1.5 text-sm font-medium border-primary border-2 text-primary bg-primary/10 rounded-md transition-colors flex items-center gap-2">
         <Pencil className="h-3 w-3" />
         Edit
       </button>
       <DeleteConfirmationDialog
-        itemType="Cuisine"
-        itemName={cuisine.title}
+        itemType="Add-On Category"
+        itemName={category.title}
         onSuccess={() => {
           window.location.reload();
         }}
@@ -64,8 +47,8 @@ const ActionButtons = ({
 };
 
 export const createColumns = (
-  onEdit: (cuisine: Cuisine) => void,
-): ColumnDef<Cuisine>[] => [
+  onEdit: (category: AddOnCategory) => void,
+): ColumnDef<AddOnCategory>[] => [
   {
     accessorKey: "id",
     header: "ID",
@@ -86,11 +69,6 @@ export const createColumns = (
     cell: ({ row }) => <div>{row.getValue("title")}</div>,
   },
   {
-    accessorKey: "stateId",
-    header: "State",
-    cell: ({ row }) => <StatusBadge status={row.getValue("stateId")} />,
-  },
-  {
     accessorKey: "createdOn",
     header: ({ column }) => {
       return (
@@ -105,14 +83,19 @@ export const createColumns = (
     cell: ({ row }) => <div>{row.getValue("createdOn")}</div>,
   },
   {
+    accessorKey: "createdBy",
+    header: "Created By",
+    cell: ({ row }) => <div>{row.getValue("createdBy")}</div>,
+  },
+  {
     id: "actions",
     header: "Actions",
     enableHiding: false,
     cell: ({ row }) => {
-      const cuisine = row.original;
+      const category = row.original;
       return (
         <ActionButtons
-          cuisine={cuisine}
+          category={category}
           onEdit={onEdit}
         />
       );
