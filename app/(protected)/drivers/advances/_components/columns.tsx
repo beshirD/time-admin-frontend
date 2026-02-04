@@ -1,7 +1,8 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
-import { ArrowUpDown, FileText, Trash2 } from "lucide-react";
+import { ArrowUpDown, FileText } from "lucide-react";
+import Button from "@/components/ui/Button";
 import { DriverAdvance } from "@/types/entities";
 
 // Status badge component
@@ -51,12 +52,11 @@ const ActionButtons = ({
           Create Settlement
         </button>
       )}
-      <button
-        onClick={handleDelete}
-        className="px-3 py-1.5 text-sm font-medium border-red-700 border-2 text-red-500 bg-red-600/10 rounded-md transition-colors flex items-center gap-1">
-        <Trash2 className="h-3 w-3" />
+      <Button
+        usage="delete"
+        onClick={handleDelete}>
         Delete
-      </button>
+      </Button>
     </div>
   );
 };

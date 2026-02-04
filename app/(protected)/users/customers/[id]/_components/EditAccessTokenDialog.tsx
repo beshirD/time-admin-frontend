@@ -1,13 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { Pencil } from "lucide-react";
 import Input from "@/components/ui/Input";
 import Label from "@/components/ui/Label";
 import Button from "@/components/ui/Button";
 import { toast } from "sonner";
 import { Modal } from "@/components/ui/modal";
-import IconButton from "@/components/ui/IconButton";
 
 interface EditAccessTokenDialogProps {
   tokenData: {
@@ -42,12 +40,11 @@ export function EditAccessTokenDialog({
   return (
     <>
       <div onClick={(e) => e.stopPropagation()}>
-        <IconButton
-          variant="edit"
-          title="Edit"
+        <Button
+          usage="edit"
           onClick={() => setOpen(true)}>
-          <Pencil className="h-4 w-4" />
-        </IconButton>
+          Edit
+        </Button>
       </div>
 
       <Modal

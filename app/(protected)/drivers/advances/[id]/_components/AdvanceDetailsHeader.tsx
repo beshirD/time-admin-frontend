@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowLeft, FileText, Trash2 } from "lucide-react";
+import { ArrowLeft, FileText } from "lucide-react";
+import Button from "@/components/ui/Button";
 import SettlementModal from "../../_components/SettlementModal";
 import { DriverAdvance } from "@/types/entities";
 import { useState } from "react";
@@ -22,10 +23,7 @@ export default function AdvanceDetailsHeader({
 }: AdvanceDetailsHeaderProps) {
   const [isSettlementModalOpen, setIsSettlementModalOpen] = useState(false);
 
-  const handleSubmitSettlement = (data: {
-    amountReturned: number;
-    notes: string;
-  }) => {
+  const handleSubmitSettlement = () => {
     toast.success("Settlement completed successfully!", {
       description: `Settled advance for ${advanceData.driverName}`,
     });
@@ -52,12 +50,11 @@ export default function AdvanceDetailsHeader({
             Create Settlement
           </button>
         )}
-        <button
-          onClick={onDelete}
-          className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-red-500 bg-red-600/10 hover:bg-red-600/20 border-2 border-red-700 rounded-lg transition">
-          <Trash2 className="h-4 w-4" />
+        <Button
+          usage="delete"
+          onClick={onDelete}>
           Delete
-        </button>
+        </Button>
       </div>
 
       {/* Settlement Modal */}

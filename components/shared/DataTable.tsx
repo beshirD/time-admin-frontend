@@ -250,7 +250,7 @@ export function DataTable<TData, TValue>({
             <div className="relative">
               <button
                 onClick={() => setColumnDropdownOpen(!columnDropdownOpen)}
-                className="dropdown-toggle inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-primary bg-white dark:bg-gray-800 border border-primary rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition"
+                className="dropdown-toggle inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-primary bg-white dark:bg-gray-800 border-2 border-primary/90 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition"
                 disabled={isLoading}>
                 <Settings2 className="h-4 w-4" />
                 Edit Columns

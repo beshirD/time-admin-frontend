@@ -2,14 +2,8 @@
 
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "@/components/shared/DataTable";
-import {
-  MoreHorizontal,
-  Eye,
-  Edit,
-  Trash2,
-  CalendarIcon,
-  Settings2,
-} from "lucide-react";
+import { CalendarIcon, Settings2 } from "lucide-react";
+import Button from "@/components/ui/Button";
 import { Dropdown } from "@/components/ui/dropdown/Dropdown";
 import { useState, useEffect, useRef } from "react";
 import { Calendar } from "@/components/ui/calendar";
@@ -78,59 +72,45 @@ const StatusBadge = ({ status }: { status: Order["deliveryStatus"] }) => {
 };
 
 // Actions dropdown component
-const ActionsDropdown = ({ orderId }: { orderId: number }) => {
-  const [isOpen, setIsOpen] = useState(false);
-
+const ActionsButtons = ({ orderId }: { orderId: number }) => {
   const handleView = () => {
     console.log("View order:", orderId);
-    setIsOpen(false);
   };
 
   const handleEdit = () => {
     console.log("Edit order:", orderId);
-    setIsOpen(false);
   };
 
   const handleDelete = () => {
     console.log("Delete order:", orderId);
-    setIsOpen(false);
   };
 
   return (
-    <div className="relative">
-      <button
+    <div className="flex items-center gap-2 justify-end">
+      <Button
+        usage="view"
         onClick={(e) => {
           e.stopPropagation();
-          setIsOpen(!isOpen);
-        }}
-        className="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition">
-        <MoreHorizontal className="h-4 w-4 text-gray-600 dark:text-gray-400" />
-      </button>
-      <Dropdown
-        isOpen={isOpen}
-        onClose={() => setIsOpen(false)}
-        className="w-40">
-        <div className="py-1">
-          <button
-            onClick={handleView}
-            className="w-full px-4 py-2 text-left text-sm flex items-center gap-2">
-            <Eye className="h-4 w-4" />
-            View
-          </button>
-          <button
-            onClick={handleEdit}
-            className="w-full px-4 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-800 flex items-center gap-2">
-            <Edit className="h-4 w-4" />
-            Edit
-          </button>
-          <button
-            onClick={handleDelete}
-            className="w-full px-4 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-800 flex items-center gap-2 text-red-600 dark:text-red-400">
-            <Trash2 className="h-4 w-4" />
-            Delete
-          </button>
-        </div>
-      </Dropdown>
+          handleView();
+        }}>
+        View
+      </Button>
+      <Button
+        usage="edit"
+        onClick={(e) => {
+          e.stopPropagation();
+          handleEdit();
+        }}>
+        Edit
+      </Button>
+      <Button
+        usage="delete"
+        onClick={(e) => {
+          e.stopPropagation();
+          handleDelete();
+        }}>
+        Delete
+      </Button>
     </div>
   );
 };
@@ -202,7 +182,7 @@ export const columns: ColumnDef<Order>[] = [
   {
     id: "actions-left",
     header: "",
-    cell: ({ row }) => <ActionsDropdown orderId={row.original.id} />,
+    cell: ({ row }) => <ActionsButtons orderId={row.original.id} />,
     enableSorting: false,
     enableHiding: false,
   },

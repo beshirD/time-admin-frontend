@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { Pencil, Trash2 } from "lucide-react";
 import Button from "@/components/ui/Button";
 
 interface FoodItem {
@@ -106,16 +105,8 @@ export function FoodItemsTable() {
                 </td>
                 <td className="px-4 py-4 text-sm">
                   <div className="flex items-center gap-2">
-                    <button
-                      className="p-1.5 rounded hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-600 dark:text-gray-400"
-                      title="Edit">
-                      <Pencil className="w-4 h-4" />
-                    </button>
-                    <button
-                      className="p-1.5 rounded hover:bg-red-100 dark:hover:bg-red-900/30 text-red-600 dark:text-red-400"
-                      title="Delete">
-                      <Trash2 className="w-4 h-4" />
-                    </button>
+                    <Button usage="edit">Edit</Button>
+                    <Button usage="delete">Delete</Button>
                   </div>
                 </td>
               </tr>

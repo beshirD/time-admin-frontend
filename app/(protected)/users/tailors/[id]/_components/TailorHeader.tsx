@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowLeft, Trash2 } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
+import Button from "@/components/ui/Button";
 import { DeleteTailorDialog } from "../../_components/DeleteTailorDialog";
 
 interface TailorHeaderProps {
@@ -56,10 +57,7 @@ export function TailorHeader({
           onDeleteSuccess={() => {
             window.location.href = "/users/tailors";
           }}>
-          <button className="flex items-center gap-2 px-3 py-1.5 border border-red-500 text-red-600 dark:text-red-400 hover:bg-red-500/20 dark:hover:bg-red-500/20 rounded-lg transition-colors duration-200">
-            <Trash2 className="h-4 w-4" />
-            Delete
-          </button>
+          <Button usage="delete">Delete</Button>
         </DeleteTailorDialog>
       </div>
     </div>

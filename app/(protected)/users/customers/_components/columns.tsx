@@ -1,10 +1,9 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
-import { ArrowUpDown, Eye, Pencil, Trash2, MoreHorizontal } from "lucide-react";
+import { ArrowUpDown } from "lucide-react";
 import Link from "next/link";
-import { Dropdown } from "@/components/ui/dropdown/Dropdown";
-import { useState } from "react";
+import Button from "@/components/ui/Button";
 
 import { Customer } from "@/types/entities";
 
@@ -28,59 +27,35 @@ const StatusBadge = ({ status }: { status: string }) => {
 import { DeleteConfirmationDialog } from "@/components/common/DeleteConfirmationDialog";
 
 // Action buttons component
-// Action buttons component
 const ActionButtons = ({ customer }: { customer: Customer }) => {
-  const [isOpen, setIsOpen] = useState(false);
-
   return (
-    <div className="relative flex justify-end">
-      <button
-        onClick={(e) => {
-          e.stopPropagation();
-          setIsOpen(!isOpen);
+    <div className="flex items-center gap-2 justify-end">
+      <Link
+        href={`/users/customers/${customer.id}`}
+        onClick={(e) => e.stopPropagation()}>
+        <Button usage="view">View</Button>
+      </Link>
+      <Link
+        href={`/users/customers/${customer.id}/edit`}
+        onClick={(e) => e.stopPropagation()}>
+        <Button usage="edit">Edit</Button>
+      </Link>
+      <DeleteConfirmationDialog
+        itemType="Customer"
+        itemName={customer.fullName}
+        onSuccess={() => {
+          window.location.reload();
         }}
-        className="dropdown-toggle p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-brand-500/20">
-        <MoreHorizontal className="h-4 w-4 text-gray-500 dark:text-gray-400" />
-      </button>
-      <Dropdown
-        isOpen={isOpen}
-        onClose={() => setIsOpen(false)}
-        className="w-40 right-0">
-        <div className="p-1 flex flex-col gap-0.5">
-          <Link
-            href={`/users/customers/${customer.id}`}
-            className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md transition-colors"
-            onClick={(e) => e.stopPropagation()}>
-            <Eye className="h-4 w-4" />
-            View
-          </Link>
-          <Link
-            href={`/users/customers/${customer.id}/edit`}
-            className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md transition-colors"
-            onClick={(e) => e.stopPropagation()}>
-            <Pencil className="h-4 w-4" />
-            Edit
-          </Link>
-          <DeleteConfirmationDialog
-            itemType="Customer"
-            itemName={customer.fullName}
-            onSuccess={() => {
-              window.location.reload();
-            }}
-            trigger={
-              <button
-                className="w-full flex items-center gap-2 px-3 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-md transition-colors text-left"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setIsOpen(false);
-                }}>
-                <Trash2 className="h-4 w-4" />
-                Delete
-              </button>
-            }
-          />
-        </div>
-      </Dropdown>
+        trigger={
+          <Button
+            usage="delete"
+            onClick={(e) => {
+              e.stopPropagation();
+            }}>
+            Delete
+          </Button>
+        }
+      />
     </div>
   );
 };

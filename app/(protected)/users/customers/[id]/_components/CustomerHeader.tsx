@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { ArrowLeft, Trash2 } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
+import Button from "@/components/ui/Button";
 import { DeleteCustomerDialog } from "../../_components/DeleteCustomerDialog";
 
 interface CustomerHeaderProps {
@@ -39,10 +40,7 @@ export function CustomerHeader({
         <DeleteCustomerDialog
           customerId={customerId}
           customerName={fullName}>
-          <button className="flex items-center gap-2 px-3 py-1.5 border border-error-500 text-error-600 dark:text-error-400 hover:bg-error-500/20 dark:hover:bg-error-500/20 rounded-lg transition-colors duration-200">
-            <Trash2 className="h-4 w-4" />
-            Delete
-          </button>
+          <Button usage="delete">Delete</Button>
         </DeleteCustomerDialog>
       </div>
     </div>

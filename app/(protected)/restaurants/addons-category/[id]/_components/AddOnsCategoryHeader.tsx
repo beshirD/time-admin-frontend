@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowLeft, Pencil, Trash2 } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 import Button from "@/components/ui/Button";
 import { AddOnCategory } from "@/types/entities";
@@ -37,27 +37,18 @@ export function AddOnsCategoryHeader({ category }: AddOnsCategoryHeaderProps) {
             <PageTitle title="Fresh (fast serve)" />
           </div>
           <div className="flex items-center gap-2">
-            <button
-              onClick={(e) => {
-                // e.stopPropagation();
-                setIsEditOpen(true);
-              }}
-              className="px-3 py-1.5 text-sm font-medium border-primary border-2 text-primary bg-primary/10 rounded-md transition-colors flex items-center gap-2">
-              <Pencil className="h-3 w-3" />
+            <Button
+              usage="edit"
+              onClick={() => setIsEditOpen(true)}>
               Edit
-            </button>
+            </Button>
             <DeleteConfirmationDialog
               itemType="Add-On Category"
               itemName={category.title}
               onSuccess={() => {
                 router.push("/restaurants/addons-category");
               }}
-              trigger={
-                <button className="px-3 py-1.5 text-sm font-medium border-red-700 border-2 text-red-500 bg-red-600/10 rounded-md transition-colors flex items-center gap-2">
-                  <Trash2 className="h-3 w-3" />
-                  Delete
-                </button>
-              }
+              trigger={<Button usage="delete">Delete</Button>}
             />
           </div>
         </div>

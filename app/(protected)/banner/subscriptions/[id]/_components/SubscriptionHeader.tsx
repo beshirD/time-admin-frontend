@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowLeft, Trash2, Clock } from "lucide-react";
+import { ArrowLeft, Clock } from "lucide-react";
+import Button from "@/components/ui/Button";
 import { DeleteConfirmationDialog } from "@/components/common/DeleteConfirmationDialog";
 import { CreateSubscriptionDialog } from "../../_components/CreateSubscriptionDialog";
 
@@ -60,12 +61,7 @@ export function SubscriptionHeader({
           onSuccess={() => {
             window.location.href = "/banner/subscriptions";
           }}
-          trigger={
-            <button className="flex items-center gap-2 px-3 py-1.5 border border-error-500 text-error-600 dark:text-error-400 hover:bg-error-500/20 dark:hover:bg-error-500/20 rounded-lg transition-colors duration-200">
-              <Trash2 className="h-4 w-4" />
-              Delete
-            </button>
-          }
+          trigger={<Button usage="delete">Delete</Button>}
         />
       </div>
     </div>
