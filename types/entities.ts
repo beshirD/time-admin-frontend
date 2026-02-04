@@ -195,3 +195,15 @@ export type RestaurantTransaction = {
   status: "pending" | "completed" | "failed" | "canceled";
   gateway: string;
 };
+
+export type RestaurantOffer = {
+  id: number;
+  title: string;
+  code: string;
+  discountType: "amount" | "percentage";
+  discount: number;
+  minimumAmount?: number;
+  endTime: string;
+  description: string;
+  image?: string;
+};
