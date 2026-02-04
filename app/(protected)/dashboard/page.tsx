@@ -8,7 +8,7 @@ import { WeeklyComparisonChart } from "./_components/WeeklyComparisonChart";
 
 export default function DashboardPage() {
   return (
-    <div className="flex flex-col gap-5">
+    <div className="flex flex-col gap-5 z-0">
       <MetricsCards />
       <TimeSeriesChart />
       <div className="flex flex-col xl:flex-row gap-5">

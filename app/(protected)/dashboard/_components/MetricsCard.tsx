@@ -50,7 +50,7 @@ export function MetricsCards() {
       {metricsData.map((metric, index) => (
         <Card
           key={index}
-          className=" bg-white border-gray-200 z-50 dark:border-gray-800 dark:bg-gray-900">
+          className=" bg-white border-gray-200 z-0 dark:border-gray-800 dark:bg-gray-900">
           <CardHeader>
             <CardDescription>{metric.title}</CardDescription>
             <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">

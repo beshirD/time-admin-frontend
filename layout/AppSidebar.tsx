@@ -13,6 +13,7 @@ import {
   PieChartIcon,
   PlugInIcon,
   UserCircleIcon,
+  RestaurantIcon,
 } from "../components/icons/index";
 import SidebarWidget from "./SidebarWidget";
 
@@ -43,12 +44,9 @@ const navItems: NavItem[] = [
     icon: <GridIcon />,
     name: "Banner Management",
     subItems: [
-      { name: "Create Banner (Admin)", path: "/banners/create" },
-      { name: "All Banners", path: "/banners" },
-      { name: "Banner Packages", path: "/banners/packages" },
-      { name: "Create Subscription", path: "/banners/subscriptions/create" },
-      { name: "Manage Subscriptions", path: "/banners/subscriptions" },
-      { name: "Approval Queue", path: "/banners/approval-queue" },
+      { name: "Banners", path: "/banner" },
+      { name: "Subscriptions", path: "/banner/subscriptions" },
+      { name: "Approval Queue", path: "/banner/approval-queue" },
     ],
   },
   {
@@ -56,8 +54,19 @@ const navItems: NavItem[] = [
     name: "Driver Management",
     subItems: [
       { name: "Driver List", path: "/drivers" },
-      { name: "Driver Assignment", path: "/drivers/assignment" },
+      { name: "Driver Assignment", path: "/drivers/assignments" },
       { name: "Driver Advances", path: "/drivers/advances" },
+    ],
+  },
+  {
+    icon: <RestaurantIcon />,
+    name: "Restaurant Management",
+    subItems: [
+      { name: "Restaurants", path: "/restaurants" },
+      { name: "Cuisines", path: "/restaurants/cuisines" },
+      { name: "Add-Ons Category", path: "/restaurants/addons-category" },
+      { name: "Transactions", path: "/restaurants/transactions" },
+      { name: "Offers", path: "/restaurants/offers" },
     ],
   },
   {
@@ -70,11 +79,7 @@ const navItems: NavItem[] = [
     name: "Deliveries",
     path: "/deliveries",
   },
-  {
-    icon: <GridIcon />,
-    name: "Restaurant Management",
-    path: "/restaurants",
-  },
+
   {
     icon: <GridIcon />,
     name: "Tailor Management",
@@ -194,19 +199,29 @@ const AppSidebar: React.FC = () => {
                     : "0px",
               }}>
               <ul className="mt-2 space-y-1 ml-9">
-                {nav.subItems.map((subItem) => (
-                  <li key={subItem.name}>
-                    <Link
-                      href={subItem.path}
-                      className={`menu-dropdown-item ${
-                        isActive(subItem.path)
-                          ? "menu-dropdown-item-active"
-                          : "menu-dropdown-item-inactive"
-                      }`}>
-                      {subItem.name}
-                    </Link>
-                  </li>
-                ))}
+                {(() => {
+                  const activeSubItemPath = nav.subItems
+                    .filter((item) => isActive(item.path))
+                    .sort((a, b) => b.path.length - a.path.length)[0]?.path;
+
+                  return nav.subItems.map((subItem) => (
+                    <li key={subItem.name}>
+                      <Link
+                        href={subItem.path}
+                        className={`menu-dropdown-item ${
+                          (
+                            activeSubItemPath
+                              ? subItem.path === activeSubItemPath
+                              : isActive(subItem.path)
+                          )
+                            ? "menu-dropdown-item-active"
+                            : "menu-dropdown-item-inactive"
+                        }`}>
+                        {subItem.name}
+                      </Link>
+                    </li>
+                  ));
+                })()}
               </ul>
             </div>
           )}

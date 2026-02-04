@@ -105,7 +105,7 @@ const SalesMetricsCard = ({ className }: { className?: string }) => {
   return (
     <Card
       className={cn(
-        "bg-white border-gray-200 z-50 dark:border-gray-800 dark:bg-gray-900",
+        "bg-white border-gray-200 z-0 dark:border-gray-800 dark:bg-gray-900",
         className,
       )}>
       <CardContent className="space-y-4">

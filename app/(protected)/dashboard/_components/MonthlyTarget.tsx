@@ -30,7 +30,7 @@ export default function MonthlyTarget() {
   ];
 
   return (
-    <div className="rounded-xl w-full border shadow p-6 bg-white border-gray-200 z-50 dark:border-gray-800 dark:bg-gray-900">
+    <div className="rounded-xl w-full border shadow p-6 bg-white border-gray-200 z-0 dark:border-gray-800 dark:bg-gray-900">
       <div className=" ">
         <div className="flex justify-between">
           <div>
