@@ -207,3 +207,13 @@ export type RestaurantOffer = {
   description: string;
   image?: string;
 };
+export type Order = {
+  id: number;
+  orderNo: string;
+  store: string;
+  address: string;
+  totalPrice: number;
+  deliveryStatus: string;
+  createdOn: string;
+  createdBy: string;
+};
