@@ -184,3 +184,14 @@ export type FoodCategory = {
   image?: string;
   type: "Restaurant" | "Store";
 };
+
+export type RestaurantTransaction = {
+  id: number;
+  orderId: number;
+  user: string;
+  restaurant: string;
+  amount: string;
+  reference: string;
+  status: "pending" | "completed" | "failed" | "canceled";
+  gateway: string;
+};

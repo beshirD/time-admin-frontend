@@ -32,13 +32,13 @@ const ActionButtons = ({
   onViewDetails: (category: FoodCategory) => void;
 }) => {
   return (
-    <div className="flex items-center gap-2 justify-end">
+    <div className="flex items-center gap-2 justify-start">
       <button
         onClick={(e) => {
           e.stopPropagation();
           onViewDetails(category);
         }}
-        className="px-3 py-1.5 text-sm font-medium border-gray-300 border-2 text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 rounded-md transition-colors flex items-center gap-2">
+        className="px-3 py-1.5 text-sm font-medium border-blue-600 border-2 text-blue-600 dark:text-blue-300 bg-blue-100 dark:bg-blue-800/20 rounded-md transition-colors flex items-center gap-2">
         <Eye className="h-3 w-3" />
         View
       </button>

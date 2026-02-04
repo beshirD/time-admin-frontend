@@ -57,7 +57,7 @@ export function FoodCategoryContent({
   return (
     <>
       <div className="flex flex-col gap-5">
-        <div className="flex px-5 py-2 rounded-lg border bg-white dark:bg-gray-900 items-center justify-between">
+        {/* <div className="flex px-5 py-2 rounded-lg border bg-white dark:bg-gray-900 items-center justify-between">
           <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
             Food Categories
           </h2>
@@ -67,7 +67,7 @@ export function FoodCategoryContent({
             <Plus className="w-4 h-4" />
             Create Food Category
           </Button>
-        </div>
+        </div> */}
         <div className="flex bg-white dark:bg-gray-900 p-5 rounded-lg">
           <DataTable
             columns={columns}

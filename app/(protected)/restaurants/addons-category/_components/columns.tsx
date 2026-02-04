@@ -15,7 +15,7 @@ const ActionButtons = ({
   onEdit: (category: AddOnCategory) => void;
 }) => {
   return (
-    <div className="flex items-center gap-2 justify-end">
+    <div className="flex items-center gap-2 justify-start">
       <button
         onClick={(e) => {
           e.stopPropagation();
