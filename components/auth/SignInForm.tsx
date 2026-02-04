@@ -111,20 +111,20 @@ export default function SignInForm() {
   };
 
   return (
-    <div className="flex flex-col flex-1 lg:w-1/2 w-full">
-      <div className="w-full max-w-md sm:pt-10 mx-auto mb-5">
+    <div className="flex flex-col flex-1 lg:w-1/2 w-full h-full">
+      {/* <div className="w-full max-w-md sm:pt-10 mx-auto mb-5">
         <Link
           href="/"
           className="inline-flex items-center text-sm text-gray-500 transition-colors hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300">
           <ChevronLeftIcon />
           Back to home
         </Link>
-      </div>
-      <div className="flex flex-col justify-center flex-1 w-full max-w-md mx-auto">
+      </div> */}
+      <div className="flex flex-col bg-white justify-center flex-1 w-full max-w-lg mx-auto p-8 rounded-2xl border shadow-2xl">
         <div>
-          <div className="mb-5 sm:mb-8">
-            <h1 className="mb-2 font-semibold text-gray-800 text-title-sm dark:text-white/90 sm:text-title-md">
-              Admin Sign In
+          <div className="mb-5 sm:mb-8 flex flex-col items-center justify-center">
+            <h1 className="mb-2 font-semibold text-gray-800 text-title-sm dark:text-white/90 sm:text-title-sm">
+              Sign in to continue
             </h1>
             <p className="text-sm text-gray-500 dark:text-gray-400">
               Enter your email and password to sign in!
@@ -135,7 +135,7 @@ export default function SignInForm() {
               <button
                 type="button"
                 disabled={isLoading}
-                className="inline-flex items-center justify-center gap-3 py-3 text-sm font-normal text-gray-700 transition-colors bg-gray-100 rounded-lg px-7 hover:bg-gray-200 hover:text-gray-800 dark:bg-white/5 dark:text-white/90 dark:hover:bg-white/10 disabled:opacity-50 disabled:cursor-not-allowed">
+                className="inline-flex border items-center justify-center gap-3 py-3 text-sm font-normal text-gray-700 transition-colors bg-gray-100 rounded-lg px-7 hover:bg-gray-200 hover:text-gray-800 dark:bg-white/5 dark:text-white/90 dark:hover:bg-white/10 disabled:opacity-50 disabled:cursor-not-allowed">
                 <svg
                   width="20"
                   height="20"
@@ -164,17 +164,23 @@ export default function SignInForm() {
               <button
                 type="button"
                 disabled={isLoading}
-                className="inline-flex items-center justify-center gap-3 py-3 text-sm font-normal text-gray-700 transition-colors bg-gray-100 rounded-lg px-7 hover:bg-gray-200 hover:text-gray-800 dark:bg-white/5 dark:text-white/90 dark:hover:bg-white/10 disabled:opacity-50 disabled:cursor-not-allowed">
+                className="inline-flex border items-center justify-center gap-3 py-3 text-sm font-normal text-gray-700 transition-colors bg-gray-100 rounded-lg px-5 hover:bg-gray-200 hover:text-gray-800 dark:bg-white/5 dark:text-white/90 dark:hover:bg-white/10 disabled:opacity-50 disabled:cursor-not-allowed">
                 <svg
-                  width="21"
-                  className="fill-current"
+                  width="20"
                   height="20"
-                  viewBox="0 0 21 20"
+                  viewBox="0 0 20 20"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg">
-                  <path d="M15.6705 1.875H18.4272L12.4047 8.75833L19.4897 18.125H13.9422L9.59717 12.4442L4.62554 18.125H1.86721L8.30887 10.7625L1.51221 1.875H7.20054L11.128 7.0675L15.6705 1.875ZM14.703 16.475H16.2305L6.37054 3.43833H4.73137L14.703 16.475Z" />
+                  <path
+                    d="M20 10C20 4.47715 15.5228 0 10 0C4.47715 0 0 4.47715 0 10C0 14.991 3.65684 19.1259 8.4375 19.878V12.8906H5.89844V10H8.4375V7.79688C8.4375 5.29063 9.93047 3.90625 12.2148 3.90625C13.3086 3.90625 14.4531 4.10156 14.4531 4.10156V6.5625H13.1922C11.95 6.5625 11.5625 7.33359 11.5625 8.125V10H14.3359L13.8926 12.8906H11.5625V19.878C16.3432 19.1259 20 14.991 20 10Z"
+                    fill="#1877F2"
+                  />
+                  <path
+                    d="M13.8926 12.8906L14.3359 10H11.5625V8.125C11.5625 7.33359 11.95 6.5625 13.1922 6.5625H14.4531V4.10156C14.4531 4.10156 13.3086 3.90625 12.2148 3.90625C9.93047 3.90625 8.4375 5.29063 8.4375 7.79688V10H5.89844V12.8906H8.4375V19.878C8.94102 19.957 9.46211 20 10 20C10.5379 20 11.0586 19.957 11.5625 19.878V12.8906H13.8926Z"
+                    fill="white"
+                  />
                 </svg>
-                Sign in with X
+                Sign in with Facebook
               </button>
             </div>
             <div className="relative py-3 sm:py-5">

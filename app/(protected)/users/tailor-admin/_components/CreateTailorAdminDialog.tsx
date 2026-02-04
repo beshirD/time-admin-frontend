@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Eye, EyeOff, Plus } from "lucide-react";
+import { Eye, EyeOff } from "lucide-react";
 import Input from "@/components/ui/Input";
 import Label from "@/components/ui/Label";
 import Button from "@/components/ui/Button";
@@ -46,12 +46,11 @@ export function CreateTailorAdminDialog() {
 
   return (
     <>
-      <button
-        onClick={() => setOpen(true)}
-        className="bg-primary flex items-center gap-1 hover:bg-primary/80 text-white p-2 rounded-md transition">
+      <Button
+        usage="create"
+        onClick={() => setOpen(true)}>
         Add Tailor Admin
-        <Plus className="h-5 w-5" />
-      </button>
+      </Button>
 
       <Modal
         isOpen={open}

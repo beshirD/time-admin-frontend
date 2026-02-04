@@ -4,7 +4,6 @@ import { Restaurant } from "@/types/entities";
 import { DataTable } from "@/components/shared/DataTable";
 // import { RestaurantsMetrics } from "./(main)/_components/RestaurantsMetrics";
 import Button from "@/components/ui/Button";
-import { Plus } from "lucide-react";
 import Link from "next/link";
 import { RestaurantsMetrics } from "./(main)/_components/RestaurantsMetrics";
 
@@ -53,10 +52,7 @@ export default async function RestaurantsPage() {
         <div className="flex items-center justify-between">
           <PageTitle title="Restaurants Management" />
           <Link href="/restaurants/create">
-            <Button className="gap-2 bg-primary text-white">
-              <Plus className="w-4 h-4" />
-              Create Restaurant
-            </Button>
+            <Button usage="create">Create Restaurant</Button>
           </Link>
         </div>
         <DataTable

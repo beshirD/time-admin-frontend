@@ -7,6 +7,9 @@ export const metadata: Metadata = {
 };
 
 export default function LoginPage() {
-  return <SignInForm />;
+  return (
+    <div className="w-full min-h-screen flex items-center justify-center bg-gray-900/[3%] dark:bg-background">
+      <SignInForm />
+    </div>
+  );
 }
-

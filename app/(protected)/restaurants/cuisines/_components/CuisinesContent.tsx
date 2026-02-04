@@ -7,7 +7,6 @@ import { Cuisine } from "@/types/entities";
 import { CuisineDialog } from "./CuisineDialog";
 import { CuisineDetailsDialog } from "./CuisineDetailsDialog";
 import Button from "@/components/ui/Button";
-import { Plus } from "lucide-react";
 import PageTitle from "@/components/common/PageTitle";
 
 interface CuisinesContentProps {
@@ -48,8 +47,7 @@ export function CuisinesContent({ initialData }: CuisinesContentProps) {
           <PageTitle title="Cuisines Management" />
           <Button
             onClick={() => setIsCreateOpen(true)}
-            className="gap-2 bg-primary text-white py-2.5 px-4">
-            <Plus className="w-4 h-4" />
+            usage="create">
             Create Cuisine
           </Button>
         </div>

@@ -3,8 +3,6 @@ import PageTitle from "@/components/common/PageTitle";
 import { BannerPackages } from "@/types/entities";
 import { DataTable } from "@/components/shared/DataTable";
 import { columns } from "./_components/columns";
-import Button from "@/components/ui/Button";
-import { Plus } from "lucide-react";
 import { CreateBannerPackageDialog } from "./_components/CreateBannerPackageDialog";
 
 async function getData(): Promise<BannerPackages[]> {

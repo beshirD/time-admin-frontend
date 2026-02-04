@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { Plus } from "lucide-react";
 import Input from "@/components/ui/Input";
 import Label from "@/components/ui/Label";
 import Button from "@/components/ui/Button";
@@ -51,9 +50,8 @@ export function CreateBannerPackageDialog() {
   return (
     <>
       <Button
-        className="gap-2 bg-primary text-white"
+        usage="create"
         onClick={() => setOpen(true)}>
-        <Plus className="w-4 h-4" />
         Add New Package
       </Button>
 

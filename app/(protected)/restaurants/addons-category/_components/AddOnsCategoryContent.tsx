@@ -6,8 +6,6 @@ import { DataTable } from "@/components/shared/DataTable";
 import { createColumns } from "./columns";
 import { AddOnCategory } from "@/types/entities";
 import { AddOnsCategoryDialog } from "./AddOnsCategoryDialog";
-import Button from "@/components/ui/Button";
-import { Plus } from "lucide-react";
 
 interface AddOnsCategoryContentProps {
   initialData: AddOnCategory[];
@@ -54,8 +52,7 @@ export function AddOnsCategoryContent({
           </h2>
           <Button
             onClick={() => setIsCreateOpen(true)}
-            className="gap-2 bg-primary text-white py-2.5 px-4">
-            <Plus className="w-4 h-4" />
+            usage="create">
             Create Add-On Category
           </Button>
         </div> */}

@@ -1,7 +1,7 @@
 "use client";
 
 import Button from "@/components/ui/Button";
-import { Download, Plus } from "lucide-react";
+import { Download } from "lucide-react";
 
 interface AdvancesHeaderProps {
   onCreateClick: () => void;
@@ -26,10 +26,8 @@ export default function AdvancesHeader({
           Export Data
         </Button>
         <Button
-          size="sm"
-          className="px-3 py-2"
+          usage="create"
           onClick={onCreateClick}>
-          <Plus className="h-4 w-4 mr-1" />
           Create Advance
         </Button>
       </div>

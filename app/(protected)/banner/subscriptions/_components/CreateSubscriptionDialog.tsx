@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { Plus } from "lucide-react";
 import Label from "@/components/ui/Label";
 import Button from "@/components/ui/Button";
 import Textarea from "@/components/ui/Textarea";
@@ -66,12 +65,11 @@ export function CreateSubscriptionDialog({
 
   return (
     <>
-      <button
-        onClick={() => setOpen(true)}
-        className="bg-primary flex items-center gap-2 hover:bg-primary/80 text-white py-2 px-3 rounded-md transition">
+      <Button
+        usage="create"
+        onClick={() => setOpen(true)}>
         {title}
-        <Plus className="h-5 w-5" />
-      </button>
+      </Button>
 
       <Modal
         isOpen={open}

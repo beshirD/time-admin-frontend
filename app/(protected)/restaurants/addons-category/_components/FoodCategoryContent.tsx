@@ -5,8 +5,6 @@ import { DataTable } from "@/components/shared/DataTable";
 import { createFoodColumns } from "./foodColumns";
 import { FoodCategory } from "@/types/entities";
 import { FoodCategoryDialog } from "./FoodCategoryDialog";
-import Button from "@/components/ui/Button";
-import { Plus } from "lucide-react";
 
 interface FoodCategoryContentProps {
   initialData: FoodCategory[];
@@ -63,8 +61,7 @@ export function FoodCategoryContent({
           </h2>
           <Button
             onClick={() => setIsCreateOpen(true)}
-            className="gap-2 bg-primary text-white py-2.5 px-4">
-            <Plus className="w-4 h-4" />
+            usage="create">
             Create Food Category
           </Button>
         </div> */}

@@ -61,10 +61,7 @@ export default function BannerGrid({
           <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">
             Get started by creating your first banner
           </p>
-          <Button className="gap-2">
-            <Plus className="w-4 h-4" />
-            Create Banner
-          </Button>
+          <Button usage="create">Create Banner</Button>
         </div>
       )}
     </>

@@ -6,7 +6,6 @@ import { AddOnsCategoryContent } from "./AddOnsCategoryContent";
 import { FoodCategoryContent } from "./FoodCategoryContent";
 import PageTitle from "@/components/common/PageTitle";
 import Button from "@/components/ui/Button";
-import { Plus } from "lucide-react";
 
 interface CategoriesTabsProps {
   addOnCategoriesData: AddOnCategory[];
@@ -34,8 +33,7 @@ export function CategoriesTabs({
         <div className="flex items-center gap-4">
           <Button
             onClick={() => setIsCreateOpen(true)}
-            className="gap-2 bg-primary text-white py-2 px-4">
-            <Plus className="w-4 h-4" />
+            usage="create">
             {activeTab === "addons"
               ? "Create Add-On Category"
               : "Create Food Category"}

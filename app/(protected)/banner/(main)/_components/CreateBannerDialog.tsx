@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Plus, Upload, X } from "lucide-react";
+import { Upload, X } from "lucide-react";
 import Input from "@/components/ui/Input";
 import Label from "@/components/ui/Label";
 import Button from "@/components/ui/Button";
@@ -83,9 +83,8 @@ export function CreateBannerDialog() {
   return (
     <>
       <Button
-        className="gap-2 h-10"
+        usage="create"
         onClick={() => setOpen(true)}>
-        <Plus className="w-4 h-4" />
         Create Banner
       </Button>
 
@@ -215,7 +214,7 @@ export function CreateBannerDialog() {
                       </div>
                     ) : (
                       <div className="mt-2 relative">
-                        <div className="relative w-full aspect-[8/5] rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700">
+                        <div className="relative w-full aspect-8/5 rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700">
                           <Image
                             src={imagePreview}
                             alt="Banner preview"

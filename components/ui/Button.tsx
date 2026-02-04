@@ -1,4 +1,5 @@
 import React, { ReactNode } from "react";
+import { Plus } from "lucide-react";
 import { Slot } from "@radix-ui/react-slot";
 import { cn } from "@/lib/utils";
 
@@ -8,6 +9,7 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
   variant?: "primary" | "outline" | "destructive" | "ghost" | "default";
   startIcon?: ReactNode;
   endIcon?: ReactNode;
+  usage?: "create";
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
@@ -19,6 +21,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       asChild = false,
       startIcon,
       endIcon,
+      usage,
       children,
       ...props
     },
@@ -52,6 +55,13 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         "bg-transparent text-foreground hover:bg-accent hover:text-accent-foreground shadow-none",
     };
 
+    const effectiveStartIcon =
+      usage === "create" ? <Plus className="w-4 h-4" /> : startIcon;
+    const usageClasses =
+      usage === "create"
+        ? "bg-primary text-white py-2 px-4 rounded-sm gap-2"
+        : "";
+
     return (
       <Comp
         ref={ref}
@@ -59,6 +69,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           "inline-flex items-center justify-center font-medium gap-2 rounded-lg transition disabled:cursor-not-allowed disabled:opacity-50",
           sizeClasses[safeSize as keyof typeof sizeClasses],
           variantClasses[safeVariant as keyof typeof variantClasses],
+          usageClasses,
           className,
         )}
         {...props}>
@@ -66,8 +77,8 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           children
         ) : (
           <>
-            {startIcon && (
-              <span className="flex items-center">{startIcon}</span>
+            {effectiveStartIcon && (
+              <span className="flex items-center">{effectiveStartIcon}</span>
             )}
             {children}
             {endIcon && <span className="flex items-center">{endIcon}</span>}

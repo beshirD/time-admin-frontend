@@ -7,7 +7,6 @@ import { createColumns } from "./columns";
 import { RestaurantOffer } from "@/types/entities";
 import PageTitle from "@/components/common/PageTitle";
 import Button from "@/components/ui/Button";
-import { Plus } from "lucide-react";
 
 interface OffersContentProps {
   initialData: RestaurantOffer[];
@@ -32,8 +31,7 @@ export function OffersContent({ initialData }: OffersContentProps) {
         <PageTitle title="Restaurant Offers" />
         <Button
           onClick={() => router.push("/restaurants/offers/create")}
-          className="gap-2 bg-primary text-white py-2 px-4">
-          <Plus className="w-4 h-4" />
+          usage="create">
           Create Offer
         </Button>
       </div>

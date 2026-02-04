@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Pencil, Trash2, Plus } from "lucide-react";
+import { Pencil, Trash2 } from "lucide-react";
 import Button from "@/components/ui/Button";
 
 interface FoodItem {
@@ -50,12 +50,7 @@ export function FoodItemsTable() {
         <h3 className="text-lg font-semibold text-gray-800 dark:text-white">
           Food Items
         </h3>
-        <Button
-          size="sm"
-          className="flex items-center gap-2">
-          <Plus className="w-4 h-4" />
-          Add Item
-        </Button>
+        <Button usage="create">Add Item</Button>
       </div>
 
       <div className="overflow-x-auto">
