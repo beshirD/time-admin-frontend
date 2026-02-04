@@ -198,7 +198,7 @@ export function CreateRestaurantForm() {
                 <Input
                   id="pricePerPerson"
                   type="number"
-                  step="0.01"
+                  step={0.01}
                   value={formData.pricePerPerson}
                   onChange={(e) =>
                     setFormData({ ...formData, pricePerPerson: e.target.value })
@@ -212,7 +212,7 @@ export function CreateRestaurantForm() {
                 <Input
                   id="deliveryFee"
                   type="number"
-                  step="0.01"
+                  step={0.01}
                   value={formData.deliveryFee}
                   onChange={(e) =>
                     setFormData({ ...formData, deliveryFee: e.target.value })
@@ -232,7 +232,7 @@ export function CreateRestaurantForm() {
                 <Input
                   id="maxDeliveryDistance"
                   type="number"
-                  step="0.1"
+                  step={0.1}
                   value={formData.maxDeliveryDistance}
                   onChange={(e) =>
                     setFormData({
@@ -255,7 +255,7 @@ export function CreateRestaurantForm() {
                 <Input
                   id="platformFeePercentage"
                   type="number"
-                  step="0.1"
+                  step={0.1}
                   value={formData.platformFeePercentage}
                   onChange={(e) =>
                     setFormData({

@@ -205,7 +205,7 @@ export default function CreateAdvanceModal({
             onChange={(e) => setAmount(e.target.value)}
             className="mt-2"
             min="0"
-            step="0.01"
+            step={0.01}
           />
         </div>
 

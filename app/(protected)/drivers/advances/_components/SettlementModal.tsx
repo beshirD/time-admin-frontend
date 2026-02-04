@@ -122,7 +122,7 @@ export default function SettlementModal({
             onChange={(e) => setAmountReturned(e.target.value)}
             className="mt-2"
             min="0"
-            step="0.01"
+            step={0.01}
           />
           <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
             Expected amount: {expectedReturn.toLocaleString()} AFN

@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import Input from "@/components/ui/Input";
 import { Calendar } from "@/components/ui/calendar";
 import { format } from "date-fns";
+import { DateRange } from "react-day-picker";
 import { CalendarIcon } from "lucide-react";
 import { Dropdown } from "@/components/ui/dropdown/Dropdown";
 import Checkbox from "@/components/ui/Checkbox";
@@ -11,11 +12,8 @@ import Checkbox from "@/components/ui/Checkbox";
 interface AdvancesFiltersProps {
   searchQuery: string;
   onSearchChange: (value: string) => void;
-  dateRange: { from: Date | undefined; to: Date | undefined };
-  onDateRangeChange: (range: {
-    from: Date | undefined;
-    to: Date | undefined;
-  }) => void;
+  dateRange: DateRange | undefined;
+  onDateRangeChange: (range: DateRange | undefined) => void;
   selectedStatuses: string[];
   onStatusToggle: (status: string) => void;
 }
@@ -52,9 +50,7 @@ export default function AdvancesFilters({
     };
   }, [isCalendarOpen]);
 
-  const handleDateSelect = (
-    range: { from: Date | undefined; to: Date | undefined } | undefined,
-  ) => {
+  const handleDateSelect = (range: DateRange | undefined) => {
     if (range) {
       onDateRangeChange(range);
     }
@@ -83,7 +79,7 @@ export default function AdvancesFilters({
             onClick={() => setIsCalendarOpen(!isCalendarOpen)}
             className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-primary bg-primary/10 hover:bg-primary/25 border-2 border-primary rounded-lg transition">
             <CalendarIcon className="h-4 w-4" />
-            {dateRange.from && dateRange.to ? (
+            {dateRange?.from && dateRange?.to ? (
               <span>
                 {format(dateRange.from, "MMM dd, yyyy")} -{" "}
                 {format(dateRange.to, "MMM dd, yyyy")}
@@ -99,7 +95,7 @@ export default function AdvancesFilters({
                 <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100">
                   Select Date Range
                 </h3>
-                {(dateRange.from || dateRange.to) && (
+                {(dateRange?.from || dateRange?.to) && (
                   <button
                     onClick={clearDateFilter}
                     className="text-xs text-primary hover:underline">

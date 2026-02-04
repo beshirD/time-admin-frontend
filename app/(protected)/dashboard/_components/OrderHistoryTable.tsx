@@ -14,6 +14,7 @@ import { Dropdown } from "@/components/ui/dropdown/Dropdown";
 import { useState, useEffect, useRef } from "react";
 import { Calendar } from "@/components/ui/calendar";
 import { format } from "date-fns";
+import { DateRange } from "react-day-picker";
 import Input from "@/components/ui/Input";
 import Checkbox from "@/components/ui/Checkbox";
 
@@ -394,10 +395,7 @@ const mockOrders: Order[] = [
 
 // Main component
 export function OrderHistoryTable() {
-  const [dateRange, setDateRange] = useState<{
-    from: Date | undefined;
-    to: Date | undefined;
-  }>({
+  const [dateRange, setDateRange] = useState<DateRange>({
     from: undefined,
     to: undefined,
   });
@@ -432,7 +430,7 @@ export function OrderHistoryTable() {
   // Filter orders by date range and search text
   const filteredOrders = mockOrders.filter((order) => {
     // Date range filter
-    if (dateRange.from && dateRange.to) {
+    if (dateRange?.from && dateRange?.to) {
       const orderDateParts = order.createdOn.split(" ")[0].split("-");
       const day = parseInt(orderDateParts[0]);
       const monthMap: { [key: string]: number } = {
@@ -453,8 +451,10 @@ export function OrderHistoryTable() {
       const year = parseInt(orderDateParts[2]);
       const orderDate = new Date(year, month, day);
 
-      if (!(orderDate >= dateRange.from && orderDate <= dateRange.to)) {
-        return false;
+      if (dateRange?.from && dateRange?.to) {
+        if (!(orderDate >= dateRange.from && orderDate <= dateRange.to)) {
+          return false;
+        }
       }
     }
 
@@ -471,9 +471,7 @@ export function OrderHistoryTable() {
     return true;
   });
 
-  const handleDateSelect = (
-    range: { from: Date | undefined; to: Date | undefined } | undefined,
-  ) => {
+  const handleDateSelect = (range: DateRange | undefined) => {
     if (range) {
       setDateRange(range);
     }
@@ -507,7 +505,7 @@ export function OrderHistoryTable() {
               onClick={() => setIsCalendarOpen(!isCalendarOpen)}
               className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-primary bg-white dark:bg-gray-800 border border-primary rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition">
               <CalendarIcon className="h-4 w-4" />
-              {dateRange.from && dateRange.to ? (
+              {dateRange?.from && dateRange?.to ? (
                 <span>
                   {format(dateRange.from, "MMM dd, yyyy")} -{" "}
                   {format(dateRange.to, "MMM dd, yyyy")}
@@ -566,9 +564,9 @@ export function OrderHistoryTable() {
                   Toggle columns
                 </div>
                 {columns
-                  .filter((column) => column.accessorKey) // Only show columns with accessorKey
+                  .filter((column) => (column as any).accessorKey) // Only show columns with accessorKey
                   .map((column) => {
-                    const columnId = column.accessorKey as string;
+                    const columnId = (column as any).accessorKey as string;
                     return (
                       <div
                         key={columnId}

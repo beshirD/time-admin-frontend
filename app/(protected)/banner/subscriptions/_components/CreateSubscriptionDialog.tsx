@@ -58,7 +58,7 @@ export function CreateSubscriptionDialog({
     setOpen(false);
     // Reset form
     setFormData({
-      restaurant: isExtend ? resturant : "",
+      restaurant: isExtend ? resturant || "" : "",
       package: "",
       adminNote: "",
     });

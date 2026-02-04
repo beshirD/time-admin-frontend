@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { format } from "date-fns";
+import { DateRange } from "react-day-picker";
 import { toast } from "sonner";
 import { DriverAdvance, Driver } from "@/types/entities";
 import { createColumns } from "./columns";
@@ -33,10 +34,7 @@ export default function AdvancesContent({
 
   // Filters
   const [searchQuery, setSearchQuery] = useState("");
-  const [dateRange, setDateRange] = useState<{
-    from: Date | undefined;
-    to: Date | undefined;
-  }>({
+  const [dateRange, setDateRange] = useState<DateRange | undefined>({
     from: undefined,
     to: undefined,
   });
@@ -53,7 +51,7 @@ export default function AdvancesContent({
     }
 
     // Date range filter
-    if (dateRange.from && dateRange.to) {
+    if (dateRange?.from && dateRange?.to) {
       const advanceDateParts = advance.date.split(" ");
       const day = parseInt(advanceDateParts[1].replace(",", ""));
       const monthMap: { [key: string]: number } = {

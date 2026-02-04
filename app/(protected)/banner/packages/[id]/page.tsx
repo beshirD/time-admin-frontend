@@ -21,7 +21,6 @@ async function getPackageData(id: string): Promise<BannerPackages> {
     stateId: "Active",
     createdOn: "09-Jan-2026 19:47",
     createdBy: "Admins",
-    createdById: "1",
   };
 }
 
