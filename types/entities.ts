@@ -176,3 +176,11 @@ export type Feed = {
   createdOn: string;
   createdBy: string;
 };
+
+export type FoodCategory = {
+  id: number;
+  title: string;
+  state: string;
+  image?: string;
+  type: "Restaurant" | "Store";
+};
