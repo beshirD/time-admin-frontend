@@ -1,194 +1,17 @@
 "use client";
 
-import { ColumnDef } from "@tanstack/react-table";
-import { DataTable } from "@/components/shared/DataTable";
-import { CalendarIcon, Settings2 } from "lucide-react";
-import Button from "@/components/ui/Button";
-import { Dropdown } from "@/components/ui/dropdown/Dropdown";
+import { CalendarIcon } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import { Calendar } from "@/components/ui/calendar";
 import { format } from "date-fns";
 import { DateRange } from "react-day-picker";
 import Input from "@/components/ui/Input";
 import Checkbox from "@/components/ui/Checkbox";
+import { Dropdown } from "@/components/ui/dropdown/Dropdown";
+import OrdersTable from "@/components/orders/OrdersTable";
+import { Order } from "@/types/entities";
+import { toast } from "sonner";
 
-// Order type definition
-export type Order = {
-  id: number;
-  orderNo: string;
-  store: string;
-  address: string;
-  totalPrice: number;
-  deliveryStatus:
-    | "RESTAURANT_REJECTED"
-    | "PENDING"
-    | "CONFIRMED"
-    | "PREPARING"
-    | "READY_FOR_PICKUP"
-    | "PICKED_UP"
-    | "DELIVERED"
-    | "CANCELLED";
-  createdOn: string;
-  createdBy: string;
-};
-
-// Status badge component
-const StatusBadge = ({ status }: { status: Order["deliveryStatus"] }) => {
-  const statusStyles = {
-    PENDING:
-      "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400",
-    CONFIRMED:
-      "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400",
-    PREPARING:
-      "bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400",
-    READY_FOR_PICKUP:
-      "bg-cyan-100 text-cyan-800 dark:bg-cyan-900/30 dark:text-cyan-400",
-    PICKED_UP:
-      "bg-indigo-100 text-indigo-800 dark:bg-indigo-900/30 dark:text-indigo-400",
-    DELIVERED:
-      "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400",
-    CANCELLED: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400",
-    RESTAURANT_REJECTED:
-      "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400",
-  };
-
-  const statusLabels = {
-    PENDING: "Pending",
-    CONFIRMED: "Confirmed",
-    PREPARING: "Preparing",
-    READY_FOR_PICKUP: "Ready for Pickup",
-    PICKED_UP: "Picked Up",
-    DELIVERED: "Delivered",
-    CANCELLED: "Cancelled",
-    RESTAURANT_REJECTED: "Restaurant Rejected",
-  };
-
-  return (
-    <span
-      className={`px-2 py-1 rounded-md text-xs font-medium ${statusStyles[status]}`}>
-      {statusLabels[status]}
-    </span>
-  );
-};
-
-// Actions dropdown component
-const ActionsButtons = ({ orderId }: { orderId: number }) => {
-  const handleView = () => {
-    console.log("View order:", orderId);
-  };
-
-  const handleEdit = () => {
-    console.log("Edit order:", orderId);
-  };
-
-  const handleDelete = () => {
-    console.log("Delete order:", orderId);
-  };
-
-  return (
-    <div className="flex items-center gap-2 justify-end">
-      <Button
-        usage="view"
-        onClick={(e) => {
-          e.stopPropagation();
-          handleView();
-        }}>
-        View
-      </Button>
-      <Button
-        usage="edit"
-        onClick={(e) => {
-          e.stopPropagation();
-          handleEdit();
-        }}>
-        Edit
-      </Button>
-      <Button
-        usage="delete"
-        onClick={(e) => {
-          e.stopPropagation();
-          handleDelete();
-        }}>
-        Delete
-      </Button>
-    </div>
-  );
-};
-
-// Column definitions
-export const columns: ColumnDef<Order>[] = [
-  {
-    accessorKey: "orderNo",
-    header: "Order No",
-    cell: ({ row }) => (
-      <span className="font-medium text-gray-900 dark:text-gray-100">
-        {row.original.orderNo}
-      </span>
-    ),
-  },
-  {
-    accessorKey: "store",
-    header: "Store",
-    cell: ({ row }) => (
-      <span className="text-gray-900 dark:text-gray-100">
-        {row.original.store}
-      </span>
-    ),
-  },
-  {
-    accessorKey: "address",
-    header: "Address",
-    cell: ({ row }) => (
-      <div className="flex items-center gap-2">
-        <span className="text-lg">🇪🇹</span>
-        <span className="text-sm text-gray-700 dark:text-gray-300 max-w-xs truncate block">
-          {row.original.address}
-        </span>
-      </div>
-    ),
-  },
-  {
-    accessorKey: "totalPrice",
-    header: "Total Price",
-    cell: ({ row }) => (
-      <span className="font-medium text-gray-900 dark:text-gray-100">
-        {row.original.totalPrice.toFixed(2)} ETB
-      </span>
-    ),
-  },
-  {
-    accessorKey: "deliveryStatus",
-    header: "Delivery Status",
-    cell: ({ row }) => <StatusBadge status={row.original.deliveryStatus} />,
-  },
-  {
-    accessorKey: "createdOn",
-    header: "Created On",
-    cell: ({ row }) => (
-      <span className="text-sm text-gray-700 dark:text-gray-300">
-        {row.original.createdOn}
-      </span>
-    ),
-  },
-  {
-    accessorKey: "createdBy",
-    header: "Created By",
-    cell: ({ row }) => (
-      <span className="text-gray-900 dark:text-gray-100">
-        {row.original.createdBy}
-      </span>
-    ),
-  },
-  {
-    id: "actions-left",
-    header: "",
-    cell: ({ row }) => <ActionsButtons orderId={row.original.id} />,
-    enableSorting: false,
-    enableHiding: false,
-  },
-];
-
-// let us change some of the sore names
 // Mock data for demonstration
 const mockOrders: Order[] = [
   {
@@ -291,100 +114,32 @@ const mockOrders: Order[] = [
     createdOn: "15-Jan-2026 20:05",
     createdBy: "Bele Shewa",
   },
-  {
-    id: 9182,
-    orderNo: "#6789",
-    store: "Habibi's Kitchen",
-    address: "XQMQ+9G8, Addis Ababa, Ethiopia",
-    totalPrice: 89,
-    deliveryStatus: "PENDING",
-    createdOn: "15-Jan-2026 20:05",
-    createdBy: "Bele Shewa",
-  },
-  {
-    id: 9181,
-    orderNo: "#6789",
-    store: "Habibi's Kitchen",
-    address: "XQMQ+9G8, Addis Ababa, Ethiopia",
-    totalPrice: 89,
-    deliveryStatus: "PENDING",
-    createdOn: "15-Jan-2026 20:05",
-    createdBy: "Bele Shewa",
-  },
-  {
-    id: 9180,
-    orderNo: "#6789",
-    store: "Habibi's Kitchen",
-    address: "XQMQ+9G8, Addis Ababa, Ethiopia",
-    totalPrice: 89,
-    deliveryStatus: "PENDING",
-    createdOn: "15-Jan-2026 20:05",
-    createdBy: "Bele Shewa",
-  },
-  {
-    id: 9179,
-    orderNo: "#6789",
-    store: "Habibi's Kitchen",
-    address: "XQMQ+9G8, Addis Ababa, Ethiopia",
-    totalPrice: 89,
-    deliveryStatus: "PENDING",
-    createdOn: "15-Jan-2026 20:05",
-    createdBy: "Bele Shewa",
-  },
-  {
-    id: 9178,
-    orderNo: "#6789",
-    store: "Habibi's Kitchen",
-    address: "XQMQ+9G8, Addis Ababa, Ethiopia",
-    totalPrice: 89,
-    deliveryStatus: "PENDING",
-    createdOn: "15-Jan-2026 20:05",
-    createdBy: "Bele Shewa",
-  },
-  {
-    id: 9177,
-    orderNo: "#6789",
-    store: "Habibi's Kitchen",
-    address: "XQMQ+9G8, Addis Ababa, Ethiopia",
-    totalPrice: 89,
-    deliveryStatus: "PENDING",
-    createdOn: "15-Jan-2026 20:05",
-    createdBy: "Bele Shewa",
-  },
-  {
-    id: 9176,
-    orderNo: "#6789",
-    store: "Habibi's Kitchen",
-    address: "XQMQ+9G8, Addis Ababa, Ethiopia",
-    totalPrice: 89,
-    deliveryStatus: "PENDING",
-    createdOn: "15-Jan-2026 20:05",
-    createdBy: "Bele Shewa",
-  },
-  {
-    id: 9175,
-    orderNo: "#6789",
-    store: "Habibi's Kitchen",
-    address: "XQMQ+9G8, Addis Ababa, Ethiopia",
-    totalPrice: 89,
-    deliveryStatus: "PENDING",
-    createdOn: "15-Jan-2026 20:05",
-    createdBy: "Bele Shewa",
-  },
 ];
 
-// Main component
+const statuses = [
+  "PLACED",
+  "PENDING",
+  "ACCEPTED",
+  "CONFIRMED",
+  "PREPARING",
+  "READY_FOR_PICKUP",
+  "PICKED_UP",
+  "ON_THE_WAY",
+  "DELIVERED",
+  "RESTAURANT_REJECTED",
+  "DRIVER_REJECTED",
+  "CANCELLED",
+];
+
 export function OrderHistoryTable() {
   const [dateRange, setDateRange] = useState<DateRange>({
     from: undefined,
     to: undefined,
   });
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
+  const [isStatusDropdownOpen, setIsStatusDropdownOpen] = useState(false);
+  const [selectedStatuses, setSelectedStatuses] = useState<string[]>([]);
   const [globalFilter, setGlobalFilter] = useState("");
-  const [columnDropdownOpen, setColumnDropdownOpen] = useState(false);
-  const [columnVisibility, setColumnVisibility] = useState<
-    Record<string, boolean>
-  >({});
   const calendarRef = useRef<HTMLDivElement>(null);
 
   // Close calendar when clicking outside
@@ -407,13 +162,32 @@ export function OrderHistoryTable() {
     };
   }, [isCalendarOpen]);
 
-  // Filter orders by date range and search text
+  const handleStatusToggle = (status: string) => {
+    setSelectedStatuses((prev) =>
+      prev.includes(status)
+        ? prev.filter((s) => s !== status)
+        : [...prev, status],
+    );
+  };
+
+  const handleInvoice = (id: number) => {
+    toast.success(`Generating invoice for order ID: ${id}`);
+  };
+
+  // Filter orders by date range, search text, and status
   const filteredOrders = mockOrders.filter((order) => {
+    // Status filter
+    if (
+      selectedStatuses.length > 0 &&
+      !selectedStatuses.includes(order.deliveryStatus)
+    ) {
+      return false;
+    }
+
     // Date range filter
     if (dateRange?.from && dateRange?.to) {
       const orderDateParts = order.createdOn.split(" ")[0].split("-");
-      const day = parseInt(orderDateParts[0]);
-      const monthMap: { [key: string]: number } = {
+      const monthMap: Record<string, number> = {
         Jan: 0,
         Feb: 1,
         Mar: 2,
@@ -427,14 +201,14 @@ export function OrderHistoryTable() {
         Nov: 10,
         Dec: 11,
       };
-      const month = monthMap[orderDateParts[1]];
-      const year = parseInt(orderDateParts[2]);
-      const orderDate = new Date(year, month, day);
+      const orderDate = new Date(
+        parseInt(orderDateParts[2]),
+        monthMap[orderDateParts[1]],
+        parseInt(orderDateParts[0]),
+      );
 
-      if (dateRange?.from && dateRange?.to) {
-        if (!(orderDate >= dateRange.from && orderDate <= dateRange.to)) {
-          return false;
-        }
+      if (orderDate < dateRange.from || orderDate > dateRange.to) {
+        return false;
       }
     }
 
@@ -467,31 +241,31 @@ export function OrderHistoryTable() {
         Recent Orders
       </h2>
 
-      {/* Toolbar with Search, Date Filter, and Column Visibility in one row */}
+      {/* Toolbar */}
       <div className="flex items-center justify-between gap-4">
         <Input
           placeholder="Search orders..."
           value={globalFilter}
           onChange={(e) => setGlobalFilter(e.target.value)}
-          className="flex min-w-4xl border-2 outline-primary border-primary/40 dark:border-primary/70"
+          className="flex-1 min-w-4xl border-2 outline-primary border-primary/40 dark:border-primary/70"
         />
 
         <div className="flex items-center gap-4">
-          {/* Date Range Filter */}
+          {/* Date Filter */}
           <div
             className="relative"
             ref={calendarRef}>
             <button
               onClick={() => setIsCalendarOpen(!isCalendarOpen)}
-              className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-primary bg-white dark:bg-gray-800 border border-primary rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition">
+              className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-primary bg-primary/10 hover:bg-primary/25 border-2 border-primary rounded-lg transition">
               <CalendarIcon className="h-4 w-4" />
               {dateRange?.from && dateRange?.to ? (
                 <span>
-                  {format(dateRange.from, "MMM dd, yyyy")} -{" "}
-                  {format(dateRange.to, "MMM dd, yyyy")}
+                  {format(dateRange.from, "MMM dd")} -{" "}
+                  {format(dateRange.to, "MMM dd")}
                 </span>
               ) : (
-                <span>Filter by Start & End Date</span>
+                <span>Filter by Date</span>
               )}
             </button>
 
@@ -527,59 +301,50 @@ export function OrderHistoryTable() {
             )}
           </div>
 
-          {/* Edit Columns Button */}
+          {/* Status Filter */}
           <div className="relative">
             <button
-              onClick={() => setColumnDropdownOpen(!columnDropdownOpen)}
-              className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-primary bg-white dark:bg-gray-800 border border-primary rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition">
-              <Settings2 className="h-4 w-4" />
-              Edit Columns
+              onClick={() => setIsStatusDropdownOpen(!isStatusDropdownOpen)}
+              className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-primary bg-primary/10 hover:bg-primary/25 border-2 border-primary rounded-lg transition">
+              Status
+              {selectedStatuses.length > 0 && (
+                <span className="ml-1 px-2 py-0.5 text-xs bg-primary text-white rounded-full">
+                  {selectedStatuses.length}
+                </span>
+              )}
             </button>
             <Dropdown
-              isOpen={columnDropdownOpen}
-              onClose={() => setColumnDropdownOpen(false)}
-              className="w-48">
+              isOpen={isStatusDropdownOpen}
+              onClose={() => setIsStatusDropdownOpen(false)}
+              className="w-56">
               <div className="py-1">
                 <div className="px-4 py-2 text-xs font-medium text-gray-500 dark:text-gray-400 border-b border-gray-200 dark:border-gray-700">
-                  Toggle columns
+                  Select Status
                 </div>
-                {columns
-                  .filter((column) => (column as any).accessorKey) // Only show columns with accessorKey
-                  .map((column) => {
-                    const columnId = (column as any).accessorKey as string;
-                    return (
-                      <div
-                        key={columnId}
-                        className="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-800">
-                        <Checkbox
-                          label={columnId}
-                          checked={columnVisibility[columnId] !== false}
-                          onChange={(value) =>
-                            setColumnVisibility((prev) => ({
-                              ...prev,
-                              [columnId]: !!value,
-                            }))
-                          }
-                        />
-                      </div>
-                    );
-                  })}
+                <div className="max-h-60 overflow-y-auto no-scrollbar">
+                  {statuses.map((status) => (
+                    <div
+                      key={status}
+                      className="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-800">
+                      <Checkbox
+                        label={status.toLowerCase().replace(/_/g, " ")}
+                        checked={selectedStatuses.includes(status)}
+                        onChange={() => handleStatusToggle(status)}
+                        className="capitalize"
+                      />
+                    </div>
+                  ))}
+                </div>
               </div>
             </Dropdown>
           </div>
         </div>
       </div>
 
-      <DataTable
-        columns={columns}
+      <OrdersTable
         data={filteredOrders}
-        searchPlaceholder="Search orders..."
-        searchableColumns={["orderNo", "store", "createdBy"]}
-        enableSearch={false}
-        enableColumnVisibility={false}
-        scrollableContainer={true}
-        maxHeight="400px"
-        stickyHeader={true}
+        variant="recent"
+        onInvoice={handleInvoice}
       />
     </div>
   );

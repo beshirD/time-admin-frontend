@@ -1,5 +1,4 @@
-"use client";
-
+import PageTitle from "@/components/common/PageTitle";
 import Button from "@/components/ui/Button";
 
 interface OrdersHeaderProps {
@@ -8,22 +7,13 @@ interface OrdersHeaderProps {
 
 export default function OrdersHeader({ onAddOrderManual }: OrdersHeaderProps) {
   return (
-    <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-      <div>
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-          Orders
-        </h1>
-        <p className="text-sm text-gray-500 dark:text-gray-400">
-          Manage and track all restaurant orders.
-        </p>
-      </div>
-      <div className="flex items-center gap-3">
-        <Button
-          usage="create"
-          onClick={onAddOrderManual}>
-          Add order manually
-        </Button>
-      </div>
+    <div className="flex flex-col bg-white dark:bg-gray-900 px-5 py-2 border rounded-lg gap-4 sm:flex-row sm:items-center sm:justify-between">
+      <PageTitle title="Orders Management" />
+      <Button
+        usage="create"
+        onClick={onAddOrderManual}>
+        Add order manually
+      </Button>
     </div>
   );
 }

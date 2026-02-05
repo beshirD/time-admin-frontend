@@ -3,15 +3,16 @@
 import { useState } from "react";
 import { DateRange } from "react-day-picker";
 import { Order } from "@/types/entities";
-import { createColumns } from "./columns";
 import OrdersHeader from "./OrdersHeader";
 import OrdersMetrics from "./OrdersMetrics";
 import OrdersFilters from "./OrdersFilters";
-import OrdersTable from "./OrdersTable";
+import OrdersTable from "@/components/orders/OrdersTable";
 import { mockOrders } from "./mockData";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 export default function OrdersContent() {
+  const router = useRouter();
   const [orders, setOrders] = useState<Order[]>(mockOrders);
   const [searchQuery, setSearchQuery] = useState("");
   const [dateRange, setDateRange] = useState<DateRange | undefined>({
@@ -21,16 +22,16 @@ export default function OrdersContent() {
   const [selectedStatuses, setSelectedStatuses] = useState<string[]>([]);
 
   // Handlers
-  const handleView = (order: Order) => {
-    toast.info(`Viewing order ${order.orderNo}`);
-  };
-
-  const handleInvoice = (order: Order) => {
-    toast.success(`Generating invoice for ${order.orderNo}`);
+  const handleView = (id: number) => {
+    router.push(`/orders/${id}`);
   };
 
   const handleAddOrderManual = () => {
     toast.info("Add manual order feature coming soon!");
+  };
+
+  const handleInvoice = (id: number) => {
+    toast.success(`Generating invoice for order ID: ${id}`);
   };
 
   const handleStatusToggle = (status: string) => {
@@ -79,11 +80,8 @@ export default function OrdersContent() {
         Nov: 10,
         Dec: 11,
       };
-      const orderDate = new Date(
-        parseInt(year),
-        monthMap[monthStr],
-        parseInt(day),
-      );
+      const month = monthMap[monthStr];
+      const orderDate = new Date(parseInt(year), month, parseInt(day));
 
       if (orderDate < dateRange.from || orderDate > dateRange.to) {
         return false;
@@ -93,10 +91,8 @@ export default function OrdersContent() {
     return true;
   });
 
-  const columns = createColumns(handleView, handleInvoice);
-
   return (
-    <div className="flex flex-col gap-6 w-full pb-8">
+    <div className="flex flex-col gap-4 w-full pb-8">
       {/* Header */}
       <OrdersHeader onAddOrderManual={handleAddOrderManual} />
 
@@ -104,7 +100,7 @@ export default function OrdersContent() {
       <OrdersMetrics orders={orders} />
 
       {/* Filters & Table */}
-      <div className="space-y-4">
+      <div className="bg-white py-6 dark:bg-gray-900 rounded-lg p-5 border border-gray-200 dark:border-gray-800">
         <OrdersFilters
           searchQuery={searchQuery}
           onSearchChange={setSearchQuery}
@@ -114,10 +110,14 @@ export default function OrdersContent() {
           onStatusToggle={handleStatusToggle}
         />
 
-        <OrdersTable
-          columns={columns}
-          data={filteredOrders}
-        />
+        <div className="mt-4">
+          <OrdersTable
+            data={filteredOrders}
+            variant="all"
+            onView={handleView}
+            onInvoice={handleInvoice}
+          />
+        </div>
       </div>
     </div>
   );

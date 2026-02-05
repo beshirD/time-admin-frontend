@@ -72,7 +72,7 @@ export default function OrdersFilters({
   };
 
   return (
-    <div className="flex gap-5 justify-between py-4">
+    <div className="flex gap-5 justify-between">
       {/* Search */}
       <Input
         placeholder="Search by Order No or Store..."
@@ -153,7 +153,7 @@ export default function OrdersFilters({
               <div className="px-4 py-2 text-xs font-medium text-gray-500 dark:text-gray-400 border-b border-gray-200 dark:border-gray-700">
                 Select Status
               </div>
-              <div className="max-h-60 overflow-y-auto no-scrollbar">
+              <div className="max-h-80 border overflow-y-auto no-scrollbar">
                 {statuses.map((status) => (
                   <div
                     key={status}

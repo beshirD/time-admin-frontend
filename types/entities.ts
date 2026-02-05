@@ -213,7 +213,28 @@ export type Order = {
   store: string;
   address: string;
   totalPrice: number;
-  deliveryStatus: string;
+  deliveryStatus:
+    | "RESTAURANT_REJECTED"
+    | "PENDING"
+    | "CONFIRMED"
+    | "PREPARING"
+    | "READY_FOR_PICKUP"
+    | "PICKED_UP"
+    | "DELIVERED"
+    | "CANCELLED"
+    | "PLACED"
+    | "ACCEPTED"
+    | "ON_THE_WAY"
+    | "DRIVER_REJECTED";
   createdOn: string;
   createdBy: string;
+};
+export type MenuItem = {
+  id: number;
+  name: string;
+  category: string;
+  type: string;
+  description: string;
+  price: number;
+  image?: string;
 };
