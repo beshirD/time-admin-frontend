@@ -3,27 +3,26 @@
 import React from "react";
 import Button from "@/components/ui/Button";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, ChevronLeft, PrinterIcon } from "lucide-react";
+import { ArrowLeft, PrinterIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 
-interface OrderDetailHeaderProps {
-  orderId: string;
-  orderNo: string;
-  status: string;
-}
+// NO Interface needed here as we use inline type
 
 export default function OrderDetailHeader({
-  orderId,
   orderNo,
   status,
-}: OrderDetailHeaderProps) {
+}: {
+  orderId?: string;
+  orderNo: string;
+  status: string;
+}) {
   const router = useRouter();
 
-  let variant: "primary" | "outline" | "destructive" | "default" = "default";
+  let variant: "outline" | "destructive" | "default" = "default";
   if (status.includes("REJECTED") || status.includes("CANCELLED")) {
     variant = "destructive";
   } else if (status.includes("COMPLETED") || status.includes("DELIVERED")) {
-    variant = "primary";
+    variant = "default";
   } else {
     variant = "outline";
   }

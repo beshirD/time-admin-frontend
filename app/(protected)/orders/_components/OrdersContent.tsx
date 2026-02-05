@@ -27,7 +27,7 @@ export default function OrdersContent() {
   };
 
   const handleAddOrderManual = () => {
-    toast.info("Add manual order feature coming soon!");
+    router.push("/orders/create");
   };
 
   const handleInvoice = (id: number) => {

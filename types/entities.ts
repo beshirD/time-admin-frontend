@@ -221,6 +221,7 @@ export type Order = {
     | "READY_FOR_PICKUP"
     | "PICKED_UP"
     | "DELIVERED"
+    | "COMPLETED"
     | "CANCELLED"
     | "PLACED"
     | "ACCEPTED"
