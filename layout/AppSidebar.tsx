@@ -90,8 +90,8 @@ const navItems: NavItem[] = [
 const othersItems: NavItem[] = [
   {
     icon: <UserCircleIcon />,
-    name: "Profile",
-    path: "/profile",
+    name: "Setting",
+    path: "/setting",
   },
   {
     icon: <PieChartIcon />,

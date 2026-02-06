@@ -17,6 +17,18 @@ interface AuthUserData {
   refreshToken: string;
 }
 
+interface SignInResponse {
+  success: boolean;
+  message: string;
+  data: AuthUserData;
+}
+
+interface UserResponse {
+  success: boolean;
+  message: string;
+  data: User;
+}
+
 /**
  * Hook for signing in
  */
@@ -26,8 +38,8 @@ export function useSignIn() {
 
   return useMutation({
     mutationFn: async (credentials: SignInCredentials) => {
-      const data = await api.post<AuthUserData>('/auth/login', credentials);
-      return data;
+      const response = await api.post<SignInResponse>('/auth/login', credentials);
+      return response.data; // Extract data from response
     },
     onSuccess: async (data) => {
       // Store tokens in httpOnly cookies
@@ -83,8 +95,8 @@ export function useCurrentUser() {
   return useQuery({
     queryKey: ['currentUser'],
     queryFn: async () => {
-      const user = await api.get<User>('/auth/me');
-      return user;
+      const response = await api.get<UserResponse>('/auth/me');
+      return response.data; // Extract user from response
     },
     staleTime: 5 * 60 * 1000, // 5 minutes
     retry: false, // Don't retry if unauthorized

@@ -12,7 +12,7 @@ export type SubAdmin = {
   id: number;
   fullName: string;
   email: string;
-  stateId: string;
+  status: string;
   createdOn: string;
   createdById: string;
 };

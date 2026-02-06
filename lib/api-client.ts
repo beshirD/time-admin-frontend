@@ -60,9 +60,8 @@ async function apiClient<T>(
       );
     }
 
-    // Return the data property from the API response
-    const apiResponse = data as ApiResponse<T>;
-    return apiResponse.data;
+    // Return the full response - let the caller decide what to extract
+    return data as T;
   } catch (error) {
     if (error instanceof ApiClientError) {
       throw error;

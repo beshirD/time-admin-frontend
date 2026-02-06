@@ -11,9 +11,11 @@ import { SubAdmin } from "@/types/entities";
 // Status badge component
 const StatusBadge = ({ status }: { status: string }) => {
   const statusStyles = {
-    Active:
+    ACTIVE:
       "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400",
-    Inactive:
+    PENDING:
+      "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400",
+    INACTIVE:
       "bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400",
   };
 
@@ -97,9 +99,9 @@ export const columns: ColumnDef<SubAdmin>[] = [
     ),
   },
   {
-    accessorKey: "stateId",
-    header: "State Id",
-    cell: ({ row }) => <StatusBadge status={row.getValue("stateId")} />,
+    accessorKey: "status",
+    header: "Status",
+    cell: ({ row }) => <StatusBadge status={row.getValue("status")} />,
   },
   {
     accessorKey: "createdOn",

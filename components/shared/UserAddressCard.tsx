@@ -39,7 +39,7 @@ export default function UserAddressCard({
                 Country
               </p>
               <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                {address.country || "United States"}
+                {address.country || "-"}
               </p>
             </div>
 
@@ -48,7 +48,7 @@ export default function UserAddressCard({
                 City/State
               </p>
               <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                {address.cityState || "Phoenix, Arizona, United States."}
+                {address.cityState || "-"}
               </p>
             </div>
 
@@ -57,7 +57,7 @@ export default function UserAddressCard({
                 Postal Code
               </p>
               <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                {address.postalCode || "ERT 2489"}
+                {address.postalCode || "-"}
               </p>
             </div>
 
@@ -66,7 +66,7 @@ export default function UserAddressCard({
                 TAX ID
               </p>
               <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                {address.taxId || "AS4568384"}
+                {address.taxId || "-"}
               </p>
             </div>
           </div>
@@ -114,7 +114,8 @@ export default function UserAddressCard({
                   <Label>Country</Label>
                   <Input
                     type="text"
-                    defaultValue={address.country || "United States"}
+                    defaultValue={address.country}
+                    placeholder="Enter country"
                   />
                 </div>
 
@@ -122,9 +123,8 @@ export default function UserAddressCard({
                   <Label>City/State</Label>
                   <Input
                     type="text"
-                    defaultValue={
-                      address.cityState || "Arizona, United States."
-                    }
+                    defaultValue={address.cityState}
+                    placeholder="Enter city/state"
                   />
                 </div>
 
@@ -132,7 +132,8 @@ export default function UserAddressCard({
                   <Label>Postal Code</Label>
                   <Input
                     type="text"
-                    defaultValue={address.postalCode || "ERT 2489"}
+                    defaultValue={address.postalCode}
+                    placeholder="Enter postal code"
                   />
                 </div>
 
@@ -140,7 +141,8 @@ export default function UserAddressCard({
                   <Label>TAX ID</Label>
                   <Input
                     type="text"
-                    defaultValue={address.taxId || "AS4568384"}
+                    defaultValue={address.taxId}
+                    placeholder="Enter TAX ID"
                   />
                 </div>
               </div>

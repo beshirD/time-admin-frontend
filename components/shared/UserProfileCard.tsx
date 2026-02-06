@@ -55,13 +55,11 @@ export default function UserProfileCard({ customer }: UserProfileCardProps) {
             <h3 className="text-lg font-bold text-gray-800 dark:text-white/90 mb-1">
               {customer.fullName}
             </h3>
-            <div className="flex flex-wrap items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
-              <span className="font-medium">
-                {customer.role || "Team Manager"}
-              </span>
-              <span className="w-px h-3 bg-gray-300 dark:bg-gray-600"></span>
-              <span>Arizona, United States</span>
-            </div>
+            {customer.role && (
+              <div className="flex flex-wrap items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
+                <span className="font-medium">{customer.role}</span>
+              </div>
+            )}
           </div>
         </div>
 
@@ -123,7 +121,7 @@ export default function UserProfileCard({ customer }: UserProfileCardProps) {
                     <Label>Facebook</Label>
                     <Input
                       type="text"
-                      defaultValue="https://www.facebook.com/"
+                      placeholder="https://www.facebook.com/"
                     />
                   </div>
 
@@ -131,7 +129,7 @@ export default function UserProfileCard({ customer }: UserProfileCardProps) {
                     <Label>X.com</Label>
                     <Input
                       type="text"
-                      defaultValue="https://x.com/"
+                      placeholder="https://x.com/"
                     />
                   </div>
 
@@ -139,7 +137,7 @@ export default function UserProfileCard({ customer }: UserProfileCardProps) {
                     <Label>Linkedin</Label>
                     <Input
                       type="text"
-                      defaultValue="https://www.linkedin.com/"
+                      placeholder="https://www.linkedin.com/"
                     />
                   </div>
 
@@ -147,7 +145,7 @@ export default function UserProfileCard({ customer }: UserProfileCardProps) {
                     <Label>Instagram</Label>
                     <Input
                       type="text"
-                      defaultValue="https://instagram.com/"
+                      placeholder="https://instagram.com/"
                     />
                   </div>
                 </div>
@@ -176,7 +174,7 @@ export default function UserProfileCard({ customer }: UserProfileCardProps) {
                     <Label>Location</Label>
                     <Input
                       type="text"
-                      defaultValue="Arizona, United States"
+                      placeholder="Enter location"
                     />
                   </div>
                 </div>
