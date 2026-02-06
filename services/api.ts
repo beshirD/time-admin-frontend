@@ -24,15 +24,12 @@ class ApiService {
   }
 
   private setupInterceptors(): void {
-    // Request interceptor - attach access token to all requests
+    // Request interceptor - tokens are now in httpOnly cookies
+    // The browser automatically sends cookies with requests
     this.api.interceptors.request.use(
       (config: InternalAxiosRequestConfig) => {
-        const accessToken = this.getAccessToken();
-        
-        if (accessToken && config.headers) {
-          config.headers.Authorization = `Bearer ${accessToken}`;
-        }
-
+        // Cookies are automatically included by the browser
+        // No need to manually attach Authorization header
         return config;
       },
       (error) => {
@@ -51,12 +48,9 @@ class ApiService {
           originalRequest._retry = true;
 
           try {
-            const newAccessToken = await this.refreshAccessToken();
-            
-            if (newAccessToken && originalRequest.headers) {
-              originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
-              return this.api(originalRequest);
-            }
+            await this.refreshAccessToken();
+            // Retry the original request (cookies will be updated automatically)
+            return this.api(originalRequest);
           } catch (refreshError) {
             // Refresh failed - redirect to login
             this.handleAuthFailure();
@@ -69,57 +63,30 @@ class ApiService {
     );
   }
 
-  private getAccessToken(): string | null {
-    if (typeof window === 'undefined') return null;
-    return localStorage.getItem('accessToken');
-  }
+  // Token management removed - now using httpOnly cookies only
+  // Tokens are managed by server actions in lib/auth-cookies.ts
 
-  private setAccessToken(token: string): void {
-    if (typeof window === 'undefined') return;
-    localStorage.setItem('accessToken', token);
-  }
-
-  private getRefreshToken(): string | null {
-    if (typeof window === 'undefined') return null;
-    return localStorage.getItem('refreshToken');
-  }
-
-  private async refreshAccessToken(): Promise<string | null> {
-    const refreshToken = this.getRefreshToken();
-    
-    if (!refreshToken) {
-      return null;
-    }
-
+  private async refreshAccessToken(): Promise<void> {
     try {
-      // Placeholder - will use actual refresh endpoint
-      const response = await axios.post(`${API_BASE_URL}/auth/refresh`, {
-        refreshToken,
+      // Call refresh endpoint - cookies are sent automatically
+      await axios.post(`${API_BASE_URL}/auth/refresh-token`, {}, {
+        withCredentials: true, // Ensure cookies are sent
       });
-
-      const newAccessToken = response.data.data.accessToken;
-      this.setAccessToken(newAccessToken);
-      
-      return newAccessToken;
+      // New tokens are set in cookies by the server
     } catch {
-      this.clearTokens();
-      return null;
+      // Refresh failed
+      throw new Error('Token refresh failed');
     }
   }
 
   private handleAuthFailure(): void {
-    this.clearTokens();
-    
+    // Tokens are now in httpOnly cookies, cleared by server
     if (typeof window !== 'undefined') {
       window.location.href = '/login';
     }
   }
 
-  private clearTokens(): void {
-    if (typeof window === 'undefined') return;
-    localStorage.removeItem('accessToken');
-    localStorage.removeItem('refreshToken');
-  }
+
 
   private normalizeError(error: AxiosError<ApiErrorResponse>): ApiErrorResponse {
     if (error.response?.data) {

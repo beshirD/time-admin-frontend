@@ -4,19 +4,15 @@ import Checkbox from "@/components/ui/Checkbox";
 import Input from "@/components/ui/Input";
 import Label from "@/components/ui/Label";
 import Button from "@/components/ui/Button";
-import { ChevronLeftIcon, EyeCloseIcon, EyeIcon } from "@/components/icons";
+import { EyeCloseIcon, EyeIcon } from "@/components/icons";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import React, { useState, FormEvent } from "react";
-import { authService } from "@/services/auth";
-import { setAuthCookie } from "@/lib/auth-cookies";
+import { useSignIn } from "@/hooks/useAuth";
 
 export default function SignInForm() {
-  const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string>("");
+  const signInMutation = useSignIn();
 
   // Form state
   const [formData, setFormData] = useState({
@@ -52,41 +48,15 @@ export default function SignInForm() {
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setError("");
 
     if (!validateForm()) {
       return;
     }
 
-    setIsLoading(true);
-
-    try {
-      const response = await authService.signIn({
-        email: formData.email,
-        password: formData.password,
-      });
-
-      // Successfully logged in
-      console.log("Login successful:", response);
-
-      // Set auth cookie for middleware (keeps tokens in localStorage too)
-      if (response.accessToken) {
-        await setAuthCookie(response.accessToken);
-      }
-
-      // Redirect to dashboard
-      router.push("/dashboard");
-      router.refresh(); // Refresh to update middleware state
-    } catch (err: unknown) {
-      const errorMessage =
-        err instanceof Error
-          ? err.message
-          : "Failed to sign in. Please try again.";
-      setError(errorMessage);
-      console.error("Login error:", err);
-    } finally {
-      setIsLoading(false);
-    }
+    signInMutation.mutate({
+      email: formData.email,
+      password: formData.password,
+    });
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -104,22 +74,14 @@ export default function SignInForm() {
       }));
     }
 
-    // Clear general error
-    if (error) {
-      setError("");
+    // Clear mutation error
+    if (signInMutation.error) {
+      signInMutation.reset();
     }
   };
 
   return (
     <div className="flex flex-col flex-1 lg:w-1/2 w-full h-full">
-      {/* <div className="w-full max-w-md sm:pt-10 mx-auto mb-5">
-        <Link
-          href="/"
-          className="inline-flex items-center text-sm text-gray-500 transition-colors hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300">
-          <ChevronLeftIcon />
-          Back to home
-        </Link>
-      </div> */}
       <div className="flex flex-col bg-white justify-center flex-1 w-full max-w-lg mx-auto p-8 rounded-2xl border shadow-2xl">
         <div>
           <div className="mb-5 sm:mb-8 flex flex-col items-center justify-center">
@@ -134,7 +96,7 @@ export default function SignInForm() {
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-5">
               <button
                 type="button"
-                disabled={isLoading}
+                disabled={signInMutation.isPending}
                 className="inline-flex border items-center justify-center gap-3 py-3 text-sm font-normal text-gray-700 transition-colors bg-gray-100 rounded-lg px-7 hover:bg-gray-200 hover:text-gray-800 dark:bg-white/5 dark:text-white/90 dark:hover:bg-white/10 disabled:opacity-50 disabled:cursor-not-allowed">
                 <svg
                   width="20"
@@ -163,7 +125,7 @@ export default function SignInForm() {
               </button>
               <button
                 type="button"
-                disabled={isLoading}
+                disabled={signInMutation.isPending}
                 className="inline-flex border items-center justify-center gap-3 py-3 text-sm font-normal text-gray-700 transition-colors bg-gray-100 rounded-lg px-5 hover:bg-gray-200 hover:text-gray-800 dark:bg-white/5 dark:text-white/90 dark:hover:bg-white/10 disabled:opacity-50 disabled:cursor-not-allowed">
                 <svg
                   width="20"
@@ -195,10 +157,10 @@ export default function SignInForm() {
             </div>
             <form onSubmit={handleSubmit}>
               {/* Global error message */}
-              {error && (
+              {signInMutation.error && (
                 <div className="mb-4 p-3 rounded-lg bg-error-50 dark:bg-error-500/10 border border-error-200 dark:border-error-500/20">
                   <p className="text-sm text-error-700 dark:text-error-400">
-                    {error}
+                    {signInMutation.error.message}
                   </p>
                 </div>
               )}
@@ -217,7 +179,7 @@ export default function SignInForm() {
                     onChange={handleInputChange}
                     error={!!validationErrors.email}
                     hint={validationErrors.email}
-                    disabled={isLoading}
+                    disabled={signInMutation.isPending}
                     required
                   />
                 </div>
@@ -235,7 +197,7 @@ export default function SignInForm() {
                       onChange={handleInputChange}
                       error={!!validationErrors.password}
                       hint={validationErrors.password}
-                      disabled={isLoading}
+                      disabled={signInMutation.isPending}
                       required
                     />
                     <span
@@ -254,7 +216,7 @@ export default function SignInForm() {
                     <Checkbox
                       checked={isChecked}
                       onChange={setIsChecked}
-                      disabled={isLoading}
+                      disabled={signInMutation.isPending}
                     />
                     <span className="block font-normal text-gray-700 text-theme-sm dark:text-gray-400">
                       Keep me logged in
@@ -271,8 +233,8 @@ export default function SignInForm() {
                     type="submit"
                     className="w-full"
                     size="sm"
-                    disabled={isLoading}>
-                    {isLoading ? "Signing in..." : "Sign in"}
+                    disabled={signInMutation.isPending}>
+                    {signInMutation.isPending ? "Signing in..." : "Sign in"}
                   </Button>
                 </div>
               </div>
