@@ -15,7 +15,7 @@ export function SettingsContent() {
       <SettingsTabs activeTab={activeTab} />
 
       {/* Tab Content */}
-      <div className="bg-white dark:bg-gray-900 rounded-lg border">
+      <div className="">
         {activeTab === "profile" && <ProfileTab />}
         {activeTab === "preferences" && <PreferencesTab />}
         {activeTab === "security" && (

@@ -15,7 +15,7 @@ export function ProfileHeader({ user }: ProfileHeaderProps) {
 
   return (
     <>
-      <div className="flex items-center justify-between pb-6 border-b border-gray-200 dark:border-gray-800">
+      <div className="flex items-center justify-between border bg-white dark:bg-gray-900 rounded-lg p-4">
         <div className="flex items-center gap-4">
           {/* Profile Picture */}
           <div className="relative w-20 h-20 rounded-full overflow-hidden border-2 border-gray-200 dark:border-gray-700 shrink-0">
