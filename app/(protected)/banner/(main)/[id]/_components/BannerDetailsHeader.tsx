@@ -2,8 +2,9 @@
 
 import React from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, Trash2 } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
+import Button from "@/components/ui/Button";
 
 interface BannerDetailsHeaderProps {
   bannerId: string;
@@ -71,10 +72,7 @@ export default function BannerDetailsHeader({
           bannerId={bannerId}
           bannerName={bannerName}
           onDeleteSuccess={() => router.push("/banner")}>
-          <button className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-red-600 dark:text-red-400 border border-red-300 dark:border-red-500 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors">
-            <Trash2 className="w-4 h-4" />
-            Delete Banner
-          </button>
+          <Button usage="delete">Delete Banner</Button>
         </DeleteBannerDialog>
       </div>
     </div>

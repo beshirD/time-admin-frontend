@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowLeft, Trash2, Info, FileText, Package } from "lucide-react";
+import { ArrowLeft, Info, FileText, Package } from "lucide-react";
+import Button from "@/components/ui/Button";
 import { DeleteConfirmationDialog } from "@/components/common/DeleteConfirmationDialog";
 import { useSearchParams } from "next/navigation";
 
@@ -91,12 +92,7 @@ export function DriverHeader({
             onSuccess={() => {
               window.location.href = "/drivers";
             }}
-            trigger={
-              <button className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-md transition-colors border border-red-600 dark:border-red-500">
-                <Trash2 className="h-4 w-4" />
-                Delete Driver
-              </button>
-            }
+            trigger={<Button usage="delete">Delete Driver</Button>}
           />
         </div>
       </div>

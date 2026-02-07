@@ -5,6 +5,7 @@ import { Eye, EyeOff } from "lucide-react";
 import Input from "@/components/ui/Input";
 import Label from "@/components/ui/Label";
 import Button from "@/components/ui/Button";
+import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
 import { Modal } from "@/components/ui/modal";
 
@@ -17,6 +18,14 @@ export function CreateSubAdminDialog() {
     email: "",
     password: "",
     profileFile: null as File | null,
+    permissions: {
+      createOrders: false,
+      deleteOrders: false,
+      viewReports: false,
+      editUsers: false,
+      manageSettings: false,
+      approveRequests: false,
+    },
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -35,6 +44,14 @@ export function CreateSubAdminDialog() {
       email: "",
       password: "",
       profileFile: null,
+      permissions: {
+        createOrders: false,
+        deleteOrders: false,
+        viewReports: false,
+        editUsers: false,
+        manageSettings: false,
+        approveRequests: false,
+      },
     });
   };
 
@@ -57,8 +74,8 @@ export function CreateSubAdminDialog() {
         onClose={() => setOpen(false)}
         title="Create New Admin"
         hideTitle={true}
-        className="max-w-[700px] m-4">
-        <div className="no-scrollbar relative w-full max-w-[700px] overflow-y-auto rounded-3xl bg-white p-4 dark:bg-gray-900 lg:p-11">
+        className="max-w-[700px] m-4 min-h-[80%]">
+        <div className="no-scrollbar relative h-full w-[700px] border overflow-y-auto rounded-3xl bg-white p-4 dark:bg-gray-900 lg:p-11">
           <div className="px-2 pr-14">
             <h4 className="mb-2 text-2xl font-semibold text-gray-800 dark:text-white/90">
               Create New Admin
@@ -71,7 +88,7 @@ export function CreateSubAdminDialog() {
           <form
             className="flex flex-col"
             onSubmit={handleSubmit}>
-            <div className="custom-scrollbar h-[450px] overflow-y-auto px-2 pb-3">
+            <div className="custom-scrollbar h-[550px] overflow-y-auto px-2 pb-3">
               <div>
                 <h5 className="mb-5 text-lg font-medium text-gray-800 dark:text-white/90 lg:mb-6">
                   Account Information
@@ -111,7 +128,7 @@ export function CreateSubAdminDialog() {
                   </div>
 
                   {/* Email */}
-                  <div className="col-span-2">
+                  <div className="">
                     <Label htmlFor="email">
                       Email <span className="text-red-500">*</span>
                     </Label>
@@ -128,7 +145,7 @@ export function CreateSubAdminDialog() {
                   </div>
 
                   {/* Password */}
-                  <div className="col-span-2">
+                  <div className="">
                     <Label htmlFor="password">
                       Password <span className="text-red-500">*</span>
                     </Label>
@@ -178,6 +195,206 @@ export function CreateSubAdminDialog() {
                         onChange={handleFileChange}
                         className="hidden"
                       />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Permissions Section */}
+                <div className="mt-8">
+                  <h5 className="mb-5 text-lg font-medium text-gray-800 dark:text-white/90">
+                    Permissions
+                  </h5>
+                  <p className="mb-4 text-sm text-gray-500 dark:text-gray-400">
+                    Select the permissions for this sub-admin
+                  </p>
+
+                  <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+                    {/* Create Orders */}
+                    <div
+                      onClick={() =>
+                        setFormData({
+                          ...formData,
+                          permissions: {
+                            ...formData.permissions,
+                            createOrders: !formData.permissions.createOrders,
+                          },
+                        })
+                      }
+                      className="flex items-center justify-between p-4 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 transition cursor-pointer">
+                      <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Create Orders
+                      </span>
+                      <div onClick={(e) => e.stopPropagation()}>
+                        <Switch
+                          checked={formData.permissions.createOrders}
+                          onCheckedChange={(checked: boolean) =>
+                            setFormData({
+                              ...formData,
+                              permissions: {
+                                ...formData.permissions,
+                                createOrders: checked,
+                              },
+                            })
+                          }
+                        />
+                      </div>
+                    </div>
+
+                    {/* Delete Orders */}
+                    <div
+                      onClick={() =>
+                        setFormData({
+                          ...formData,
+                          permissions: {
+                            ...formData.permissions,
+                            deleteOrders: !formData.permissions.deleteOrders,
+                          },
+                        })
+                      }
+                      className="flex items-center justify-between p-4 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 transition cursor-pointer">
+                      <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Delete Orders
+                      </span>
+                      <div onClick={(e) => e.stopPropagation()}>
+                        <Switch
+                          checked={formData.permissions.deleteOrders}
+                          onCheckedChange={(checked: boolean) =>
+                            setFormData({
+                              ...formData,
+                              permissions: {
+                                ...formData.permissions,
+                                deleteOrders: checked,
+                              },
+                            })
+                          }
+                        />
+                      </div>
+                    </div>
+
+                    {/* View Reports */}
+                    <div
+                      onClick={() =>
+                        setFormData({
+                          ...formData,
+                          permissions: {
+                            ...formData.permissions,
+                            viewReports: !formData.permissions.viewReports,
+                          },
+                        })
+                      }
+                      className="flex items-center justify-between p-4 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 transition cursor-pointer">
+                      <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                        View Reports
+                      </span>
+                      <div onClick={(e) => e.stopPropagation()}>
+                        <Switch
+                          checked={formData.permissions.viewReports}
+                          onCheckedChange={(checked: boolean) =>
+                            setFormData({
+                              ...formData,
+                              permissions: {
+                                ...formData.permissions,
+                                viewReports: checked,
+                              },
+                            })
+                          }
+                        />
+                      </div>
+                    </div>
+
+                    {/* Edit Users */}
+                    <div
+                      onClick={() =>
+                        setFormData({
+                          ...formData,
+                          permissions: {
+                            ...formData.permissions,
+                            editUsers: !formData.permissions.editUsers,
+                          },
+                        })
+                      }
+                      className="flex items-center justify-between p-4 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 transition cursor-pointer">
+                      <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Edit Users
+                      </span>
+                      <div onClick={(e) => e.stopPropagation()}>
+                        <Switch
+                          checked={formData.permissions.editUsers}
+                          onCheckedChange={(checked: boolean) =>
+                            setFormData({
+                              ...formData,
+                              permissions: {
+                                ...formData.permissions,
+                                editUsers: checked,
+                              },
+                            })
+                          }
+                        />
+                      </div>
+                    </div>
+
+                    {/* Manage Settings */}
+                    <div
+                      onClick={() =>
+                        setFormData({
+                          ...formData,
+                          permissions: {
+                            ...formData.permissions,
+                            manageSettings:
+                              !formData.permissions.manageSettings,
+                          },
+                        })
+                      }
+                      className="flex items-center justify-between p-4 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 transition cursor-pointer">
+                      <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Manage Settings
+                      </span>
+                      <div onClick={(e) => e.stopPropagation()}>
+                        <Switch
+                          checked={formData.permissions.manageSettings}
+                          onCheckedChange={(checked: boolean) =>
+                            setFormData({
+                              ...formData,
+                              permissions: {
+                                ...formData.permissions,
+                                manageSettings: checked,
+                              },
+                            })
+                          }
+                        />
+                      </div>
+                    </div>
+
+                    {/* Approve Requests */}
+                    <div
+                      onClick={() =>
+                        setFormData({
+                          ...formData,
+                          permissions: {
+                            ...formData.permissions,
+                            approveRequests:
+                              !formData.permissions.approveRequests,
+                          },
+                        })
+                      }
+                      className="flex items-center justify-between p-4 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 transition cursor-pointer">
+                      <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Approve Requests
+                      </span>
+                      <div onClick={(e) => e.stopPropagation()}>
+                        <Switch
+                          checked={formData.permissions.approveRequests}
+                          onCheckedChange={(checked: boolean) =>
+                            setFormData({
+                              ...formData,
+                              permissions: {
+                                ...formData.permissions,
+                                approveRequests: checked,
+                              },
+                            })
+                          }
+                        />
+                      </div>
                     </div>
                   </div>
                 </div>

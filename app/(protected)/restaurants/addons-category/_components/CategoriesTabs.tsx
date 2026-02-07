@@ -41,7 +41,7 @@ export function CategoriesTabs({
           <div className="flex gap-2">
             <button
               onClick={() => setActiveTab("addons")}
-              className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
+              className={`px-4 py-2 text-sm border border-primary font-medium rounded-md transition-colors ${
                 activeTab === "addons"
                   ? "bg-primary text-white"
                   : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800"
@@ -50,7 +50,7 @@ export function CategoriesTabs({
             </button>
             <button
               onClick={() => setActiveTab("food")}
-              className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
+              className={`px-4 py-2 text-sm border border-primary font-medium rounded-md transition-colors ${
                 activeTab === "food"
                   ? "bg-primary text-white"
                   : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800"
