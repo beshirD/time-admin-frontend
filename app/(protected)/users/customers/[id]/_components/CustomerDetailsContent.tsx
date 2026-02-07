@@ -75,8 +75,8 @@ export function CustomerDetailsContent({
   };
 
   return (
-    <div className="w-full dark:bg-gray-900 space-y-4 rounded-lg">
-      <div className="mx-auto">
+    <div className="w-full">
+      <div className="mx-auto flex flex-col gap-5">
         {/* Header */}
         <CustomerHeader
           customerId={customerId}
@@ -86,11 +86,11 @@ export function CustomerDetailsContent({
         />
 
         {/* Main Content */}
-        <div className="space-y-6">
-          <UserProfileCard customer={transformedCustomer} />
-          <UserInfoCard customer={transformedCustomer} />
-          <UserAddressCard />
-        </div>
+        {/* <div className="space-y-6"> */}
+        <UserProfileCard customer={transformedCustomer} />
+        <UserInfoCard customer={transformedCustomer} />
+        <UserAddressCard />
+        {/* </div> */}
 
         {/* User Actions Section */}
         <div className="mt-6">

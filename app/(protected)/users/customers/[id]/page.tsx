@@ -1,4 +1,3 @@
-import * as React from "react";
 import { CustomerDetailsContent } from "./_components/CustomerDetailsContent";
 
 export default async function CustomerDetailsPage({

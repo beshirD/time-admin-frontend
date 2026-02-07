@@ -26,7 +26,7 @@ export default function UserProfileCard({ customer }: UserProfileCardProps) {
   };
 
   return (
-    <div className="p-5 border border-gray-200 rounded-2xl dark:border-gray-800 lg:p-6 bg-white dark:bg-gray-800">
+    <div className="bg-white dark:bg-gray-900 rounded-lg border p-5">
       <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
         <div className="flex items-center gap-4 lg:gap-5">
           {/* Profile Image */}

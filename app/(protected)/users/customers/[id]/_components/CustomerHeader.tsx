@@ -17,7 +17,7 @@ export function CustomerHeader({
   role,
 }: CustomerHeaderProps) {
   return (
-    <div className="py-3 flex items-center px-5 justify-between">
+    <div className="py-3 bg-white dark:bg-gray-900 rounded-lg border flex items-center px-5 justify-between">
       <div className="flex items-center gap-4">
         <Link
           href="/users/customers"
@@ -25,7 +25,7 @@ export function CustomerHeader({
           <ArrowLeft className="h-5 w-5" />
         </Link>
         <div className="flex items-center gap-3">
-          <h1 className="text-2xl font-semibold text-gray-900 dark:text-white">
+          <h1 className="text-xl font-semibold text-gray-900 dark:text-white">
             {fullName}
           </h1>
           <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-sm font-medium bg-success-100 text-success-800 dark:bg-success-900/30 dark:text-success-400">
