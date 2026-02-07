@@ -4,6 +4,7 @@ import { useAdminUsers } from "@/hooks/useAdminUsers";
 import { DataTable } from "@/components/shared/DataTable";
 import { columns } from "./columns";
 import type { Customer } from "@/types/entities";
+import { TableSkeleton } from "@/components/ui/TableSkeleton";
 
 export function CustomersTable() {
   const {
@@ -18,11 +19,11 @@ export function CustomersTable() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center py-12">
-        <div className="text-gray-500 dark:text-gray-400">
-          Loading customers...
-        </div>
-      </div>
+      <TableSkeleton
+        rows={10}
+        columns={6}
+        showHeader={true}
+      />
     );
   }
 

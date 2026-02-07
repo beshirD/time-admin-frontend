@@ -39,6 +39,7 @@ import Input from "@/components/ui/Input";
 import Checkbox from "@/components/ui/Checkbox";
 import { Dropdown } from "@/components/ui/dropdown/Dropdown";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { TableSkeleton } from "@/components/ui/TableSkeleton";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -325,13 +326,24 @@ export function DataTable<TData, TValue>({
                 </thead>
                 <tbody className="[&_tr:last-child]:border-0">
                   {isLoading ? (
-                    <tr className="hover:bg-muted/50 data-[state=selected]:bg-muted border-b transition-colors">
-                      <td
-                        colSpan={columns.length}
-                        className="p-4 align-middle whitespace-nowrap h-24 text-center">
-                        Loading...
-                      </td>
-                    </tr>
+                    <>
+                      {Array.from({ length: 5 }).map((_, index) => (
+                        <tr
+                          key={`skeleton-${index}`}
+                          className="border-b">
+                          {columns.map((column, colIndex) => (
+                            <td
+                              key={`skeleton-cell-${index}-${colIndex}`}
+                              className="p-4 align-middle">
+                              <div
+                                className="h-4 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"
+                                style={{ width: `${Math.random() * 40 + 60}%` }}
+                              />
+                            </td>
+                          ))}
+                        </tr>
+                      ))}
+                    </>
                   ) : table.getRowModel().rows?.length ? (
                     table.getRowModel().rows.map((row) => (
                       <tr

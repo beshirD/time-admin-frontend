@@ -19,14 +19,16 @@ export function SubAdminHeader({
   role = "Sub-Admin",
 }: SubAdminHeaderProps) {
   const statusStyles = {
-    Active:
+    ACTIVE:
       "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400",
-    Inactive:
+    INACTIVE:
       "bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400",
+    PENDING:
+      "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400",
   };
 
   return (
-    <div className="py-3 px-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div className="py-3 px-5 flex bg-white dark:bg-gray-900 rounded-lg border flex-col sm:flex-row sm:items-center justify-between gap-4">
       <div className="flex items-center gap-4">
         <Link
           href="/users/sub-admin"

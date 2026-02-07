@@ -62,8 +62,8 @@ export function SubAdminDetailsContent({
   };
 
   return (
-    <div className="w-full dark:bg-gray-900 space-y-4 rounded-lg">
-      <div className="mx-auto">
+    <div className="w-full space-y-4">
+      <div className="mx-auto space-y-5">
         {/* Header */}
         <SubAdminHeader
           subAdminId={adminId}
@@ -72,7 +72,7 @@ export function SubAdminDetailsContent({
         />
 
         {/* Main Content */}
-        <div className="space-y-6">
+        <div className="space-y-5">
           <UserProfileCard customer={transformedAdmin} />
           <UserInfoCard customer={transformedAdmin} />
           <UserAddressCard />
