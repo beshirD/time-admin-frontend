@@ -17,16 +17,16 @@ export function useCreateRole() {
         '/rbac/roles',
         request
       );
-      return response.data;
+      return response; // Return full response, not just response.data
     },
     onSuccess: (response) => {
       toast.success(response.message || 'Role created successfully');
       // Invalidate roles query to refresh the list
       queryClient.invalidateQueries({ queryKey: ['roles'] });
     },
-    onError: (error: { response?: { data?: { message?: string; status?: number } } }) => {
-      const errorData = error?.response?.data;
-      const errorMessage = errorData?.message || 'Failed to create role';
+    onError: (error: any) => {
+      // ApiClientError instances have the message directly on the error object
+      const errorMessage = error?.message || 'Failed to create role';
       
       // Check if it's a permission error
       if (errorMessage.includes('Permission') && errorMessage.includes('required')) {

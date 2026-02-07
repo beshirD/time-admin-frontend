@@ -96,7 +96,7 @@ export function CreateRoleDialog() {
       <Button
         usage="create"
         onClick={() => setOpen(true)}>
-        Create Role
+        Create New Role
       </Button>
 
       <Modal

@@ -19,49 +19,48 @@ export function RolesPermissionsTab() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex w-full rounded-lg bg-white dark:bg-gray-900 px-5 py-2 border items-center justify-between">
         <div>
-          <h3 className="text-2xl font-semibold text-gray-800 dark:text-white">
+          <h3 className="text-xl font-semibold text-gray-800 dark:text-white">
             Roles & Permissions
           </h3>
-          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+          <p className="mt-0.5 text-sm text-gray-500 dark:text-gray-400">
             Manage roles and permissions for access control
           </p>
         </div>
-      </div>
-
-      {/* View Toggle */}
-      <div className="flex gap-2 p-1 bg-gray-100 dark:bg-gray-800 rounded-lg w-fit">
-        <button
-          onClick={() => setActiveView("roles")}
-          className={`px-6 py-2 text-sm font-medium rounded-md transition-all ${
-            activeView === "roles"
-              ? "bg-white dark:bg-gray-700 text-primary shadow-sm"
-              : "text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200"
-          }`}>
-          <Shield className="inline-block h-4 w-4 mr-2" />
-          Roles
-        </button>
-        <button
-          onClick={() => setActiveView("permissions")}
-          className={`px-6 py-2 text-sm font-medium rounded-md transition-all ${
-            activeView === "permissions"
-              ? "bg-white dark:bg-gray-700 text-primary shadow-sm"
-              : "text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200"
-          }`}>
-          <Key className="inline-block h-4 w-4 mr-2" />
-          Permissions
-        </button>
+        {/* View Toggle */}
+        <div className="flex gap-2 p-1 border bg-gray-100 dark:bg-gray-800 rounded-lg w-fit">
+          <button
+            onClick={() => setActiveView("roles")}
+            className={`px-6 py-2 text-sm font-medium rounded-md transition-all ${
+              activeView === "roles"
+                ? "bg-primary/20 border border-primary/60 text-primary shadow-sm"
+                : "text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200"
+            }`}>
+            <Shield className="inline-block h-4 w-4 mr-2" />
+            Roles
+          </button>
+          <button
+            onClick={() => setActiveView("permissions")}
+            className={`px-6 py-2 text-sm font-medium rounded-md transition-all ${
+              activeView === "permissions"
+                ? "bg-primary/20 border border-primary/60 text-primary shadow-sm"
+                : "text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200"
+            }`}>
+            <Key className="inline-block h-4 w-4 mr-2" />
+            Permissions
+          </button>
+        </div>
       </div>
 
       {/* Roles View */}
       {activeView === "roles" && (
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <p className="text-sm text-gray-600 dark:text-gray-400">
+        <div className="space-y-3 rounded-lg bg-white dark:bg-gray-900 p-6 border">
+          <div className="flex items-center justify-between pb-3 border-b">
+            <h3 className="text-lg font-semibold text-gray-800 dark:text-white">
               {roles?.length || 0} role{roles?.length !== 1 ? "s" : ""}{" "}
               available
-            </p>
+            </h3>
             <CreateRoleDialog />
           </div>
 
@@ -70,11 +69,11 @@ export function RolesPermissionsTab() {
               <Loader2 className="h-8 w-8 animate-spin text-primary" />
             </div>
           ) : roles && roles.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
               {roles.map((role) => (
                 <div
                   key={role.id}
-                  className="p-5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl hover:border-primary/50 transition-colors">
+                  className="p-5 bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-xl hover:border-primary/50 transition-colors">
                   <div className="flex items-start justify-between mb-3">
                     <div>
                       <h4 className="text-lg font-semibold text-gray-800 dark:text-white">
@@ -113,12 +112,12 @@ export function RolesPermissionsTab() {
 
       {/* Permissions View */}
       {activeView === "permissions" && (
-        <div className="space-y-4">
+        <div className="space-y-4 rounded-lg bg-white dark:bg-gray-900 p-6 border">
           <div className="flex items-center justify-between">
-            <p className="text-sm text-gray-600 dark:text-gray-400">
+            <h3 className="text-lg font-semibold text-gray-800 dark:text-white">
               {permissions?.length || 0} permission
               {permissions?.length !== 1 ? "s" : ""} available
-            </p>
+            </h3>
             <CreatePermissionDialog />
           </div>
 
@@ -142,15 +141,17 @@ export function RolesPermissionsTab() {
                   {} as Record<string, typeof permissions>,
                 ),
               ).map(([category, categoryPermissions]) => (
-                <div key={category}>
-                  <h4 className="text-sm font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wide mb-3 px-1">
+                <div
+                  key={category}
+                  className=" border-b pb-5">
+                  <h4 className="text-lg font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wide mb-3 px-1">
                     {category}
                   </h4>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                     {categoryPermissions.map((permission) => (
                       <div
                         key={permission.id}
-                        className="p-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg hover:border-primary/50 transition-colors">
+                        className="p-4 bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg transition-colors">
                         <div className="flex items-start justify-between">
                           <div className="flex-1">
                             <h5 className="font-medium text-gray-800 dark:text-white">
@@ -165,7 +166,7 @@ export function RolesPermissionsTab() {
                               </p>
                             )}
                           </div>
-                          <Key className="h-4 w-4 text-primary ml-2 flex-shrink-0" />
+                          <Key className="h-4 w-4 text-primary ml-2 shrink-0" />
                         </div>
                       </div>
                     ))}

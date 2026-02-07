@@ -75,7 +75,7 @@ export function CreatePermissionDialog() {
       <Button
         usage="create"
         onClick={() => setOpen(true)}>
-        Create Permission
+        Create New Permission
       </Button>
 
       <Modal
@@ -84,7 +84,7 @@ export function CreatePermissionDialog() {
         title="Create New Permission"
         hideTitle={true}
         className="max-w-[600px] m-4">
-        <div className="no-scrollbar relative h-full w-full max-w-[600px] border overflow-y-auto rounded-3xl bg-white p-4 dark:bg-gray-900 lg:p-11">
+        <div className="no-scrollbar relative h-full w-[600px] border overflow-y-auto rounded-3xl bg-white p-4 dark:bg-gray-900 lg:p-11">
           <div className="px-2 pr-14">
             <h4 className="mb-2 text-2xl font-semibold text-gray-800 dark:text-white/90">
               Create New Permission
@@ -113,7 +113,7 @@ export function CreatePermissionDialog() {
                   }
                   placeholder="e.g., View User Profile"
                 />
-                <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
                   Human-readable name for the permission
                 </p>
               </div>
@@ -133,7 +133,7 @@ export function CreatePermissionDialog() {
                   }
                   placeholder="e.g., USER_VIEW"
                 />
-                <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
                   Unique code identifier (uppercase with underscores)
                 </p>
               </div>
@@ -153,7 +153,7 @@ export function CreatePermissionDialog() {
                   searchPlaceholder="Search categories..."
                   className="w-full"
                 />
-                <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
                   Group this permission belongs to
                 </p>
               </div>
@@ -173,7 +173,7 @@ export function CreatePermissionDialog() {
                   placeholder="Describe what this permission allows..."
                   className="flex h-20 w-full rounded-md border-2 border-gray-200 bg-transparent px-3 py-2 text-sm outline-none transition-all focus:border-primary disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-800 dark:focus:border-primary resize-none"
                 />
-                <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
                   Detailed description of the permission
                 </p>
               </div>

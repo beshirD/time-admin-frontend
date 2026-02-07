@@ -19,6 +19,8 @@ interface ApiResponse<T> {
 }
 
 class ApiClientError extends Error {
+  public isHandled = true; // Mark as handled for application logic
+  
   constructor(
     message: string,
     public status: number,

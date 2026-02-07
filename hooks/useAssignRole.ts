@@ -30,7 +30,7 @@ export function useAssignRole() {
       queryClient.invalidateQueries({ queryKey: ['adminUsers'] });
     },
     onError: (error: any) => {
-      const errorMessage = error?.response?.data?.message || 'Failed to assign role';
+      const errorMessage = error?.message || 'Failed to assign role';
       toast.error(errorMessage);
     },
   });

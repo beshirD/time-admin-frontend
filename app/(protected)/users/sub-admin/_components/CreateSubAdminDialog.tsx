@@ -108,8 +108,8 @@ export function CreateSubAdminDialog() {
         onClose={handleClose}
         title="Assign Admin Role"
         hideTitle={true}
-        className="max-w-[800px] m-4 items-center">
-        <div className="no-scrollbar h-full overflow-y-auto max-h-[80%] relative w-full max-w-[800px] border overflow-y-auto rounded-3xl bg-white p-4 dark:bg-gray-900 lg:p-11">
+        className="m-4 items-center">
+        <div className="no-scrollbar  h-full max-h-[80%] relative w-[600px] border overflow-y-auto rounded-3xl bg-white p-4 dark:bg-gray-900 lg:p-9">
           <div className="px-2 pr-14">
             <h4 className="mb-2 text-2xl font-semibold text-gray-800 dark:text-white/90">
               Assign Admin Role
@@ -120,9 +120,9 @@ export function CreateSubAdminDialog() {
           </div>
 
           <form
-            className="flex flex-col min-w-2xl overflow-y-auto"
+            className="flex flex-col w-[520px] overflow-y-auto"
             onSubmit={handleSubmit}>
-            <div className="custom-scrollbar min-h-[450px] overflow-y-auto px-2 pb-3">
+            <div className="custom-scrollbar min-h-[500px] overflow-y-auto px-2 pb-3">
               <div className="space-y-4">
                 {/* User Selection */}
                 <div>
@@ -140,7 +140,7 @@ export function CreateSubAdminDialog() {
                     disabled={isLoadingUsers}
                     className="w-full"
                   />
-                  <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                  <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
                     Select a user to promote to an admin role
                   </p>
                 </div>
@@ -161,7 +161,7 @@ export function CreateSubAdminDialog() {
                     disabled={isLoadingRoles || !selectedUserId}
                     className="w-full"
                   />
-                  <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                  <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
                     Choose the administrative role to assign
                   </p>
                 </div>
@@ -177,11 +177,11 @@ export function CreateSubAdminDialog() {
                       permission{selectedRole.permissionCount !== 1 ? "s" : ""}
                     </p>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                       {selectedRole.permissions.map((permission) => (
                         <div
                           key={permission.id}
-                          className="flex items-center justify-between p-4 rounded-lg border-2 border-primary bg-primary/5 dark:bg-primary/10 transition cursor-not-allowed">
+                          className="flex items-center justify-between p-3 rounded-lg border-2 border-primary bg-primary/5 dark:bg-primary/10 transition cursor-not-allowed">
                           <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
                             {permission.name}
                           </span>

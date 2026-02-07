@@ -17,16 +17,16 @@ export function useCreatePermission() {
         '/rbac/permissions',
         request
       );
-      return response.data;
+      return response; // Return full response, not just response.data
     },
     onSuccess: (response) => {
       toast.success(response.message || 'Permission created successfully');
       // Invalidate permissions query to refresh the list
       queryClient.invalidateQueries({ queryKey: ['permissions'] });
     },
-    onError: (error: { response?: { data?: { message?: string; status?: number } } }) => {
-      const errorData = error?.response?.data;
-      const errorMessage = errorData?.message || 'Failed to create permission';
+    onError: (error: any) => {
+      // ApiClientError instances have the message directly on the error object
+      const errorMessage = error?.message || 'Failed to create permission';
       
       // Check if it's a permission error
       if (errorMessage.includes('Permission') && errorMessage.includes('required')) {
