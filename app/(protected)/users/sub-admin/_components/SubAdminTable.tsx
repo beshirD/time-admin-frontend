@@ -6,6 +6,7 @@ import { useAdminUsers } from "@/hooks/useAdminUsers";
 import { AdminUser } from "@/types/user";
 import { SubAdmin } from "@/types/entities";
 import { useState } from "react";
+import { TableSkeleton } from "@/components/ui/TableSkeleton";
 
 function transformToSubAdmin(adminUser: AdminUser): SubAdmin {
   return {
@@ -43,6 +44,15 @@ export function SubAdminTable() {
           Failed to load sub-admins. Please try again.
         </div>
       </div>
+    );
+  }
+
+  if (isLoading) {
+    return (
+      <TableSkeleton
+        rows={10}
+        columns={columns.length}
+      />
     );
   }
 
