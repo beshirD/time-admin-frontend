@@ -49,7 +49,11 @@ async function proxyRequest(
   method: string
 ) {
   const path = pathSegments.join('/');
-  const url = `${BACKEND_URL}/${path}`;
+  
+  // Get query parameters from the incoming request
+  const searchParams = request.nextUrl.searchParams.toString();
+  const queryString = searchParams ? `?${searchParams}` : '';
+  const url = `${BACKEND_URL}/${path}${queryString}`;
 
   console.log(`[Proxy] ${method} ${url}`);
 

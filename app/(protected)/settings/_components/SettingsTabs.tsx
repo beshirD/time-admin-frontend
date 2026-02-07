@@ -11,6 +11,7 @@ import {
   CreditCard,
   Plug,
   Sliders,
+  ShieldCheck,
 } from "lucide-react";
 import PageTitle from "@/components/common/PageTitle";
 
@@ -21,6 +22,7 @@ interface SettingsTabsProps {
 const tabs = [
   { id: "profile", label: "Profile", icon: User },
   { id: "preferences", label: "Preferences", icon: Settings },
+  { id: "roles-permissions", label: "Roles & Permissions", icon: ShieldCheck },
   { id: "security", label: "Security", icon: Shield },
   { id: "notifications", label: "Notifications", icon: Bell },
   { id: "privacy", label: "Privacy", icon: Lock },
