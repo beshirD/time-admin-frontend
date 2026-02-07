@@ -43,7 +43,7 @@ export function CustomersTable() {
     fullName: user.fullName,
     email: user.email,
     contactNo: user.contactNo,
-    stateId: user.status, // Map status to stateId
+    status: user.status,
     createdOn: user.createdOn,
     createdById: user.createdByName, // Map createdByName to createdById
   }));

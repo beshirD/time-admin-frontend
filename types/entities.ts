@@ -3,7 +3,7 @@ export type Customer = {
   fullName: string;
   email: string;
   contactNo: string;
-  stateId: string;
+  status: "ACTIVE" | "INACTIVE" | "PENDING" | "BANNED";
   createdOn: string;
   createdById: string;
 };

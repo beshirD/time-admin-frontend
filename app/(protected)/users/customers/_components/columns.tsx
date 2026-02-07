@@ -10,21 +10,23 @@ import { Customer } from "@/types/entities";
 // Status badge component
 const StatusBadge = ({ status }: { status: string }) => {
   const statusStyles = {
-    Active:
+    ACTIVE:
       "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400",
-    Inactive:
+    INACTIVE:
       "bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400",
+    PENDING: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400",
+    BANNED: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400",
   };
 
   return (
     <span
-      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusStyles[status as keyof typeof statusStyles] || statusStyles.Inactive}`}>
+      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusStyles[status as keyof typeof statusStyles] || statusStyles.INACTIVE}`}>
       {status}
     </span>
   );
 };
 
-import { DeleteConfirmationDialog } from "@/components/common/DeleteConfirmationDialog";
+import { DeleteCustomerDialog } from "./DeleteCustomerDialog";
 
 // Action buttons component
 const ActionButtons = ({ customer }: { customer: Customer }) => {
@@ -40,22 +42,20 @@ const ActionButtons = ({ customer }: { customer: Customer }) => {
         onClick={(e) => e.stopPropagation()}>
         <Button usage="edit">Edit</Button>
       </Link>
-      <DeleteConfirmationDialog
-        itemType="Customer"
-        itemName={customer.fullName}
-        onSuccess={() => {
-          window.location.reload();
-        }}
-        trigger={
-          <Button
-            usage="delete"
-            onClick={(e) => {
-              e.stopPropagation();
-            }}>
-            Delete
-          </Button>
-        }
-      />
+      <DeleteCustomerDialog
+        customerId={customer.id}
+        customerName={customer.fullName}
+        onDeleteSuccess={() => {
+          // window.location.reload();
+        }}>
+        <Button
+          usage="delete"
+          onClick={(e) => {
+            e.stopPropagation();
+          }}>
+          Delete
+        </Button>
+      </DeleteCustomerDialog>
     </div>
   );
 };
@@ -102,9 +102,9 @@ export const columns: ColumnDef<Customer>[] = [
     cell: ({ row }) => <div>{row.getValue("contactNo")}</div>,
   },
   {
-    accessorKey: "stateId",
-    header: "State Id",
-    cell: ({ row }) => <StatusBadge status={row.getValue("stateId")} />,
+    accessorKey: "status",
+    header: "Status",
+    cell: ({ row }) => <StatusBadge status={row.getValue("status")} />,
   },
   {
     accessorKey: "createdOn",
