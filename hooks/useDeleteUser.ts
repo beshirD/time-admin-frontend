@@ -3,7 +3,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/lib/api-client';
 import { toast } from 'sonner';
-import { useRouter } from 'next/navigation';
 
 interface DeleteUserResponse {
   success: boolean;
@@ -17,7 +16,6 @@ interface DeleteUserResponse {
  */
 export function useDeleteUser() {
   const queryClient = useQueryClient();
-  const router = useRouter();
 
   return useMutation({
     mutationFn: async (userId: number) => {
@@ -28,9 +26,9 @@ export function useDeleteUser() {
     },
     onSuccess: (response) => {
       toast.success(response.message || 'User deleted successfully');
+      // Invalidate all user-related queries
       queryClient.invalidateQueries({ queryKey: ['adminUsers'] });
-      // Redirect to customers list after successful deletion
-      router.push('/users/customers');
+      queryClient.invalidateQueries({ queryKey: ['adminUser'] });
     },
     onError: (error: any) => {
       const errorMessage = error?.message || 'Failed to delete user';

@@ -33,9 +33,11 @@ export function useBanUser() {
       );
       return response;
     },
-    onSuccess: (response) => {
+    onSuccess: (response, variables) => {
       toast.success(response.message || 'User banned successfully');
-      queryClient.invalidateQueries({ queryKey: ['user'] });
+      // Invalidate the specific user detail query
+      queryClient.invalidateQueries({ queryKey: ['adminUser', variables.userId] });
+      // Invalidate list queries
       queryClient.invalidateQueries({ queryKey: ['adminUsers'] });
     },
     onError: (error: any) => {
@@ -59,9 +61,11 @@ export function useUnbanUser() {
       );
       return response;
     },
-    onSuccess: (response) => {
+    onSuccess: (response, variables) => {
       toast.success(response.message || 'User unbanned successfully');
-      queryClient.invalidateQueries({ queryKey: ['user'] });
+      // Invalidate the specific user detail query
+      queryClient.invalidateQueries({ queryKey: ['adminUser', variables.userId] });
+      // Invalidate list queries
       queryClient.invalidateQueries({ queryKey: ['adminUsers'] });
     },
     onError: (error: any) => {
@@ -85,9 +89,11 @@ export function useActivateUser() {
       );
       return response;
     },
-    onSuccess: (response) => {
+    onSuccess: (response, variables) => {
       toast.success(response.message || 'User activated successfully');
-      queryClient.invalidateQueries({ queryKey: ['user'] });
+      // Invalidate the specific user detail query
+      queryClient.invalidateQueries({ queryKey: ['adminUser', variables.userId] });
+      // Invalidate list queries
       queryClient.invalidateQueries({ queryKey: ['adminUsers'] });
     },
     onError: (error: any) => {
@@ -115,9 +121,11 @@ export function useDeactivateUser() {
       );
       return response;
     },
-    onSuccess: (response) => {
+    onSuccess: (response, variables) => {
       toast.success(response.message || 'User deactivated successfully');
-      queryClient.invalidateQueries({ queryKey: ['user'] });
+      // Invalidate the specific user detail query
+      queryClient.invalidateQueries({ queryKey: ['adminUser', variables.userId] });
+      // Invalidate list queries
       queryClient.invalidateQueries({ queryKey: ['adminUsers'] });
     },
     onError: (error: any) => {

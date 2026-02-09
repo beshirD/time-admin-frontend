@@ -4,7 +4,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown } from "lucide-react";
 import Link from "next/link";
 import Button from "@/components/ui/Button";
-import { DeleteConfirmationDialog } from "@/components/common/DeleteConfirmationDialog";
+import { DeleteSubAdminDialog } from "./DeleteSubAdminDialog";
 
 import { SubAdmin } from "@/types/entities";
 
@@ -27,9 +27,7 @@ const StatusBadge = ({ status }: { status: string }) => {
   );
 };
 
-// Action buttons component
-// Action buttons component
-const ActionButtons = ({ subAdmin }: { subAdmin: SubAdmin }) => {
+ const ActionButtons = ({ subAdmin }: { subAdmin: SubAdmin }) => {
   return (
     <div className="flex items-center gap-2 justify-end">
       <Link
@@ -42,22 +40,17 @@ const ActionButtons = ({ subAdmin }: { subAdmin: SubAdmin }) => {
         onClick={(e) => e.stopPropagation()}>
         <Button usage="edit">Edit</Button>
       </Link>
-      <DeleteConfirmationDialog
-        itemType="Sub Admin"
-        itemName={subAdmin.fullName}
-        onSuccess={() => {
-          window.location.reload();
-        }}
-        trigger={
-          <Button
-            usage="delete"
-            onClick={(e) => {
-              e.stopPropagation();
-            }}>
-            Delete
-          </Button>
-        }
-      />
+      <DeleteSubAdminDialog
+        subAdminId={subAdmin.id}
+        subAdminName={subAdmin.fullName}>
+        <Button
+          usage="delete"
+          onClick={(e) => {
+            e.stopPropagation();
+          }}>
+          Delete
+        </Button>
+      </DeleteSubAdminDialog>
     </div>
   );
 };

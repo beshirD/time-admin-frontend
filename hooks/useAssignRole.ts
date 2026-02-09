@@ -18,14 +18,14 @@ export function useAssignRole() {
 
   return useMutation({
     mutationFn: async ({ userId, roleName }: AssignRoleParams) => {
-      const response = await api.put<AssignRoleResponse>(
+      const response = await api.post<AssignRoleResponse>(
         `/rbac/users/${userId}/roles`,
         { roleName } as AssignRoleRequest
       );
-      return response.data;
+      return response;
     },
-    onSuccess: (data) => {
-      toast.success(data.message || 'Role assigned successfully');
+    onSuccess: (response) => {
+      toast.success(response.message || 'Role assigned successfully');
       // Invalidate admin users query to refresh the table
       queryClient.invalidateQueries({ queryKey: ['adminUsers'] });
     },

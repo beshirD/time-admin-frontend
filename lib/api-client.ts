@@ -3,6 +3,8 @@
  * Works with TanStack Query and uses the /api/proxy route
  */
 
+import { removeAuthCookie, removeRefreshCookie } from './auth-cookies';
+
 interface ApiError {
   success: false;
   message: string;
@@ -32,6 +34,20 @@ class ApiClientError extends Error {
 }
 
 /**
+ * Handle logout when token expires
+ */
+async function handleUnauthorized() {
+  // Clear auth cookies
+  await removeAuthCookie();
+  await removeRefreshCookie();
+  
+  // Redirect to login page
+  if (typeof window !== 'undefined') {
+    window.location.href = '/login';
+  }
+}
+
+/**
  * Base API client function
  * Automatically includes auth headers and handles errors
  */
@@ -55,6 +71,18 @@ async function apiClient<T>(
 
     if (!response.ok) {
       const errorData = data as ApiError;
+      
+      // Handle 401 Unauthorized - token expired or invalid
+      if (response.status === 401) {
+        await handleUnauthorized();
+        // Throw error anyway in case the redirect doesn't happen immediately
+        throw new ApiClientError(
+          'Session expired. Redirecting to login...',
+          response.status,
+          errorData.error?.code
+        );
+      }
+      
       throw new ApiClientError(
         errorData.message || 'An error occurred',
         response.status,

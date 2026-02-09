@@ -90,7 +90,7 @@ async function proxyRequest(
     console.log(`[Proxy] Sending request to: ${url}`);
     const response = await fetch(url, options);
     
-    console.log(`[Proxy] Response status: ${response.status}`);
+    // console.log(`[Proxy] Response status: ${response.status}`);
     
     const contentType = response.headers.get('content-type');
     
@@ -111,7 +111,7 @@ async function proxyRequest(
     }
 
     const data = await response.json();
-    console.log(`[Proxy] Response data:`, JSON.stringify(data).substring(0, 200));
+    // console.log(`[Proxy] Response data:`, JSON.stringify(data).substring(0, 200));
 
     return NextResponse.json(data, { status: response.status });
   } catch (error: unknown) {

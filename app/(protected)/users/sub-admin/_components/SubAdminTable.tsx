@@ -29,8 +29,6 @@ export function SubAdminTable() {
     pageSize: pageSize,
   });
 
-  console.log("Admin are", data);
-
   const handlePaginationChange = (
     newPageIndex: number,
     newPageSize: number,

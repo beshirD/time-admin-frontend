@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -11,35 +12,40 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { toast } from "sonner";
+import { useDeleteUser } from "@/hooks/useDeleteUser";
+import { Loader2 } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 interface DeleteSubAdminDialogProps {
   subAdminId: number | string;
   subAdminName: string;
   children: React.ReactNode;
-  onDeleteSuccess?: () => void;
 }
 
 export function DeleteSubAdminDialog({
-  // subAdminId,
+  subAdminId,
   subAdminName,
   children,
-  onDeleteSuccess,
 }: DeleteSubAdminDialogProps) {
-  // const router = useRouter();
+  const [isOpen, setIsOpen] = useState(false);
+  const deleteMutation = useDeleteUser();
+  const router = useRouter();
 
   const handleDelete = async () => {
-    toast.success("Sub-Admin deleted successfully", {
-      description: `${subAdminName} has been removed from the system.`,
-    });
-
-    if (onDeleteSuccess) {
-      onDeleteSuccess();
+    try {
+      await deleteMutation.mutateAsync(parseInt(subAdminId.toString()));
+      setIsOpen(false);
+      // Navigate to sub-admin list after successful deletion
+      router.push("/users/sub-admin");
+    } catch {
+      // Error handled by mutation
     }
   };
 
   return (
-    <AlertDialog>
+    <AlertDialog
+      open={isOpen}
+      onOpenChange={setIsOpen}>
       <AlertDialogTrigger asChild>{children}</AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
@@ -51,11 +57,21 @@ export function DeleteSubAdminDialog({
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogCancel disabled={deleteMutation.isPending}>
+            Cancel
+          </AlertDialogCancel>
           <AlertDialogAction
             variant="destructive"
-            onClick={handleDelete}>
-            Delete
+            onClick={handleDelete}
+            disabled={deleteMutation.isPending}>
+            {deleteMutation.isPending ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Deleting...
+              </>
+            ) : (
+              "Delete"
+            )}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

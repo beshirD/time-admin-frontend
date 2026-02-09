@@ -6,7 +6,13 @@ import Input from "@/components/ui/Input";
 import Label from "@/components/ui/Label";
 import { Modal } from "@/components/ui/modal";
 import { Calendar } from "@/components/ui/calendar";
-import { AlertTriangle, ArrowRight, CheckCircle2 } from "lucide-react";
+import {
+  AlertTriangle,
+  ArrowRight,
+  CheckCircle2,
+  CalendarIcon,
+  X,
+} from "lucide-react";
 import type { UserStatus } from "@/types/user";
 import { Switch } from "@/components/ui/switch";
 
@@ -60,6 +66,7 @@ export function ChangeUserStatusDialog({
 }: ChangeUserStatusDialogProps) {
   const [step, setStep] = useState<1 | 2>(1);
   const [selectedStatus, setSelectedStatus] = useState<UserStatus | null>(null);
+  const [showCalendar, setShowCalendar] = useState(false);
   const [formData, setFormData] = useState({
     reason: "",
     durationDays: "",
@@ -301,27 +308,53 @@ export function ChangeUserStatusDialog({
                     </div>
                     <div>
                       <Label htmlFor="banUntil">Ban Until Date</Label>
-                      <div className="mt-2">
-                        <Calendar
-                          mode="single"
-                          selected={
-                            formData.banUntil
-                              ? new Date(formData.banUntil)
-                              : undefined
-                          }
-                          onSelect={(date) => {
-                            if (date) {
-                              setFormData({
-                                ...formData,
-                                banUntil: date.toISOString(),
-                              });
-                            } else {
-                              setFormData({ ...formData, banUntil: "" });
-                            }
-                          }}
-                          disabled={(date) => date < new Date()}
-                          className="rounded-md border"
-                        />
+                      <div className="relative">
+                        <Button
+                          type="button"
+                          variant="outline"
+                          onClick={() => setShowCalendar(!showCalendar)}
+                          className="w-full justify-start text-left font-normal">
+                          <CalendarIcon className="mr-2 h-4 w-4" />
+                          {formData.banUntil
+                            ? new Date(formData.banUntil).toLocaleDateString()
+                            : "Pick a date"}
+                        </Button>
+                        {showCalendar && (
+                          <div className="absolute z-50 mt-2 rounded-md border bg-white dark:bg-gray-900 shadow-lg">
+                            <div className="flex items-center justify-between p-2 border-b">
+                              <span className="text-sm font-medium">
+                                Select Date
+                              </span>
+                              <button
+                                type="button"
+                                onClick={() => setShowCalendar(false)}
+                                className="rounded-sm opacity-70 hover:opacity-100">
+                                <X className="h-4 w-4" />
+                              </button>
+                            </div>
+                            <Calendar
+                              mode="single"
+                              selected={
+                                formData.banUntil
+                                  ? new Date(formData.banUntil)
+                                  : undefined
+                              }
+                              onSelect={(date) => {
+                                if (date) {
+                                  setFormData({
+                                    ...formData,
+                                    banUntil: date.toISOString(),
+                                  });
+                                  setShowCalendar(false);
+                                } else {
+                                  setFormData({ ...formData, banUntil: "" });
+                                }
+                              }}
+                              disabled={(date) => date < new Date()}
+                              className="rounded-md"
+                            />
+                          </div>
+                        )}
                       </div>
                       <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
                         Select when the ban should end
