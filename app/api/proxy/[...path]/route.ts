@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { cookies } from 'next/headers';
 
 const BACKEND_URL = 'http://46.202.191.177:8080';
 
@@ -48,17 +49,26 @@ async function proxyRequest(
   method: string
 ) {
   const path = pathSegments.join('/');
-  const url = `${BACKEND_URL}/${path}`;
+  
+  // Get query parameters from the incoming request
+  const searchParams = request.nextUrl.searchParams.toString();
+  const queryString = searchParams ? `?${searchParams}` : '';
+  const url = `${BACKEND_URL}/${path}${queryString}`;
 
-  console.log(`[Proxy] ${method} ${url}`); // Debug log
+  console.log(`[Proxy] ${method} ${url}`);
 
   try {
     const headers: Record<string, string> = {};
     
-    // Forward relevant headers
-    const authHeader = request.headers.get('authorization');
-    if (authHeader) {
-      headers['Authorization'] = authHeader;
+    // Get access token from cookies
+    const cookieStore = await cookies();
+    const accessToken = cookieStore.get('accessToken')?.value;
+    
+    if (accessToken) {
+      headers['Authorization'] = `Bearer ${accessToken}`;
+      console.log('[Proxy] Added Authorization header from cookie');
+    } else {
+      console.log('[Proxy] No access token found in cookies');
     }
     
     headers['Content-Type'] = 'application/json';
@@ -73,14 +83,14 @@ async function proxyRequest(
       const body = await request.text();
       if (body) {
         options.body = body;
-        console.log(`[Proxy] Request body:`, body); // Debug log
+        console.log(`[Proxy] Request body:`, body);
       }
     }
 
     console.log(`[Proxy] Sending request to: ${url}`);
     const response = await fetch(url, options);
     
-    console.log(`[Proxy] Response status: ${response.status}`);
+    // console.log(`[Proxy] Response status: ${response.status}`);
     
     const contentType = response.headers.get('content-type');
     
@@ -101,7 +111,7 @@ async function proxyRequest(
     }
 
     const data = await response.json();
-    console.log(`[Proxy] Response data:`, data);
+    // console.log(`[Proxy] Response data:`, JSON.stringify(data).substring(0, 200));
 
     return NextResponse.json(data, { status: response.status });
   } catch (error: unknown) {

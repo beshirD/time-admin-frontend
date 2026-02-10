@@ -1,9 +1,10 @@
 /**
  * Authentication service for login, logout, and session management
+ * Now uses httpOnly cookies only (no localStorage)
  */
 
 import { api } from './api';
-import { setAuthCookie } from '@/lib/auth-cookies';
+import { setAuthCookie, setRefreshCookie, removeAuthCookie, removeRefreshCookie } from '@/lib/auth-cookies';
 
 import { 
   SignInCredentials, 
@@ -12,7 +13,6 @@ import {
   RefreshTokenResponse,
   AuthUserData 
 } from '@/types/auth';
-import { removeAuthCookie } from '@/lib/auth-cookies';
 
 class AuthService {
   /**
@@ -29,9 +29,10 @@ class AuthService {
       if (response.data.success && response.data.data) {
         const authData = response.data.data;
         
-        // Store tokens in localStorage
+        // Store tokens in httpOnly cookies only
         if (authData.accessToken && authData.refreshToken) {
-          this.setTokens(authData.accessToken, authData.refreshToken);
+          await setAuthCookie(authData.accessToken);
+          await setRefreshCookie(authData.refreshToken);
         }
         
         return authData;
@@ -54,10 +55,9 @@ class AuthService {
       // Ignore errors on logout
       console.error('Logout error:', error);
     } finally {
-      this.clearTokens();
-      
-      // Remove auth cookie for middleware
+      // Remove auth cookies
       await removeAuthCookie();
+      await removeRefreshCookie();
       
       if (typeof window !== 'undefined') {
         window.location.href = '/login';
@@ -70,12 +70,6 @@ class AuthService {
    */
   async getCurrentUser(): Promise<User | null> {
     try {
-      const accessToken = this.getAccessToken();
-      
-      if (!accessToken) {
-        return null;
-      }
-
       // Backend endpoint: /auth/me
       const response = await api.get<{
         success: boolean;
@@ -96,76 +90,32 @@ class AuthService {
 
   /**
    * Refresh access token using refresh token
+   * Note: This is now handled by the API client automatically
    */
   async refreshToken(): Promise<string | null> {
     try {
-      const refreshToken = this.getRefreshToken();
-      
-      if (!refreshToken) {
-        return null;
-      }
-
-      // Backend endpoint: /auth/refresh-token (sends refresh token in Authorization header)
+      // Backend endpoint: /auth/refresh-token
       const response = await api.post<RefreshTokenResponse>(
         '/auth/refresh-token',
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${refreshToken}`
-          }
-        }
+        {}
       );
 
       if (response.data.success && response.data.data) {
         const { accessToken, refreshToken: newRefreshToken } = response.data.data;
-        this.setTokens(accessToken, newRefreshToken);
-              
+        
+        // Update cookies with new tokens
         await setAuthCookie(accessToken);
+        await setRefreshCookie(newRefreshToken);
 
         return accessToken;
       }
 
       return null;
     } catch {
-      this.clearTokens();
       await removeAuthCookie();
+      await removeRefreshCookie();
       return null;
     }
-  }
-
-  /**
-   * Check if user is authenticated
-   */
-  isAuthenticated(): boolean {
-    return !!this.getAccessToken();
-  }
-
-  // Token management helpers
-  private setTokens(accessToken: string, refreshToken: string): void {
-    if (typeof window === 'undefined') return;
-    localStorage.setItem('accessToken', accessToken);
-    localStorage.setItem('refreshToken', refreshToken);
-  }
-
-  private setAccessToken(accessToken: string): void {
-    if (typeof window === 'undefined') return;
-    localStorage.setItem('accessToken', accessToken);
-  }
-
-  private getAccessToken(): string | null {
-    if (typeof window === 'undefined') return null;
-    return localStorage.getItem('accessToken');
-  }
-
-  private getRefreshToken(): string | null {
-    if (typeof window === 'undefined') return null;
-    return localStorage.getItem('refreshToken');
-  }
-
-  private clearTokens(): void {
-    if (typeof window === 'undefined') return;
-    localStorage.removeItem('accessToken');
-    localStorage.removeItem('refreshToken');
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

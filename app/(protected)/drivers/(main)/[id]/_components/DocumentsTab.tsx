@@ -1,6 +1,6 @@
 "use client";
 
-import { Download, Printer, Eye, Share2 } from "lucide-react";
+import { Download, Printer, Share2 } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
 import { Modal } from "@/components/ui/modal/Modal";
@@ -120,13 +120,11 @@ export default function DocumentsTab() {
                 <td className="py-3 px-4">
                   {doc.uploaded ? (
                     <div className="flex items-center gap-2">
-                      <button
-                        onClick={() => handlePreview(doc)}
-                        className="flex items-center gap-1.5 px-3 py-1.5 text-sm border border-blue-600 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded transition-colors"
-                        title="View">
-                        <Eye className="h-4 w-4" />
+                      <Button
+                        usage="view"
+                        onClick={() => handlePreview(doc)}>
                         View
-                      </button>
+                      </Button>
                       <button
                         onClick={() => handleDownload(doc)}
                         className="flex items-center gap-1.5 px-3 py-1.5 text-sm border border-green-600 text-green-600 dark:text-green-400 hover:bg-green-50 dark:hover:bg-green-900/20 rounded transition-colors"

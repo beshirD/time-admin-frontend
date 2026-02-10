@@ -1,7 +1,8 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
-import { ArrowUpDown, Eye } from "lucide-react";
+import { ArrowUpDown } from "lucide-react";
+import Button from "@/components/ui/Button";
 import Link from "next/link";
 import { SubscriptionQueue } from "@/types/entities";
 import { toast } from "sonner";
@@ -33,10 +34,7 @@ const ActionButtons = ({ queue }: { queue: SubscriptionQueue }) => {
       <Link
         href={`/banner/approval-queue/${queue.id}`}
         onClick={(e) => e.stopPropagation()}>
-        <button className="px-3 py-1.5 text-xs font-medium text-white bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600 rounded-md transition-colors flex items-center gap-1">
-          <Eye className="h-3 w-3" />
-          Details
-        </button>
+        <Button usage="view">Details</Button>
       </Link>
     </div>
   );

@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -11,7 +12,8 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { toast } from "sonner";
+import { useDeleteUser } from "@/hooks/useDeleteUser";
+import { Loader2 } from "lucide-react";
 
 interface DeleteCustomerDialogProps {
   customerId: number | string;
@@ -21,25 +23,30 @@ interface DeleteCustomerDialogProps {
 }
 
 export function DeleteCustomerDialog({
-  // customerId,
+  customerId,
   customerName,
   children,
   onDeleteSuccess,
 }: DeleteCustomerDialogProps) {
-  // const router = useRouter();
+  const [isOpen, setIsOpen] = useState(false);
+  const deleteMutation = useDeleteUser();
 
   const handleDelete = async () => {
-    toast.success("Customer deleted successfully", {
-      description: `${customerName} has been removed from the system.`,
-    });
-
-    if (onDeleteSuccess) {
-      onDeleteSuccess();
+    try {
+      await deleteMutation.mutateAsync(parseInt(customerId.toString()));
+      setIsOpen(false);
+      if (onDeleteSuccess) {
+        onDeleteSuccess();
+      }
+    } catch (error) {
+      // Error handled by mutation
     }
   };
 
   return (
-    <AlertDialog>
+    <AlertDialog
+      open={isOpen}
+      onOpenChange={setIsOpen}>
       <AlertDialogTrigger asChild>{children}</AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
@@ -51,11 +58,21 @@ export function DeleteCustomerDialog({
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogCancel disabled={deleteMutation.isPending}>
+            Cancel
+          </AlertDialogCancel>
           <AlertDialogAction
             variant="destructive"
-            onClick={handleDelete}>
-            Delete
+            onClick={handleDelete}
+            disabled={deleteMutation.isPending}>
+            {deleteMutation.isPending ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Deleting...
+              </>
+            ) : (
+              "Delete"
+            )}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

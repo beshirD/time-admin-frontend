@@ -1,16 +1,35 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import { useModal } from "@/hooks/useModal";
 import { Modal } from "@/components/ui/modal";
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
 import Label from "@/components/ui/Label";
+import { useUpdateUser } from "@/hooks/useUpdateUser";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Calendar } from "@/components/ui/calendar";
+import { CalendarIcon } from "lucide-react";
+import { format } from "date-fns";
 
 interface UserInfoCustomer {
+  id: number;
   firstName?: string;
   lastName?: string;
   email?: string;
   contactNo?: string;
+  phoneNumber?: string;
+  countryCode?: string;
+  dateOfBirth?: string;
+  gender?: string;
+  timezone?: string;
+  language?: string;
+  status?: string;
   role?: string;
 }
 
@@ -20,14 +39,65 @@ interface UserInfoCardProps {
 
 export default function UserInfoCard({ customer }: UserInfoCardProps) {
   const { isOpen, openModal, closeModal } = useModal();
+  const { mutate: updateUser, isPending } = useUpdateUser();
+  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
+
+  // Form state
+  const [formData, setFormData] = useState({
+    firstName: customer.firstName || "",
+    lastName: customer.lastName || "",
+    email: customer.email || "",
+    phoneNumber: customer.phoneNumber || customer.contactNo || "",
+    countryCode: customer.countryCode || "",
+    dateOfBirth: customer.dateOfBirth
+      ? new Date(customer.dateOfBirth)
+      : (undefined as Date | undefined),
+    gender: customer.gender || "",
+    timezone: customer.timezone || "",
+    language: customer.language || "",
+  });
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleGenderChange = (value: string) => {
+    setFormData((prev) => ({ ...prev, gender: value }));
+  };
+
+  const handleDateChange = (date: Date | undefined) => {
+    setFormData((prev) => ({ ...prev, dateOfBirth: date }));
+    setIsCalendarOpen(false);
+  };
+
   const handleSave = () => {
-    // Handle save logic here
-    console.log("Saving changes...");
-    closeModal();
+    // Only send fields that have values
+    const updateData: any = {};
+
+    if (formData.firstName) updateData.firstName = formData.firstName;
+    if (formData.lastName) updateData.lastName = formData.lastName;
+    if (formData.email) updateData.email = formData.email;
+    if (formData.phoneNumber) updateData.phoneNumber = formData.phoneNumber;
+    if (formData.countryCode) updateData.countryCode = formData.countryCode;
+    if (formData.dateOfBirth)
+      updateData.dateOfBirth = formData.dateOfBirth.toISOString();
+    if (formData.gender) updateData.gender = formData.gender;
+    if (formData.timezone) updateData.timezone = formData.timezone;
+    if (formData.language) updateData.language = formData.language;
+
+    updateUser(
+      { userId: customer.id, data: updateData },
+      {
+        onSuccess: () => {
+          closeModal();
+        },
+      },
+    );
   };
 
   return (
-    <div className="p-5 border border-gray-200 rounded-2xl dark:border-gray-800 lg:p-6 bg-white dark:bg-gray-800">
+    <div className="bg-white dark:bg-gray-900 rounded-lg border p-6">
       <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
         <div className="w-full">
           <h4 className="text-lg font-semibold text-gray-800 dark:text-white/90 lg:mb-6">
@@ -64,10 +134,57 @@ export default function UserInfoCard({ customer }: UserInfoCardProps) {
 
             <div>
               <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
-                Phone
+                Phone Number
               </p>
               <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                {customer.contactNo || "-"}
+                {customer.phoneNumber || customer.contactNo || "-"}
+              </p>
+            </div>
+
+            <div>
+              <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
+                Country Code
+              </p>
+              <p className="text-sm font-medium text-gray-800 dark:text-white/90">
+                {customer.countryCode || "-"}
+              </p>
+            </div>
+
+            <div>
+              <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
+                Date of Birth
+              </p>
+              <p className="text-sm font-medium text-gray-800 dark:text-white/90">
+                {customer.dateOfBirth
+                  ? new Date(customer.dateOfBirth).toLocaleDateString()
+                  : "-"}
+              </p>
+            </div>
+
+            <div>
+              <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
+                Gender
+              </p>
+              <p className="text-sm font-medium text-gray-800 dark:text-white/90">
+                {customer.gender || "-"}
+              </p>
+            </div>
+
+            <div>
+              <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
+                Timezone
+              </p>
+              <p className="text-sm font-medium text-gray-800 dark:text-white/90">
+                {customer.timezone || "-"}
+              </p>
+            </div>
+
+            <div>
+              <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
+                Language
+              </p>
+              <p className="text-sm font-medium text-gray-800 dark:text-white/90">
+                {customer.language || "-"}
               </p>
             </div>
 
@@ -107,7 +224,7 @@ export default function UserInfoCard({ customer }: UserInfoCardProps) {
         isOpen={isOpen}
         onClose={closeModal}
         className="max-w-[700px] m-4">
-        <div className="no-scrollbar relative w-full max-w-[700px] overflow-y-auto rounded-3xl bg-white p-4 dark:bg-gray-900 lg:p-11">
+        <div className="no-scrollbar relative border w-[650px] overflow-y-auto rounded-3xl bg-white p-4 dark:bg-gray-900 lg:p-11">
           <div className="px-2 pr-14">
             <h4 className="mb-2 text-2xl font-semibold text-gray-800 dark:text-white/90">
               Edit Personal Information
@@ -130,7 +247,10 @@ export default function UserInfoCard({ customer }: UserInfoCardProps) {
                     <Label>First Name</Label>
                     <Input
                       type="text"
-                      defaultValue={customer.firstName}
+                      name="firstName"
+                      value={formData.firstName}
+                      onChange={handleInputChange}
+                      disabled={isPending}
                     />
                   </div>
 
@@ -138,23 +258,116 @@ export default function UserInfoCard({ customer }: UserInfoCardProps) {
                     <Label>Last Name</Label>
                     <Input
                       type="text"
-                      defaultValue={customer.lastName}
+                      name="lastName"
+                      value={formData.lastName}
+                      onChange={handleInputChange}
+                      disabled={isPending}
                     />
                   </div>
 
                   <div className="col-span-2 lg:col-span-1">
                     <Label>Email Address</Label>
                     <Input
-                      type="text"
-                      defaultValue={customer.email}
+                      type="email"
+                      name="email"
+                      value={formData.email}
+                      onChange={handleInputChange}
+                      disabled={isPending}
                     />
                   </div>
 
                   <div className="col-span-2 lg:col-span-1">
-                    <Label>Phone</Label>
+                    <Label>Phone Number</Label>
                     <Input
                       type="text"
-                      defaultValue={customer.contactNo}
+                      name="phoneNumber"
+                      value={formData.phoneNumber}
+                      onChange={handleInputChange}
+                      disabled={isPending}
+                    />
+                  </div>
+
+                  <div className="col-span-2 lg:col-span-1">
+                    <Label>Country Code</Label>
+                    <Input
+                      type="text"
+                      name="countryCode"
+                      value={formData.countryCode}
+                      onChange={handleInputChange}
+                      placeholder="+1"
+                      disabled={isPending}
+                    />
+                  </div>
+
+                  <div className="col-span-2 lg:col-span-1">
+                    <Label>Date of Birth</Label>
+                    <div className="mt-2 relative">
+                      <button
+                        type="button"
+                        onClick={() => setIsCalendarOpen(!isCalendarOpen)}
+                        disabled={isPending}
+                        className="w-full inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition disabled:opacity-50 disabled:cursor-not-allowed">
+                        <CalendarIcon className="h-4 w-4" />
+                        {formData.dateOfBirth ? (
+                          <span>
+                            {format(formData.dateOfBirth, "MMM dd, yyyy")}
+                          </span>
+                        ) : (
+                          <span>Select date</span>
+                        )}
+                      </button>
+
+                      {isCalendarOpen && (
+                        <div className="absolute left-0 top-full mt-2 z-50 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg p-4">
+                          <Calendar
+                            mode="single"
+                            selected={formData.dateOfBirth}
+                            onSelect={handleDateChange}
+                            className="rounded-md"
+                            disabled={isPending}
+                          />
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="col-span-2 lg:col-span-1">
+                    <Label>Gender</Label>
+                    <Select
+                      value={formData.gender}
+                      onValueChange={handleGenderChange}
+                      disabled={isPending}>
+                      <SelectTrigger className="w-full mt-2">
+                        <SelectValue placeholder="Select gender" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="MALE">Male</SelectItem>
+                        <SelectItem value="FEMALE">Female</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="col-span-2 lg:col-span-1">
+                    <Label>Timezone</Label>
+                    <Input
+                      type="text"
+                      name="timezone"
+                      value={formData.timezone}
+                      onChange={handleInputChange}
+                      placeholder="UTC, EST, PST, etc."
+                      disabled={isPending}
+                    />
+                  </div>
+
+                  <div className="col-span-2 lg:col-span-1">
+                    <Label>Language</Label>
+                    <Input
+                      type="text"
+                      name="language"
+                      value={formData.language}
+                      onChange={handleInputChange}
+                      placeholder="en, es, fr, etc."
+                      disabled={isPending}
                     />
                   </div>
 
@@ -162,7 +375,8 @@ export default function UserInfoCard({ customer }: UserInfoCardProps) {
                     <Label>Role</Label>
                     <Input
                       type="text"
-                      defaultValue={customer.role}
+                      value={customer.role || "-"}
+                      disabled
                     />
                   </div>
                 </div>
@@ -172,13 +386,15 @@ export default function UserInfoCard({ customer }: UserInfoCardProps) {
               <Button
                 size="sm"
                 variant="outline"
-                onClick={closeModal}>
+                onClick={closeModal}
+                disabled={isPending}>
                 Close
               </Button>
               <Button
                 size="sm"
-                onClick={handleSave}>
-                Save Changes
+                onClick={handleSave}
+                disabled={isPending}>
+                {isPending ? "Saving..." : "Save Changes"}
               </Button>
             </div>
           </form>

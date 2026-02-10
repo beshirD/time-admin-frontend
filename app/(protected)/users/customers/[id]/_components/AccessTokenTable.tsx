@@ -1,5 +1,4 @@
-import { Trash2 } from "lucide-react";
-import IconButton from "@/components/ui/IconButton";
+import Button from "@/components/ui/Button";
 import { DeleteConfirmationDialog } from "@/components/common/DeleteConfirmationDialog";
 import { SimpleTable } from "@/components/shared/SimpleTable";
 import { EditAccessTokenDialog } from "./EditAccessTokenDialog";
@@ -38,11 +37,7 @@ export function AccessTokenTable() {
           <DeleteConfirmationDialog
             trigger={
               <div onClick={(e) => e.stopPropagation()}>
-                <IconButton
-                  variant="delete"
-                  title="Delete">
-                  <Trash2 className="h-4 w-4" />
-                </IconButton>
+                <Button usage="delete" />
               </div>
             }
             itemType="Access Token"

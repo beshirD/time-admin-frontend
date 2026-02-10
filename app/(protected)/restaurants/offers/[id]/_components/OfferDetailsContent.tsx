@@ -2,8 +2,9 @@
 
 import { useState } from "react";
 import { RestaurantOffer } from "@/types/entities";
-import { ArrowLeft, Pencil, Trash2 } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
+import Button from "@/components/ui/Button";
 import PageTitle from "@/components/common/PageTitle";
 import Image from "next/image";
 import { DeleteConfirmationDialog } from "@/components/common/DeleteConfirmationDialog";
@@ -65,12 +66,11 @@ export function OfferDetailsContent({ offer }: OfferDetailsContentProps) {
                 router.push("/restaurants/offers");
               }}
               trigger={
-                <button
+                <Button
                   suppressHydrationWarning
-                  className="px-3 py-1.5 text-sm font-medium border-red-700 border-2 text-red-500 bg-red-600/10 rounded-md transition-colors flex items-center gap-2">
-                  <Trash2 className="h-3 w-3" />
+                  usage="delete">
                   Delete
-                </button>
+                </Button>
               }
             />
           </div>
@@ -82,12 +82,11 @@ export function OfferDetailsContent({ offer }: OfferDetailsContentProps) {
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
               Offer Details
             </h3>
-            <button
-              onClick={() => setIsEditBasicOpen(true)}
-              className="px-3 py-1.5 text-sm font-medium border-primary border-2 text-primary bg-primary/10 rounded-md transition-colors flex items-center gap-2">
-              <Pencil className="h-3 w-3" />
+            <Button
+              usage="edit"
+              onClick={() => setIsEditBasicOpen(true)}>
               Edit
-            </button>
+            </Button>
           </div>
           <div className="p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             <div>
@@ -161,12 +160,11 @@ export function OfferDetailsContent({ offer }: OfferDetailsContentProps) {
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
               Description & Image
             </h3>
-            <button
-              onClick={() => setIsEditDescriptionOpen(true)}
-              className="px-3 py-1.5 text-sm font-medium border-primary border-2 text-primary bg-primary/10 rounded-md transition-colors flex items-center gap-2">
-              <Pencil className="h-3 w-3" />
+            <Button
+              usage="edit"
+              onClick={() => setIsEditDescriptionOpen(true)}>
               Edit
-            </button>
+            </Button>
           </div>
           <div className="p-6 space-y-6">
             <div>

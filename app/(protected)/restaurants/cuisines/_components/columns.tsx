@@ -1,7 +1,7 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
-import { ArrowUpDown, Pencil, Trash2 } from "lucide-react";
+import { ArrowUpDown } from "lucide-react";
 import { Cuisine } from "@/types/entities";
 import { DeleteConfirmationDialog } from "@/components/common/DeleteConfirmationDialog";
 import Button from "@/components/ui/Button";
@@ -33,15 +33,14 @@ const ActionButtons = ({
 }) => {
   return (
     <div className="flex items-center gap-2 justify-start">
-      <button
+      <Button
+        usage="edit"
         onClick={(e) => {
           e.stopPropagation();
           onEdit(cuisine);
-        }}
-        className="px-3 py-1.5 text-sm font-medium border-primary border-2 text-primary bg-primary/10 rounded-md transition-colors flex items-center gap-2">
-        <Pencil className="h-3 w-3" />
+        }}>
         Edit
-      </button>
+      </Button>
       <DeleteConfirmationDialog
         itemType="Cuisine"
         itemName={cuisine.title}
@@ -49,14 +48,13 @@ const ActionButtons = ({
           window.location.reload();
         }}
         trigger={
-          <button
+          <Button
+            usage="delete"
             onClick={(e) => {
               e.stopPropagation();
-            }}
-            className="px-3 py-1.5 text-sm font-medium border-red-700 border-2 text-red-500 bg-red-600/10 rounded-md transition-colors flex items-center gap-2">
-            <Trash2 className="h-3 w-3" />
+            }}>
             Delete
-          </button>
+          </Button>
         }
       />
     </div>

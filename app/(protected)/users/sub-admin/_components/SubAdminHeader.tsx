@@ -1,13 +1,26 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, Trash2 } from "lucide-react";
+import { ArrowLeft, RefreshCw } from "lucide-react";
+import Button from "@/components/ui/Button";
 import { DeleteSubAdminDialog } from "./DeleteSubAdminDialog";
+import {
+  ChangeUserStatusDialog,
+  type StatusChangeDetails,
+} from "@/components/shared/ChangeUserStatusDialog";
+import {
+  useBanUser,
+  useUnbanUser,
+  useActivateUser,
+  useDeactivateUser,
+} from "@/hooks/useUserStatus";
+import type { UserStatus } from "@/types/user";
 
 interface SubAdminHeaderProps {
   subAdminId: number | string;
   fullName: string;
-  status: string;
+  status: UserStatus;
   role?: string;
 }
 
@@ -17,56 +30,127 @@ export function SubAdminHeader({
   status,
   role = "Sub-Admin",
 }: SubAdminHeaderProps) {
-  const statusStyles = {
-    Active:
-      "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400",
-    Inactive:
-      "bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400",
+  const [isStatusDialogOpen, setIsStatusDialogOpen] = useState(false);
+
+  const banMutation = useBanUser();
+  const unbanMutation = useUnbanUser();
+  const activateMutation = useActivateUser();
+  const deactivateMutation = useDeactivateUser();
+
+  const handleStatusChange = async (details: StatusChangeDetails) => {
+    const userId = parseInt(subAdminId.toString());
+    const requestBody = {
+      reason: details.reason,
+      notifyUser: details.notifyUser,
+      ...(details.durationDays && { durationDays: details.durationDays }),
+      ...(details.banUntil && { banUntil: details.banUntil }),
+      ...(details.notificationMessage && {
+        notificationMessage: details.notificationMessage,
+      }),
+    };
+
+    try {
+      // Select the appropriate mutation based on the new status
+      switch (details.newStatus) {
+        case "BANNED":
+          await banMutation.mutateAsync({ userId, details: requestBody });
+          break;
+        case "ACTIVE":
+          // If current status is BANNED, unban. Otherwise, activate.
+          if (status === "BANNED") {
+            await unbanMutation.mutateAsync({ userId, details: requestBody });
+          } else {
+            await activateMutation.mutateAsync({
+              userId,
+              details: requestBody,
+            });
+          }
+          break;
+        case "INACTIVE":
+          await deactivateMutation.mutateAsync({
+            userId,
+            details: requestBody,
+          });
+          break;
+      }
+      setIsStatusDialogOpen(false);
+    } catch {
+      // Error handled by mutation
+    }
   };
 
+  const getStatusBadgeColor = (userStatus: UserStatus) => {
+    switch (userStatus) {
+      case "ACTIVE":
+        return "bg-success-100 text-success-800 dark:bg-success-900/30 dark:text-success-400";
+      case "INACTIVE":
+        return "bg-warning-100 text-warning-800 dark:bg-warning-900/30 dark:text-warning-400";
+      case "BANNED":
+        return "bg-error-100 text-error-800 dark:bg-error-900/30 dark:text-error-400";
+      case "PENDING":
+        return "bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400";
+      default:
+        return "bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400";
+    }
+  };
+
+  const isLoading =
+    banMutation.isPending ||
+    unbanMutation.isPending ||
+    activateMutation.isPending ||
+    deactivateMutation.isPending;
+
   return (
-    <div className="py-3 px-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-      <div className="flex items-center gap-4">
-        <Link
-          href="/users/sub-admin"
-          className="flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition">
-          <ArrowLeft className="h-5 w-5" />
-        </Link>
+    <>
+      <div className="py-3 bg-white dark:bg-gray-900 rounded-lg border flex items-center px-5 justify-between">
+        <div className="flex items-center gap-4">
+          <Link
+            href="/users/sub-admin"
+            className="flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition">
+            <ArrowLeft className="h-5 w-5" />
+          </Link>
+          <div className="flex items-center gap-3">
+            <h1 className="text-xl font-semibold text-gray-900 dark:text-white">
+              {fullName}
+            </h1>
+            <span
+              className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-sm font-medium ${getStatusBadgeColor(status)}`}>
+              {status}
+            </span>
+            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-sm font-medium bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400">
+              {role}
+            </span>
+          </div>
+        </div>
         <div className="flex items-center gap-3">
-          <h1 className="text-2xl font-semibold text-gray-900 dark:text-white">
-            {fullName}
-          </h1>
-          <span
-            className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-              statusStyles[status as keyof typeof statusStyles] ||
-              statusStyles.Inactive
-            }`}>
-            {status}
-          </span>
-          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400">
-            {role}
-          </span>
+          {/* Single Change Status Button */}
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => setIsStatusDialogOpen(true)}
+            disabled={isLoading}
+            className="border-primary text-primary hover:bg-primary/10">
+            <RefreshCw className="h-4 w-4 mr-2" />
+            Change User Status
+          </Button>
+
+          <DeleteSubAdminDialog
+            subAdminId={subAdminId}
+            subAdminName={fullName}>
+            <Button usage="delete">Delete</Button>
+          </DeleteSubAdminDialog>
         </div>
       </div>
 
-      <div className="flex items-center gap-3">
-        <DeleteSubAdminDialog
-          subAdminId={subAdminId}
-          subAdminName={fullName}
-          onDeleteSuccess={() => {
-            window.location.href = "/users/sub-admin";
-          }}>
-          <button className="flex items-center gap-2 px-3 py-1.5 border border-red-500 text-red-600 dark:text-red-400 hover:bg-red-500/20 dark:hover:bg-blue-500/20 rounded-lg transition-colors duration-200">
-            <Trash2 className="h-4 w-4" />
-            Delete
-          </button>
-          {/* <IconButton
-            variant="delete"
-            title="Delete Sub-Admin">
-            <Trash2 className="h-4 w-4" />
-          </IconButton> */}
-        </DeleteSubAdminDialog>
-      </div>
-    </div>
+      {/* Status Change Dialog */}
+      <ChangeUserStatusDialog
+        isOpen={isStatusDialogOpen}
+        onClose={() => setIsStatusDialogOpen(false)}
+        onConfirm={handleStatusChange}
+        userName={fullName}
+        currentStatus={status}
+        isLoading={isLoading}
+      />
+    </>
   );
 }

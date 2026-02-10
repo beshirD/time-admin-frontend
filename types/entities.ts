@@ -3,7 +3,7 @@ export type Customer = {
   fullName: string;
   email: string;
   contactNo: string;
-  stateId: string;
+  status: "ACTIVE" | "INACTIVE" | "PENDING" | "BANNED";
   createdOn: string;
   createdById: string;
 };
@@ -12,7 +12,7 @@ export type SubAdmin = {
   id: number;
   fullName: string;
   email: string;
-  stateId: string;
+  status: string;
   createdOn: string;
   createdById: string;
 };
@@ -205,5 +205,37 @@ export type RestaurantOffer = {
   minimumAmount?: number;
   endTime: string;
   description: string;
+  image?: string;
+};
+export type Order = {
+  id: number;
+  orderNo: string;
+  store: string;
+  address: string;
+  totalPrice: number;
+  deliveryStatus:
+    | "RESTAURANT_REJECTED"
+    | "PENDING"
+    | "CONFIRMED"
+    | "PREPARING"
+    | "READY_FOR_PICKUP"
+    | "PICKED_UP"
+    | "DELIVERED"
+    | "COMPLETED"
+    | "CANCELLED"
+    | "PLACED"
+    | "ACCEPTED"
+    | "ON_THE_WAY"
+    | "DRIVER_REJECTED";
+  createdOn: string;
+  createdBy: string;
+};
+export type MenuItem = {
+  id: number;
+  name: string;
+  category: string;
+  type: string;
+  description: string;
+  price: number;
   image?: string;
 };

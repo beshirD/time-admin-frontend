@@ -1,86 +1,61 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
-import { ArrowUpDown, Eye, Pencil, Trash2, MoreHorizontal } from "lucide-react";
+import { ArrowUpDown } from "lucide-react";
 import Link from "next/link";
-import { Dropdown } from "@/components/ui/dropdown/Dropdown";
-import { useState } from "react";
+import Button from "@/components/ui/Button";
 
 import { Customer } from "@/types/entities";
 
 // Status badge component
 const StatusBadge = ({ status }: { status: string }) => {
   const statusStyles = {
-    Active:
+    ACTIVE:
       "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400",
-    Inactive:
+    INACTIVE:
       "bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400",
+    PENDING: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400",
+    BANNED: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400",
   };
 
   return (
     <span
-      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusStyles[status as keyof typeof statusStyles] || statusStyles.Inactive}`}>
+      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusStyles[status as keyof typeof statusStyles] || statusStyles.INACTIVE}`}>
       {status}
     </span>
   );
 };
 
-import { DeleteConfirmationDialog } from "@/components/common/DeleteConfirmationDialog";
+import { DeleteCustomerDialog } from "./DeleteCustomerDialog";
 
-// Action buttons component
 // Action buttons component
 const ActionButtons = ({ customer }: { customer: Customer }) => {
-  const [isOpen, setIsOpen] = useState(false);
-
   return (
-    <div className="relative flex justify-end">
-      <button
-        onClick={(e) => {
-          e.stopPropagation();
-          setIsOpen(!isOpen);
-        }}
-        className="dropdown-toggle p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-brand-500/20">
-        <MoreHorizontal className="h-4 w-4 text-gray-500 dark:text-gray-400" />
-      </button>
-      <Dropdown
-        isOpen={isOpen}
-        onClose={() => setIsOpen(false)}
-        className="w-40 right-0">
-        <div className="p-1 flex flex-col gap-0.5">
-          <Link
-            href={`/users/customers/${customer.id}`}
-            className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md transition-colors"
-            onClick={(e) => e.stopPropagation()}>
-            <Eye className="h-4 w-4" />
-            View
-          </Link>
-          <Link
-            href={`/users/customers/${customer.id}/edit`}
-            className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md transition-colors"
-            onClick={(e) => e.stopPropagation()}>
-            <Pencil className="h-4 w-4" />
-            Edit
-          </Link>
-          <DeleteConfirmationDialog
-            itemType="Customer"
-            itemName={customer.fullName}
-            onSuccess={() => {
-              window.location.reload();
-            }}
-            trigger={
-              <button
-                className="w-full flex items-center gap-2 px-3 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-md transition-colors text-left"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setIsOpen(false);
-                }}>
-                <Trash2 className="h-4 w-4" />
-                Delete
-              </button>
-            }
-          />
-        </div>
-      </Dropdown>
+    <div className="flex items-center gap-2 justify-end">
+      <Link
+        href={`/users/customers/${customer.id}`}
+        onClick={(e) => e.stopPropagation()}>
+        <Button usage="view">View</Button>
+      </Link>
+      <Link
+        href={`/users/customers/${customer.id}/edit`}
+        onClick={(e) => e.stopPropagation()}>
+        <Button usage="edit">Edit</Button>
+      </Link>
+      <DeleteCustomerDialog
+        customerId={customer.id}
+        customerName={customer.fullName}
+        onDeleteSuccess={() => {
+          // window.location.reload();
+        }}>
+        <Button
+          usage="delete"
+          onClick={(e) => {
+            e.stopPropagation();
+          }}>
+          Delete
+        </Button>
+      </DeleteCustomerDialog>
     </div>
   );
 };
@@ -127,9 +102,9 @@ export const columns: ColumnDef<Customer>[] = [
     cell: ({ row }) => <div>{row.getValue("contactNo")}</div>,
   },
   {
-    accessorKey: "stateId",
-    header: "State Id",
-    cell: ({ row }) => <StatusBadge status={row.getValue("stateId")} />,
+    accessorKey: "status",
+    header: "Status",
+    cell: ({ row }) => <StatusBadge status={row.getValue("status")} />,
   },
   {
     accessorKey: "createdOn",

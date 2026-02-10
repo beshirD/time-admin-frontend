@@ -1,47 +1,98 @@
 "use client";
 
-import { useState } from "react";
-import { Eye, EyeOff } from "lucide-react";
-import Input from "@/components/ui/Input";
+import { useState, useMemo } from "react";
 import Label from "@/components/ui/Label";
 import Button from "@/components/ui/Button";
+import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
 import { Modal } from "@/components/ui/modal";
+import { SearchableSelect } from "@/components/ui/SearchableSelect";
+import type { SearchableSelectOption } from "@/components/ui/SearchableSelect";
+import { useAdminUsers } from "@/hooks/useAdminUsers";
+import { useRoles } from "@/hooks/useRoles";
+import { useAssignRole } from "@/hooks/useAssignRole";
+import { Loader2 } from "lucide-react";
 
 export function CreateSubAdminDialog() {
   const [open, setOpen] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
-  const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
-    email: "",
-    password: "",
-    profileFile: null as File | null,
+  const [selectedUserId, setSelectedUserId] = useState("");
+  const [selectedRoleName, setSelectedRoleName] = useState("");
+
+  // Fetch users with roleName=USER
+  const { data: usersData, isLoading: isLoadingUsers } = useAdminUsers({
+    roleName: "USER",
+    pageNumber: 0,
+    pageSize: 1000, // Get all users for the dropdown
   });
+
+  // Fetch available roles
+  const { data: roles, isLoading: isLoadingRoles } = useRoles();
+
+  // Assign role mutation
+  const assignRoleMutation = useAssignRole();
+
+  // Transform users to SearchableSelect options
+  const userOptions: SearchableSelectOption[] = useMemo(() => {
+    if (!usersData?.content) return [];
+    return usersData.content.map((user) => ({
+      value: user.id.toString(),
+      label: user.fullName,
+      description: user.email,
+    }));
+  }, [usersData]);
+
+  // Transform roles to SearchableSelect options
+  const roleOptions: SearchableSelectOption[] = useMemo(() => {
+    if (!roles) {
+      return [];
+    }
+    const options = roles.map((role) => ({
+      value: role.name,
+      label: role.name,
+      description: role.description,
+    }));
+    return options;
+  }, [roles]);
+
+  // Get selected role details
+  const selectedRole = useMemo(() => {
+    if (!selectedRoleName || !roles) return null;
+    return roles.find((role) => role.name === selectedRoleName);
+  }, [selectedRoleName, roles]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Form submitted:", formData);
 
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    if (!selectedUserId) {
+      toast.error("Please select a user");
+      return;
+    }
 
-    toast.success("Sub-Admin created successfully");
-    setOpen(false);
-    // Reset form
-    setFormData({
-      firstName: "",
-      lastName: "",
-      email: "",
-      password: "",
-      profileFile: null,
-    });
+    if (!selectedRoleName) {
+      toast.error("Please select a role");
+      return;
+    }
+
+    try {
+      await assignRoleMutation.mutateAsync({
+        userId: parseInt(selectedUserId),
+        roleName: selectedRoleName,
+      });
+
+      // Reset form and close dialog
+      setOpen(false);
+      setSelectedUserId("");
+      setSelectedRoleName("");
+    } catch (error) {
+      // Error is handled by the mutation hook
+      console.error("Failed to assign role:", error);
+    }
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      setFormData({ ...formData, profileFile: e.target.files[0] });
-    }
+  const handleClose = () => {
+    setOpen(false);
+    setSelectedUserId("");
+    setSelectedRoleName("");
   };
 
   return (
@@ -54,133 +105,95 @@ export function CreateSubAdminDialog() {
 
       <Modal
         isOpen={open}
-        onClose={() => setOpen(false)}
-        title="Create New Admin"
+        onClose={handleClose}
+        title="Assign Admin Role"
         hideTitle={true}
-        className="max-w-[700px] m-4">
-        <div className="no-scrollbar relative w-full max-w-[700px] overflow-y-auto rounded-3xl bg-white p-4 dark:bg-gray-900 lg:p-11">
+        className="m-4 items-center">
+        <div className="no-scrollbar  h-full max-h-[80%] relative w-[600px] border overflow-y-auto rounded-3xl bg-white p-4 dark:bg-gray-900 lg:p-9">
           <div className="px-2 pr-14">
             <h4 className="mb-2 text-2xl font-semibold text-gray-800 dark:text-white/90">
-              Create New Admin
+              Assign Admin Role
             </h4>
-            <p className="mb-6 text-sm text-gray-500 dark:text-gray-400 lg: ">
-              Fill the form to create a new sub-admin account.
+            <p className="mb-4 text-sm text-gray-500 dark:text-gray-400">
+              Select a user and assign them an administrative role.
             </p>
           </div>
 
           <form
-            className="flex flex-col"
+            className="flex flex-col w-[520px] overflow-y-auto"
             onSubmit={handleSubmit}>
-            <div className="custom-scrollbar h-[450px] overflow-y-auto px-2 pb-3">
-              <div>
-                <h5 className="mb-5 text-lg font-medium text-gray-800 dark:text-white/90 lg:mb-6">
-                  Account Information
-                </h5>
-
-                <div className="grid grid-cols-1 gap-x-6 gap-y-5 lg:grid-cols-2">
-                  {/* First Name */}
-                  <div>
-                    <Label htmlFor="firstName">
-                      First Name <span className="text-red-500">*</span>
-                    </Label>
-                    <Input
-                      id="firstName"
-                      type="text"
-                      required
-                      value={formData.firstName}
-                      onChange={(e) =>
-                        setFormData({ ...formData, firstName: e.target.value })
-                      }
-                    />
-                  </div>
-
-                  {/* Last Name */}
-                  <div>
-                    <Label htmlFor="lastName">
-                      Last Name <span className="text-red-500">*</span>
-                    </Label>
-                    <Input
-                      id="lastName"
-                      type="text"
-                      required
-                      value={formData.lastName}
-                      onChange={(e) =>
-                        setFormData({ ...formData, lastName: e.target.value })
-                      }
-                    />
-                  </div>
-
-                  {/* Email */}
-                  <div className="col-span-2">
-                    <Label htmlFor="email">
-                      Email <span className="text-red-500">*</span>
-                    </Label>
-                    <Input
-                      id="email"
-                      type="email"
-                      required
-                      value={formData.email}
-                      onChange={(e) =>
-                        setFormData({ ...formData, email: e.target.value })
-                      }
-                      placeholder="admin@gmail.com"
-                    />
-                  </div>
-
-                  {/* Password */}
-                  <div className="col-span-2">
-                    <Label htmlFor="password">
-                      Password <span className="text-red-500">*</span>
-                    </Label>
-                    <div className="relative">
-                      <Input
-                        id="password"
-                        type={showPassword ? "text" : "password"}
-                        required
-                        value={formData.password}
-                        onChange={(e) =>
-                          setFormData({ ...formData, password: e.target.value })
-                        }
-                        className="pr-10"
-                        placeholder=".........."
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
-                        {showPassword ? (
-                          <EyeOff className="h-4 w-4" />
-                        ) : (
-                          <Eye className="h-4 w-4" />
-                        )}
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* Profile File */}
-                  <div className="col-span-2">
-                    <Label htmlFor="profileFile">Profile Picture</Label>
-                    <div className="flex flex-col gap-2">
-                      <label
-                        htmlFor="profileFile"
-                        className="cursor-pointer w-full px-4 py-2 bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 transition">
-                        Choose File
-                      </label>
-                      <span className="text-sm text-gray-500 dark:text-gray-400">
-                        {formData.profileFile
-                          ? formData.profileFile.name
-                          : "No file chosen"}
-                      </span>
-                      <input
-                        id="profileFile"
-                        type="file"
-                        accept="image/*"
-                        onChange={handleFileChange}
-                        className="hidden"
-                      />
-                    </div>
-                  </div>
+            <div className="custom-scrollbar min-h-[500px] overflow-y-auto px-2 pb-3">
+              <div className="space-y-4">
+                {/* User Selection */}
+                <div>
+                  <Label htmlFor="user">
+                    Select User <span className="text-red-500">*</span>
+                  </Label>
+                  <SearchableSelect
+                    options={userOptions}
+                    value={selectedUserId}
+                    onChange={setSelectedUserId}
+                    placeholder={
+                      isLoadingUsers ? "Loading users..." : "Select a user"
+                    }
+                    searchPlaceholder="Search by name or email..."
+                    disabled={isLoadingUsers}
+                    className="w-full"
+                  />
+                  <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                    Select a user to promote to an admin role
+                  </p>
                 </div>
+
+                {/* Role Selection */}
+                <div>
+                  <Label htmlFor="role">
+                    Select Role <span className="text-red-500">*</span>
+                  </Label>
+                  <SearchableSelect
+                    options={roleOptions}
+                    value={selectedRoleName}
+                    onChange={setSelectedRoleName}
+                    placeholder={
+                      isLoadingRoles ? "Loading roles..." : "Select a role"
+                    }
+                    searchPlaceholder="Search roles..."
+                    disabled={isLoadingRoles || !selectedUserId}
+                    className="w-full"
+                  />
+                  <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                    Choose the administrative role to assign
+                  </p>
+                </div>
+
+                {/* Permissions Display */}
+                {selectedRole && (
+                  <div className="mt-8">
+                    <h5 className="mb-5 text-lg font-medium text-gray-800 dark:text-white/90">
+                      Role Permissions
+                    </h5>
+                    <p className="mb-4 text-sm text-gray-500 dark:text-gray-400">
+                      This role includes {selectedRole.permissionCount}{" "}
+                      permission{selectedRole.permissionCount !== 1 ? "s" : ""}
+                    </p>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                      {selectedRole.permissions.map((permission) => (
+                        <div
+                          key={permission.id}
+                          className="flex items-center justify-between p-3 rounded-lg border-2 border-primary bg-primary/5 dark:bg-primary/10 transition cursor-not-allowed">
+                          <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                            {permission.name}
+                          </span>
+                          <Switch
+                            checked={true}
+                            disabled={true}
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
 
@@ -189,13 +202,26 @@ export function CreateSubAdminDialog() {
                 size="sm"
                 variant="outline"
                 type="button"
-                onClick={() => setOpen(false)}>
+                onClick={handleClose}
+                disabled={assignRoleMutation.isPending}>
                 Cancel
               </Button>
               <Button
                 size="sm"
-                type="submit">
-                Create Admin
+                type="submit"
+                disabled={
+                  !selectedUserId ||
+                  !selectedRoleName ||
+                  assignRoleMutation.isPending
+                }>
+                {assignRoleMutation.isPending ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Assigning...
+                  </>
+                ) : (
+                  "Assign Role"
+                )}
               </Button>
             </div>
           </form>
