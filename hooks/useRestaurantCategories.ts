@@ -1,7 +1,7 @@
 'use client';
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { api, ApiResponse } from "@/lib/api-client";
+import { api } from "@/lib/api-client";
 import { FoodCategoriesResponse } from "@/types/entities";
 import { toast } from "sonner";
 
@@ -19,10 +19,10 @@ export function useRestaurantCategories() {
         direction: "DESC",
       });
 
-      const response = await api.get<ApiResponse<FoodCategoriesResponse>>(
+      const response = await api.get<FoodCategoriesResponse>(
         `/api/v1/restaurant-categories?${queryParams.toString()}`
       );
-      return response.data;
+      return response;
     },
     staleTime: 2 * 60 * 1000, // 2 minutes
   });
@@ -30,11 +30,18 @@ export function useRestaurantCategories() {
   // Create mutation
   const createMutation = useMutation({
     mutationFn: async (formData: FormData) => {
-      const response = await api.post<ApiResponse<unknown>>(
-        "/api/v1/admin/restaurant-categories",
-        formData
-      );
-      return response.data;
+      const response = await fetch('/api/proxy/api/v1/admin/restaurant-categories', {
+        method: 'POST',
+        body: formData,
+        credentials: 'include',
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to create restaurant category');
+      }
+
+      return response.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["restaurant-categories"] });
@@ -49,11 +56,18 @@ export function useRestaurantCategories() {
   // Update mutation
   const updateMutation = useMutation({
     mutationFn: async ({ id, formData }: { id: number; formData: FormData }) => {
-      const response = await api.patch<ApiResponse<unknown>>(
-        `/api/v1/admin/restaurant-categories/${id}`,
-        formData
-      );
-      return response.data;
+      const response = await fetch(`/api/proxy/api/v1/admin/restaurant-categories/${id}`, {
+        method: 'PATCH',
+        body: formData,
+        credentials: 'include',
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to update restaurant category');
+      }
+
+      return response.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["restaurant-categories"] });
@@ -72,7 +86,7 @@ export function useRestaurantCategories() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["restaurant-categories"] });
-      toast.success("Restaurant category deleted successfully!");
+      // Note: Success toast is shown by DeleteConfirmationDialog
     },
     onError: (error: Error) => {
       toast.error("Failed to delete restaurant category");

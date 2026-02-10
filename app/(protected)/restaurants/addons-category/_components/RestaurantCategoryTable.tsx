@@ -47,7 +47,20 @@ export function RestaurantCategoryTable({
 
   const handleCreate = (data: { title: string; image?: File }) => {
     const formData = new FormData();
-    formData.append("title", data.title);
+
+    // Create the data object as JSON string
+    const dataJson = JSON.stringify({
+      title: data.title,
+      status: "active",
+    });
+
+    // Append data as a blob with application/json content type
+    formData.append(
+      "data",
+      new Blob([dataJson], { type: "application/json" }),
+      "data.json",
+    );
+
     if (data.image) {
       formData.append("image", data.image);
     }
@@ -63,7 +76,20 @@ export function RestaurantCategoryTable({
     if (!editingCategory) return;
 
     const formData = new FormData();
-    formData.append("title", data.title);
+
+    // Create the data object as JSON string
+    const dataJson = JSON.stringify({
+      title: data.title,
+      status: editingCategory.status || "active",
+    });
+
+    // Append data as a blob with application/json content type
+    formData.append(
+      "data",
+      new Blob([dataJson], { type: "application/json" }),
+      "data.json",
+    );
+
     if (data.image) {
       formData.append("image", data.image);
     }
@@ -111,6 +137,7 @@ export function RestaurantCategoryTable({
         data={data}
         searchPlaceholder="Search by title, id..."
         searchableColumns={["id", "title"]}
+        enableColumnVisibility={false}
       />
 
       {/* View Details Dialog */}

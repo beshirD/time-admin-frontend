@@ -66,6 +66,7 @@ export function AddOnsCategoryContent({
             searchableColumns={["id", "title"]}
             onRowClick={handleRowClick}
             isLoading={isLoading}
+            enableColumnVisibility={false}
           />
         </div>
       </div>
