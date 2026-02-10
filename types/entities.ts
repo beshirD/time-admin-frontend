@@ -146,14 +146,52 @@ export type DriverAdvance = {
   expectedReturn?: number;
 };
 
+// API Response Types for Restaurants
+export type RestaurantCategory = {
+  id: number;
+  title: string;
+};
+
+export type RestaurantStatus = 
+  | "active" 
+  | "inactive" 
+  | "pending" 
+  | "approved" 
+  | "rejected" 
+  | "suspended";
+
 export type Restaurant = {
   id: number;
-  restaurantName: string;
-  fee?: string;
-  location: string;
-  image: string;
-  stateId: string;
-  createdOn: string;
+  ownerId: number;
+  name: string;
+  description: string;
+  featuredImage: string;
+  images: string[];
+  addressLine: string;
+  status: RestaurantStatus;
+  category: RestaurantCategory;
+  cuisine: string;
+  deliveryFee: number;
+  deliveryDistanceKm: number;
+  averageRating: number;
+  numberOfRatings: number;
+  distanceKm: number;
+  isFavorite: boolean;
+  deliveryTimeMinutes: number;
+  isAvailable: boolean;
+  averagePrice: number;
+};
+
+export type PageMetadata = {
+  size: number;
+  number: number;
+  totalElements: number;
+  totalPages: number;
+};
+
+export type RestaurantsResponse = {
+  content: Restaurant[];
+  page: PageMetadata;
 };
 
 export type Cuisine = {
@@ -180,9 +218,16 @@ export type Feed = {
 export type FoodCategory = {
   id: number;
   title: string;
-  state: string;
   image?: string;
-  type: "Restaurant" | "Store";
+  status?: "active" | "inactive";
+  // Legacy fields for backward compatibility
+  state?: string;
+  type?: "Restaurant" | "Store";
+};
+
+export type FoodCategoriesResponse = {
+  content: FoodCategory[];
+  page: PageMetadata;
 };
 
 export type RestaurantTransaction = {

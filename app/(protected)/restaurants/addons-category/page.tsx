@@ -1,8 +1,8 @@
-import { AddOnCategory, FoodCategory } from "@/types/entities";
+import { AddOnCategory } from "@/types/entities";
 import { CategoriesTabs } from "./_components/CategoriesTabs";
 
 async function getAddOnCategoriesData(): Promise<AddOnCategory[]> {
-  // Mock data for add-on categories
+  // Mock data for add-on categories (TODO: Replace with API call when available)
   return [
     {
       id: 3,
@@ -25,62 +25,8 @@ async function getAddOnCategoriesData(): Promise<AddOnCategory[]> {
   ];
 }
 
-async function getFoodCategoriesData(): Promise<FoodCategory[]> {
-  // Mock data for food categories
-  return [
-    {
-      id: 22,
-      title: "test added",
-      state: "Active",
-      type: "Restaurant",
-    },
-    {
-      id: 21,
-      title: "rice",
-      state: "Active",
-      type: "Restaurant",
-    },
-    {
-      id: 20,
-      title: "soda",
-      state: "Active",
-      type: "Store",
-    },
-    {
-      id: 19,
-      title: "Pizza",
-      state: "Active",
-      type: "Restaurant",
-    },
-    {
-      id: 18,
-      title: "Hot Drinks",
-      state: "Deleted",
-      type: "Store",
-    },
-    {
-      id: 17,
-      title: "Coffee",
-      state: "Deleted",
-      type: "Restaurant",
-    },
-    {
-      id: 16,
-      title: "Juice",
-      state: "Active",
-      type: "Store",
-    },
-  ];
-}
-
 export default async function AddOnsCategoryPage() {
   const addOnCategoriesData = await getAddOnCategoriesData();
-  const foodCategoriesData = await getFoodCategoriesData();
 
-  return (
-    <CategoriesTabs
-      addOnCategoriesData={addOnCategoriesData}
-      foodCategoriesData={foodCategoriesData}
-    />
-  );
+  return <CategoriesTabs addOnCategoriesData={addOnCategoriesData} />;
 }

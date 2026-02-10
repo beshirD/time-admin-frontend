@@ -8,43 +8,61 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { TrendingDown, TrendingUp } from "lucide-react";
+import { Restaurant } from "@/types/entities";
 
-const metricsData = [
-  {
-    title: "Total Restaurants",
-    value: "143",
-    trend: "+15.2%",
-    isPositive: true,
-    footerTitle: "Growing restaurant network",
-    footerDescription: "Registered restaurants",
-  },
-  {
-    title: "Active Restaurants",
-    value: "128",
-    trend: "+10.5%",
-    isPositive: true,
-    footerTitle: "Currently active",
-    footerDescription: "Available for orders",
-  },
-  {
-    title: "Pending Approval",
-    value: "8",
-    trend: "+2.0%",
-    isPositive: false,
-    footerTitle: "Awaiting verification",
-    footerDescription: "Needs admin review",
-  },
-  {
-    title: "Total Orders",
-    value: "5,234",
-    trend: "+22.8%",
-    isPositive: true,
-    footerTitle: "Orders completed",
-    footerDescription: "This month",
-  },
-];
+interface RestaurantsMetricsProps {
+  restaurants: Restaurant[];
+  totalCount: number;
+}
 
-export function RestaurantsMetrics() {
+export function RestaurantsMetrics({
+  restaurants,
+  totalCount,
+}: RestaurantsMetricsProps) {
+  // Calculate metrics from actual data
+  const activeCount = restaurants.filter((r) => r.status === "active").length;
+  const pendingCount = restaurants.filter((r) => r.status === "pending").length;
+  const averageRating =
+    restaurants.length > 0
+      ? restaurants.reduce((sum, r) => sum + r.averageRating, 0) /
+        restaurants.length
+      : 0;
+
+  const metricsData = [
+    {
+      title: "Total Restaurants",
+      value: totalCount.toString(),
+      trend: "+15.2%",
+      isPositive: true,
+      footerTitle: "Growing restaurant network",
+      footerDescription: "Registered restaurants",
+    },
+    {
+      title: "Active Restaurants",
+      value: activeCount.toString(),
+      trend: "+10.5%",
+      isPositive: true,
+      footerTitle: "Currently active",
+      footerDescription: "Available for orders",
+    },
+    {
+      title: "Pending Approval",
+      value: pendingCount.toString(),
+      trend: pendingCount > 5 ? "+2.0%" : "-1.5%",
+      isPositive: pendingCount <= 5,
+      footerTitle: "Awaiting verification",
+      footerDescription: "Needs admin review",
+    },
+    {
+      title: "Average Rating",
+      value: averageRating.toFixed(1),
+      trend: "+0.3",
+      isPositive: true,
+      footerTitle: "Customer satisfaction",
+      footerDescription: "Overall rating",
+    },
+  ];
+
   return (
     <div className="grid grid-cols-1 gap-5 @xl/main:grid-cols-2 lg:grid-cols-4">
       {metricsData.map((metric, index) => (

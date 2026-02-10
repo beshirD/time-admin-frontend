@@ -76,7 +76,7 @@ const ActionButtons = ({
   );
 };
 
-export const createFoodColumns = (
+export const createRestaurantCategoryColumns = (
   onEdit: (category: FoodCategory) => void,
   onViewDetails: (category: FoodCategory) => void,
   onDelete: (id: number) => Promise<void>,
