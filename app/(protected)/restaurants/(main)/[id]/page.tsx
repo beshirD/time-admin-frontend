@@ -59,7 +59,13 @@ export default function RestaurantDetailsPage() {
             updateRestaurant={updateRestaurant}
             isUpdating={isUpdating}
           />
-          <RestaurantLocationMap location={restaurant.addressLine} />
+          <RestaurantLocationMap
+            location={restaurant.addressLine}
+            latitude={restaurant.latitude}
+            longitude={restaurant.longitude}
+            updateRestaurant={updateRestaurant}
+            isUpdating={isUpdating}
+          />
           <RestaurantImages
             restaurantImage={restaurant.featuredImage}
             foodImages={restaurant.images || []}

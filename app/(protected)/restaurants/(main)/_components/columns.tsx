@@ -63,8 +63,6 @@ const RatingDisplay = ({
   );
 };
 
-import { DeleteConfirmationDialog } from "@/components/common/DeleteConfirmationDialog";
-
 // Action buttons component
 const ActionButtons = ({ restaurant }: { restaurant: Restaurant }) => {
   return (
@@ -79,22 +77,6 @@ const ActionButtons = ({ restaurant }: { restaurant: Restaurant }) => {
         onClick={(e) => e.stopPropagation()}>
         <Button usage="edit">Edit</Button>
       </Link>
-      <DeleteConfirmationDialog
-        itemType="Restaurant"
-        itemName={restaurant.name}
-        onSuccess={() => {
-          window.location.reload();
-        }}
-        trigger={
-          <Button
-            usage="delete"
-            onClick={(e) => {
-              e.stopPropagation();
-            }}>
-            Delete
-          </Button>
-        }
-      />
     </div>
   );
 };

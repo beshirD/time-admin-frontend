@@ -301,12 +301,65 @@ export type Order = {
   createdOn: string;
   createdBy: string;
 };
-export type MenuItem = {
+export type MenuItemType = "VEG" | "NON_VEG" | "VEGAN";
+
+export type MenuItemPrice = {
   id: number;
-  name: string;
-  category: string;
-  type: string;
+  title: string;
   description: string;
   price: number;
-  image?: string;
+  quantity: number;
+  sortOrder: number;
 };
+
+export type MenuItemAddOn = {
+  id: number;
+  title: string;
+  price: number;
+  image: string;
+};
+
+export type MenuItemCategory = {
+  id: number;
+  title: string;
+  description: string;
+  status: "active" | "inactive";
+};
+
+export type MenuItem = {
+  id: number;
+  restaurantId: number;
+  title: string;
+  description: string;
+  images: string[];
+  itemType: MenuItemType;
+  basePrice: number;
+  platformFeePercentage: number;
+  availabilityStartTime: string;
+  availabilityEndTime: string;
+  cookTimeMins: number;
+  isAvailable: boolean;
+  stock: number;
+  prices: MenuItemPrice[];
+  addons: MenuItemAddOn[];
+  category: MenuItemCategory;
+  averageRating: number;
+  numberOfRatings: number;
+  numberOfOrders: number;
+  totalQuantitySold: number;
+  estimatedDeliveryTimeMinutes: number;
+  isFavorite: boolean;
+};
+
+export type MenuItemsResponse = {
+  content: MenuItem[];
+  page: PageMetadata;
+};
+
+export type OpeningHour = {
+  dayOfWeek: string;
+  openTime: string;
+  closeTime: string;
+  isClosed: boolean;
+};
+
