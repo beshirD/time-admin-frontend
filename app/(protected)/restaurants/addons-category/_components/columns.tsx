@@ -10,9 +10,11 @@ import Button from "@/components/ui/Button";
 const ActionButtons = ({
   category,
   onEdit,
+  onDelete,
 }: {
   category: AddOnCategory;
   onEdit: (category: AddOnCategory) => void;
+  onDelete: (id: number) => void;
 }) => {
   return (
     <div className="flex items-center gap-2 justify-start">
@@ -27,9 +29,6 @@ const ActionButtons = ({
       <DeleteConfirmationDialog
         itemType="Add-On Category"
         itemName={category.title}
-        onSuccess={() => {
-          window.location.reload();
-        }}
         trigger={
           <Button
             usage="delete"
@@ -46,6 +45,7 @@ const ActionButtons = ({
 
 export const createColumns = (
   onEdit: (category: AddOnCategory) => void,
+  onDelete: (id: number) => void,
 ): ColumnDef<AddOnCategory>[] => [
   {
     accessorKey: "id",
@@ -67,23 +67,12 @@ export const createColumns = (
     cell: ({ row }) => <div>{row.getValue("title")}</div>,
   },
   {
-    accessorKey: "createdOn",
-    header: ({ column }) => {
-      return (
-        <button
-          className="flex items-center gap-2 hover:text-gray-900 dark:hover:text-gray-100 transition"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          Created On
-          <ArrowUpDown className="h-4 w-4" />
-        </button>
-      );
+    accessorKey: "addons",
+    header: "Add-Ons Count",
+    cell: ({ row }) => {
+      const addons = row.getValue("addons") as unknown[];
+      return <div>{addons?.length || 0}</div>;
     },
-    cell: ({ row }) => <div>{row.getValue("createdOn")}</div>,
-  },
-  {
-    accessorKey: "createdBy",
-    header: "Created By",
-    cell: ({ row }) => <div>{row.getValue("createdBy")}</div>,
   },
   {
     id: "actions",
@@ -95,6 +84,7 @@ export const createColumns = (
         <ActionButtons
           category={category}
           onEdit={onEdit}
+          onDelete={onDelete}
         />
       );
     },

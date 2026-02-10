@@ -197,15 +197,31 @@ export type RestaurantsResponse = {
 export type Cuisine = {
   id: number;
   title: string;
-  stateId: string;
-  createdOn: string;
+  image: string;
+  status: "active" | "inactive";
+};
+
+export type CuisinesResponse = {
+  content: Cuisine[];
+  page: PageMetadata;
+};
+
+export type AddOn = {
+  id: number;
+  title: string;
+  price: number;
+  image: string;
 };
 
 export type AddOnCategory = {
   id: number;
   title: string;
-  createdOn: string;
-  createdBy: string;
+  addons: AddOn[];
+};
+
+export type AddOnCategoriesResponse = {
+  content: AddOnCategory[];
+  page: PageMetadata;
 };
 
 export type Feed = {

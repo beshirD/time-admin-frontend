@@ -7,11 +7,9 @@ import { RestaurantCategoryTable } from "./RestaurantCategoryTable";
 import PageTitle from "@/components/common/PageTitle";
 import Button from "@/components/ui/Button";
 
-interface CategoriesTabsProps {
-  addOnCategoriesData: AddOnCategory[];
-}
+interface CategoriesTabsProps {}
 
-export function CategoriesTabs({ addOnCategoriesData }: CategoriesTabsProps) {
+export function CategoriesTabs({}: CategoriesTabsProps) {
   const [activeTab, setActiveTab] = useState<"addons" | "restaurant">("addons");
   const [isCreateOpen, setIsCreateOpen] = useState(false);
 
@@ -61,7 +59,6 @@ export function CategoriesTabs({ addOnCategoriesData }: CategoriesTabsProps) {
       <div className="flex bg-white dark:bg-gray-900 p-5 rounded-lg">
         {activeTab === "addons" ? (
           <AddOnsCategoryContent
-            initialData={addOnCategoriesData}
             isCreateOpen={isCreateOpen}
             setIsCreateOpen={setIsCreateOpen}
           />

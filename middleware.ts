@@ -23,11 +23,11 @@ export default function middleware(request: NextRequest) {
   }
   
   // All other routes are protected - require authentication
-  // if (!token) {
-  //   const url = new URL('/login', request.url);
-  //   url.searchParams.set('redirect', pathname);
-  //   return NextResponse.redirect(url);
-  // }
+  if (!token) {
+    const url = new URL('/login', request.url);
+    url.searchParams.set('redirect', pathname);
+    return NextResponse.redirect(url);
+  }
   
   return NextResponse.next();
 }
