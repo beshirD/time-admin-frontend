@@ -1,7 +1,6 @@
 "use client";
 
-import { useState } from "react";
-import { useParams } from "next/navigation";
+import { useState, useEffect } from "react";
 import { Upload, X } from "lucide-react";
 import Input from "@/components/ui/Input";
 import Label from "@/components/ui/Label";
@@ -15,24 +14,26 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import Image from "next/image";
-import { useCreateMenuItem } from "@/hooks/useCreateMenuItem";
+import { useUpdateMenuItem } from "@/hooks/useUpdateMenuItem";
 import { useItemCategories } from "@/hooks/useItemCategories";
+import { MenuItem } from "@/types/entities";
 
-interface CreateMenuItemDialogProps {
+interface EditMenuItemDialogProps {
+  menuItem: MenuItem | null;
   isOpen: boolean;
   onClose: () => void;
 }
 
-export function CreateMenuItemDialog({
+export function EditMenuItemDialog({
+  menuItem,
   isOpen,
   onClose,
-}: CreateMenuItemDialogProps) {
-  const params = useParams();
-  const restaurantId = params.id as string;
-  const createMenuItem = useCreateMenuItem();
+}: EditMenuItemDialogProps) {
+  const updateMenuItem = useUpdateMenuItem(menuItem?.id || 0);
   const { categories, isLoading: categoriesLoading } = useItemCategories();
 
-  const [imagePreviews, setImagePreviews] = useState<string[]>([]);
+  const [existingImages, setExistingImages] = useState<string[]>([]);
+  const [newImagePreviews, setNewImagePreviews] = useState<string[]>([]);
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -45,14 +46,34 @@ export function CreateMenuItemDialog({
     cookTimeMins: "",
     stock: "",
     isAvailable: true,
-    images: [] as File[],
+    newImages: [] as File[],
   });
+
+  useEffect(() => {
+    if (menuItem) {
+      setFormData({
+        title: menuItem.title,
+        description: menuItem.description,
+        categoryId: menuItem.category.id.toString(),
+        itemType: menuItem.itemType,
+        basePrice: menuItem.basePrice.toString(),
+        platformFeePercentage: menuItem.platformFeePercentage.toString(),
+        availabilityStartTime: menuItem.availabilityStartTime,
+        availabilityEndTime: menuItem.availabilityEndTime,
+        cookTimeMins: menuItem.cookTimeMins.toString(),
+        stock: menuItem.stock.toString(),
+        isAvailable: menuItem.isAvailable,
+        newImages: [],
+      });
+      setExistingImages(menuItem.images || []);
+      setNewImagePreviews([]);
+    }
+  }, [menuItem]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     const data = {
-      restaurantId: parseInt(restaurantId),
       title: formData.title,
       description: formData.description,
       categoryId: parseInt(formData.categoryId),
@@ -64,6 +85,7 @@ export function CreateMenuItemDialog({
       cookTimeMins: parseInt(formData.cookTimeMins),
       stock: parseInt(formData.stock),
       isAvailable: formData.isAvailable,
+      images: existingImages, // Keep existing images
     };
 
     const formDataToSend = new FormData();
@@ -73,12 +95,12 @@ export function CreateMenuItemDialog({
       "data.json",
     );
 
-    // Append images
-    formData.images.forEach((image) => {
+    // Append new images
+    formData.newImages.forEach((image) => {
       formDataToSend.append("images", image);
     });
 
-    createMenuItem.mutate(formDataToSend, {
+    updateMenuItem.mutate(formDataToSend, {
       onSuccess: () => {
         handleClose();
       },
@@ -88,45 +110,40 @@ export function CreateMenuItemDialog({
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const filesArray = Array.from(e.target.files);
-      setFormData({ ...formData, images: [...formData.images, ...filesArray] });
+      setFormData({
+        ...formData,
+        newImages: [...formData.newImages, ...filesArray],
+      });
 
       // Create previews
       filesArray.forEach((file) => {
         const reader = new FileReader();
         reader.onloadend = () => {
-          setImagePreviews((prev) => [...prev, reader.result as string]);
+          setNewImagePreviews((prev) => [...prev, reader.result as string]);
         };
         reader.readAsDataURL(file);
       });
     }
   };
 
-  const removeImage = (index: number) => {
+  const removeExistingImage = (index: number) => {
+    setExistingImages(existingImages.filter((_, i) => i !== index));
+  };
+
+  const removeNewImage = (index: number) => {
     setFormData({
       ...formData,
-      images: formData.images.filter((_, i) => i !== index),
+      newImages: formData.newImages.filter((_, i) => i !== index),
     });
-    setImagePreviews(imagePreviews.filter((_, i) => i !== index));
+    setNewImagePreviews(newImagePreviews.filter((_, i) => i !== index));
   };
 
   const handleClose = () => {
-    setFormData({
-      title: "",
-      description: "",
-      categoryId: "",
-      itemType: "VEG",
-      basePrice: "",
-      platformFeePercentage: "",
-      availabilityStartTime: "",
-      availabilityEndTime: "",
-      cookTimeMins: "",
-      stock: "",
-      isAvailable: true,
-      images: [],
-    });
-    setImagePreviews([]);
+    setNewImagePreviews([]);
     onClose();
   };
+
+  if (!menuItem) return null;
 
   return (
     <Modal
@@ -136,10 +153,10 @@ export function CreateMenuItemDialog({
       <div className="no-scrollbar border relative w-full lg:w-[800px] overflow-y-auto rounded-3xl bg-white p-4 dark:bg-gray-900 lg:p-8">
         <div className="px-2 pr-14">
           <h4 className="mb-2 text-2xl font-semibold text-gray-800 dark:text-white/90">
-            Create Menu Item
+            Edit Menu Item
           </h4>
           <p className="mb-6 text-sm text-gray-500 dark:text-gray-400">
-            Add a new item to your restaurant menu.
+            Update menu item information.
           </p>
         </div>
 
@@ -166,7 +183,6 @@ export function CreateMenuItemDialog({
                       onChange={(e) =>
                         setFormData({ ...formData, title: e.target.value })
                       }
-                      placeholder="e.g., Margherita Pizza"
                     />
                   </div>
 
@@ -182,7 +198,6 @@ export function CreateMenuItemDialog({
                           description: e.target.value,
                         })
                       }
-                      placeholder="Describe your menu item..."
                     />
                   </div>
 
@@ -197,7 +212,7 @@ export function CreateMenuItemDialog({
                         setFormData({ ...formData, itemType: value })
                       }>
                       <SelectTrigger className="w-full h-11">
-                        <SelectValue placeholder="Select type" />
+                        <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="VEG">Vegetarian</SelectItem>
@@ -267,7 +282,6 @@ export function CreateMenuItemDialog({
                       onChange={(e) =>
                         setFormData({ ...formData, basePrice: e.target.value })
                       }
-                      placeholder="0.00"
                     />
                   </div>
 
@@ -287,7 +301,6 @@ export function CreateMenuItemDialog({
                           platformFeePercentage: e.target.value,
                         })
                       }
-                      placeholder="0.0"
                     />
                   </div>
 
@@ -303,7 +316,6 @@ export function CreateMenuItemDialog({
                       onChange={(e) =>
                         setFormData({ ...formData, stock: e.target.value })
                       }
-                      placeholder="0"
                     />
                   </div>
 
@@ -322,7 +334,6 @@ export function CreateMenuItemDialog({
                           cookTimeMins: e.target.value,
                         })
                       }
-                      placeholder="0"
                     />
                   </div>
                 </div>
@@ -396,18 +407,48 @@ export function CreateMenuItemDialog({
                 <h5 className="mb-4 text-lg font-medium text-gray-800 dark:text-white/90">
                   Images
                 </h5>
+
+                {/* Existing Images */}
+                {existingImages.length > 0 && (
+                  <div className="mb-4">
+                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+                      Current Images
+                    </p>
+                    <div className="grid grid-cols-3 gap-3">
+                      {existingImages.map((image, index) => (
+                        <div
+                          key={index}
+                          className="relative">
+                          <div className="relative w-full h-24 rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700">
+                            <Image
+                              src={image}
+                              alt={`Existing ${index + 1}`}
+                              fill
+                              className="object-cover"
+                            />
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => removeExistingImage(index)}
+                            className="absolute -top-2 -right-2 p-1 bg-red-500 hover:bg-red-600 text-white rounded-full transition-colors shadow-lg">
+                            <X className="w-3 h-3" />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Add New Images */}
                 <div>
-                  <Label htmlFor="images">Menu Item Images</Label>
+                  <Label htmlFor="images">Add New Images</Label>
                   <div className="mt-2">
                     <label
                       htmlFor="images"
                       className="cursor-pointer flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg hover:border-primary dark:hover:border-primary transition-colors bg-gray-50 dark:bg-gray-800/50">
                       <Upload className="w-8 h-8 text-gray-400 mb-2" />
                       <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                        Click to upload images
-                      </span>
-                      <span className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                        PNG, JPG, WEBP (Multiple files allowed)
+                        Click to upload new images
                       </span>
                     </label>
                     <input
@@ -420,23 +461,23 @@ export function CreateMenuItemDialog({
                     />
                   </div>
 
-                  {imagePreviews.length > 0 && (
+                  {newImagePreviews.length > 0 && (
                     <div className="grid grid-cols-3 gap-3 mt-4">
-                      {imagePreviews.map((preview, index) => (
+                      {newImagePreviews.map((preview, index) => (
                         <div
                           key={index}
                           className="relative">
                           <div className="relative w-full h-24 rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700">
                             <Image
                               src={preview}
-                              alt={`Preview ${index + 1}`}
+                              alt={`New ${index + 1}`}
                               fill
                               className="object-cover"
                             />
                           </div>
                           <button
                             type="button"
-                            onClick={() => removeImage(index)}
+                            onClick={() => removeNewImage(index)}
                             className="absolute -top-2 -right-2 p-1 bg-red-500 hover:bg-red-600 text-white rounded-full transition-colors shadow-lg">
                             <X className="w-3 h-3" />
                           </button>
@@ -455,14 +496,14 @@ export function CreateMenuItemDialog({
               variant="outline"
               type="button"
               onClick={handleClose}
-              disabled={createMenuItem.isPending}>
+              disabled={updateMenuItem.isPending}>
               Cancel
             </Button>
             <Button
               size="sm"
               type="submit"
-              disabled={createMenuItem.isPending}>
-              {createMenuItem.isPending ? "Creating..." : "Create Menu Item"}
+              disabled={updateMenuItem.isPending}>
+              {updateMenuItem.isPending ? "Updating..." : "Update Menu Item"}
             </Button>
           </div>
         </form>

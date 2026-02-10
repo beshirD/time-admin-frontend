@@ -4,19 +4,30 @@ import { useState } from "react";
 import { useParams } from "next/navigation";
 import Button from "@/components/ui/Button";
 import { useMenuItems } from "@/hooks/useMenuItems";
+import { useDeleteMenuItem } from "@/hooks/useDeleteMenuItem";
 import { MenuItem } from "@/types/entities";
 import { MenuItemDetailDialog } from "./MenuItemDetailDialog";
+import { CreateMenuItemDialog } from "./CreateMenuItemDialog";
+import { EditMenuItemDialog } from "./EditMenuItemDialog";
 import { TableSkeleton } from "@/components/ui/TableSkeleton";
+import { Modal } from "@/components/ui/modal";
 
-export function FoodItemsTable() {
+export function MenuItemsTable() {
   const params = useParams();
   const restaurantId = params.id as string;
   const [selectedMenuItem, setSelectedMenuItem] = useState<MenuItem | null>(
     null,
   );
   const [isDetailDialogOpen, setIsDetailDialogOpen] = useState(false);
+  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [menuItemToDelete, setMenuItemToDelete] = useState<MenuItem | null>(
+    null,
+  );
 
   const { menuItems, isLoading, error } = useMenuItems({ restaurantId });
+  const deleteMenuItem = useDeleteMenuItem();
 
   const getItemTypeBadge = (type: string) => {
     const styles = {
@@ -36,6 +47,29 @@ export function FoodItemsTable() {
     e.stopPropagation();
     setSelectedMenuItem(menuItem);
     setIsDetailDialogOpen(true);
+  };
+
+  const handleEditClick = (menuItem: MenuItem, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setSelectedMenuItem(menuItem);
+    setIsEditDialogOpen(true);
+  };
+
+  const handleDeleteClick = (menuItem: MenuItem, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setMenuItemToDelete(menuItem);
+    setIsDeleteDialogOpen(true);
+  };
+
+  const confirmDelete = () => {
+    if (menuItemToDelete) {
+      deleteMenuItem.mutate(menuItemToDelete.id, {
+        onSuccess: () => {
+          setIsDeleteDialogOpen(false);
+          setMenuItemToDelete(null);
+        },
+      });
+    }
   };
 
   if (isLoading) {
@@ -68,7 +102,11 @@ export function FoodItemsTable() {
           <h3 className="text-lg font-semibold text-gray-800 dark:text-white">
             Menu Items
           </h3>
-          <Button usage="create">Add Item</Button>
+          <Button
+            usage="create"
+            onClick={() => setIsCreateDialogOpen(true)}>
+            Add Menu Item
+          </Button>
         </div>
 
         <div className="overflow-x-auto">
@@ -141,8 +179,13 @@ export function FoodItemsTable() {
                       </Button>
                       <Button
                         usage="edit"
-                        onClick={(e) => e.stopPropagation()}>
+                        onClick={(e) => handleEditClick(item, e)}>
                         Edit
+                      </Button>
+                      <Button
+                        usage="delete"
+                        onClick={(e) => handleDeleteClick(item, e)}>
+                        Delete
                       </Button>
                     </div>
                   </td>
@@ -161,6 +204,7 @@ export function FoodItemsTable() {
         )}
       </div>
 
+      {/* Detail Dialog */}
       <MenuItemDetailDialog
         menuItem={selectedMenuItem}
         isOpen={isDetailDialogOpen}
@@ -169,6 +213,62 @@ export function FoodItemsTable() {
           setSelectedMenuItem(null);
         }}
       />
+
+      {/* Create Dialog */}
+      <CreateMenuItemDialog
+        isOpen={isCreateDialogOpen}
+        onClose={() => setIsCreateDialogOpen(false)}
+      />
+
+      {/* Edit Dialog */}
+      <EditMenuItemDialog
+        menuItem={selectedMenuItem}
+        isOpen={isEditDialogOpen}
+        onClose={() => {
+          setIsEditDialogOpen(false);
+          setSelectedMenuItem(null);
+        }}
+      />
+
+      {/* Delete Confirmation Dialog */}
+      <Modal
+        isOpen={isDeleteDialogOpen}
+        onClose={() => {
+          setIsDeleteDialogOpen(false);
+          setMenuItemToDelete(null);
+        }}
+        className="max-w-[500px] m-4">
+        <div className="relative w-full max-w-[500px] rounded-3xl bg-white p-6 dark:bg-gray-900 lg:p-8">
+          <div className="mb-6">
+            <h4 className="mb-2 text-2xl font-semibold text-gray-800 dark:text-white/90">
+              Delete Menu Item
+            </h4>
+            <p className="text-sm text-gray-500 dark:text-gray-400">
+              Are you sure you want to delete &quot;{menuItemToDelete?.title}
+              &quot;? This action cannot be undone.
+            </p>
+          </div>
+          <div className="flex items-center gap-3 justify-end">
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => {
+                setIsDeleteDialogOpen(false);
+                setMenuItemToDelete(null);
+              }}
+              disabled={deleteMenuItem.isPending}>
+              Cancel
+            </Button>
+            <Button
+              size="sm"
+              onClick={confirmDelete}
+              disabled={deleteMenuItem.isPending}
+              className="bg-red-600 hover:bg-red-700 text-white">
+              {deleteMenuItem.isPending ? "Deleting..." : "Delete"}
+            </Button>
+          </div>
+        </div>
+      </Modal>
     </>
   );
 }
