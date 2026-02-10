@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import Input from "@/components/ui/Input";
@@ -16,15 +16,16 @@ import {
 import { RichTextEditor } from "@/components/ui/RichTextEditor";
 import { FileUploadWithPreview } from "@/components/ui/FileUploadWithPreview";
 import { AvailabilitySelector } from "@/components/ui/AvailabilitySelector";
-import { api } from "@/services/api";
+import { useRestaurantCategories } from "@/hooks/useRestaurantCategories";
+import { useCuisines } from "@/hooks/useCuisines";
 
 export function CreateRestaurantForm() {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [categories, setCategories] = useState<{ id: number; title: string }[]>(
-    [],
-  );
-  const [cuisines, setCuisines] = useState<{ id: number; title: string }[]>([]);
+
+  // Fetch categories and cuisines using hooks
+  const { data: categories } = useRestaurantCategories();
+  const { data: cuisines } = useCuisines();
 
   const [formData, setFormData] = useState({
     name: "",
@@ -49,36 +50,6 @@ export function CreateRestaurantForm() {
   const [availability, setAvailability] = useState<
     Record<string, { enabled: boolean; openTime: string; closeTime: string }>
   >({});
-
-  // Fetch categories and cuisines on mount
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        // Fetch categories
-        const categoriesResponse = await api.get(
-          "/api/v1/restaurant-categories",
-          {
-            params: {
-              page: 0,
-              size: 100,
-              sortBy: "id",
-              direction: "DESC",
-            },
-          },
-        );
-        setCategories(categoriesResponse.data.content || []);
-
-        // Fetch cuisines
-        const cuisinesResponse = await api.get("/api/v1/cuisines");
-        setCuisines(cuisinesResponse.data || []);
-      } catch (error) {
-        console.error("Error fetching form data:", error);
-        toast.error("Failed to load form data");
-      }
-    };
-
-    fetchData();
-  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -130,20 +101,25 @@ export function CreateRestaurantForm() {
         formDataToSend.append("businessLicense", businessLicense);
       }
 
-      // Make API call
-      await api.post("/api/v1/restaurants", formDataToSend, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
+      // Make API call using fetch
+      const response = await fetch("/api/proxy/api/v1/restaurants", {
+        method: "POST",
+        body: formDataToSend,
+        credentials: "include",
       });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to create restaurant");
+      }
 
       toast.success("Restaurant created successfully!");
       router.push("/restaurants");
-    } catch (error: any) {
+    } catch (error) {
       console.error("Error creating restaurant:", error);
-      toast.error(
-        error?.response?.data?.message || "Failed to create restaurant",
-      );
+      const errorMessage =
+        error instanceof Error ? error.message : "Failed to create restaurant";
+      toast.error(errorMessage);
     } finally {
       setIsSubmitting(false);
     }

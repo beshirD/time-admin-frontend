@@ -126,13 +126,13 @@ export const columns: ColumnDef<Restaurant>[] = [
     header: "Category",
     cell: ({ row }) => {
       const category = row.getValue("category") as Restaurant["category"];
-      return <div>{category.title}</div>;
+      return <div>{category?.title || "N/A"}</div>;
     },
   },
   {
     accessorKey: "cuisine",
     header: "Cuisine",
-    cell: ({ row }) => <div>{row.getValue("cuisine")}</div>,
+    cell: ({ row }) => <div>{row.getValue("cuisine") || "N/A"}</div>,
   },
   {
     accessorKey: "averageRating",
@@ -146,19 +146,28 @@ export const columns: ColumnDef<Restaurant>[] = [
         </button>
       );
     },
-    cell: ({ row }) => (
-      <RatingDisplay
-        rating={row.getValue("averageRating")}
-        count={row.original.numberOfRatings}
-      />
-    ),
+    cell: ({ row }) => {
+      const rating = row.getValue("averageRating") as number | null;
+      const count = row.original.numberOfRatings;
+
+      if (!rating || !count) {
+        return <div className="text-gray-400">No ratings</div>;
+      }
+
+      return (
+        <RatingDisplay
+          rating={rating}
+          count={count}
+        />
+      );
+    },
   },
   {
     accessorKey: "deliveryTimeMinutes",
     header: "Delivery Time",
     cell: ({ row }) => {
-      const time = row.getValue("deliveryTimeMinutes") as number;
-      return <div>{time} min</div>;
+      const time = row.getValue("deliveryTimeMinutes") as number | null;
+      return <div>{time ? `${time} min` : "N/A"}</div>;
     },
   },
   {

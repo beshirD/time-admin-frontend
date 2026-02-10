@@ -1,43 +1,53 @@
+"use client";
+
 import PageTitle from "@/components/common/PageTitle";
 import { columns } from "./(main)/_components/columns";
-import { Restaurant, RestaurantsResponse } from "@/types/entities";
 import { DataTable } from "@/components/shared/DataTable";
 import Button from "@/components/ui/Button";
 import Link from "next/link";
 import { RestaurantsMetrics } from "./(main)/_components/RestaurantsMetrics";
-import { api } from "@/services/api";
+import { useRestaurants } from "@/hooks/useRestaurants";
+import { TableSkeleton } from "@/components/ui/TableSkeleton";
 
-async function getData(): Promise<{
-  restaurants: Restaurant[];
-  totalCount: number;
-}> {
-  try {
-    const response = await api.get<RestaurantsResponse>("/api/v1/restaurants", {
-      params: {
-        page: 0,
-        size: 20,
-        sortBy: "id",
-        direction: "DESC",
-        status: "approved",
-      },
-    });
+export default function RestaurantsPage() {
+  const {
+    data: restaurants,
+    totalCount,
+    isLoading,
+    error,
+  } = useRestaurants({
+    page: 0,
+    size: 20,
+    sortBy: "id",
+    direction: "DESC",
+    status: "approved",
+  });
 
-    return {
-      restaurants: response.data.content,
-      totalCount: response.data.page.totalElements,
-    };
-  } catch (error) {
-    console.error("Error fetching restaurants:", error);
-    // Return empty data on error
-    return {
-      restaurants: [],
-      totalCount: 0,
-    };
+  if (isLoading) {
+    return (
+      <div className="w-full space-y-5 mb-7">
+        <div className="bg-white dark:bg-gray-900 rounded-lg p-5 border border-gray-200 dark:border-gray-700">
+          <TableSkeleton
+            rows={10}
+            columns={10}
+            showHeader={true}
+          />
+        </div>
+      </div>
+    );
   }
-}
 
-export default async function RestaurantsPage() {
-  const { restaurants, totalCount } = await getData();
+  if (error) {
+    return (
+      <div className="w-full space-y-5 mb-7">
+        <div className="flex items-center justify-center py-12 bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700">
+          <div className="text-error-500">
+            Failed to load restaurants. Please try again.
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full space-y-5 mb-7">
