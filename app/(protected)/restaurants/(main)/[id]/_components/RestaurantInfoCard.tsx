@@ -6,42 +6,65 @@ import { Modal } from "@/components/ui/modal";
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
 import Label from "@/components/ui/Label";
-
-interface Restaurant {
-  id: number;
-  merchantId: string;
-  email: string;
-  ownerName: string;
-  restaurantName: string;
-  deliveryFees: number;
-  maxDeliveryDistance: number;
-  platformFeePercentage: number;
-  location: string;
-  averageRating: number | null;
-  state: string;
-  createdOn: string;
-}
+import { Restaurant } from "@/types/entities";
 
 interface RestaurantInfoCardProps {
   restaurant: Restaurant;
+  updateRestaurant?: (formData: FormData) => void;
+  isUpdating?: boolean;
 }
 
-export function RestaurantInfoCard({ restaurant }: RestaurantInfoCardProps) {
+export function RestaurantInfoCard({
+  restaurant,
+  updateRestaurant,
+  isUpdating = false,
+}: RestaurantInfoCardProps) {
   const { isOpen, openModal, closeModal } = useModal();
   const [formData, setFormData] = useState({
-    merchantId: restaurant.merchantId,
-    email: restaurant.email,
-    ownerName: restaurant.ownerName,
-    restaurantName: restaurant.restaurantName,
-    deliveryFees: restaurant.deliveryFees,
-    maxDeliveryDistance: restaurant.maxDeliveryDistance,
-    platformFeePercentage: restaurant.platformFeePercentage,
-    location: restaurant.location,
+    name: restaurant.name,
+    contactNumber: restaurant.contactNumber || "",
+    website: restaurant.website || "",
+    deliveryFee: restaurant.deliveryFee.toString(),
+    deliveryDistanceKm: restaurant.deliveryDistanceKm.toString(),
+    platformFeePercentage: restaurant.platformFeePercentage.toString(),
+    addressLine: restaurant.addressLine,
+    cuisine: restaurant.cuisine || "",
+    averagePrice: restaurant.averagePrice.toString(),
+    description: restaurant.description || "",
+    latitude: restaurant.latitude.toString(),
+    longitude: restaurant.longitude.toString(),
   });
 
   const handleSave = () => {
-    // Handle save logic here
-    console.log("Saving changes...", formData);
+    if (!updateRestaurant) return;
+
+    // Prepare the data object
+    const data = {
+      name: formData.name,
+      contactNumber: formData.contactNumber,
+      website: formData.website,
+      deliveryFee: parseFloat(formData.deliveryFee.toString()),
+      deliveryDistanceKm: parseFloat(formData.deliveryDistanceKm.toString()),
+      platformFeePercentage: parseFloat(
+        formData.platformFeePercentage.toString(),
+      ),
+      addressLine: formData.addressLine,
+      cuisine: formData.cuisine,
+      averagePrice: parseFloat(formData.averagePrice.toString()),
+      description: formData.description,
+      latitude: parseFloat(formData.latitude.toString()),
+      longitude: parseFloat(formData.longitude.toString()),
+    };
+
+    // Create FormData for multipart/form-data
+    const formDataToSend = new FormData();
+    formDataToSend.append(
+      "data",
+      new Blob([JSON.stringify(data)], { type: "application/json" }),
+      "data.json",
+    );
+
+    updateRestaurant(formDataToSend);
     closeModal();
   };
 
@@ -65,55 +88,55 @@ export function RestaurantInfoCard({ restaurant }: RestaurantInfoCardProps) {
 
             <div>
               <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
-                Merchant Id
+                Owner ID
               </p>
               <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                {restaurant.merchantId}
+                {restaurant.ownerId}
               </p>
             </div>
 
             <div>
               <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
-                Email
+                Category
               </p>
               <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                {restaurant.email}
+                {restaurant.category?.title || "N/A"}
               </p>
             </div>
 
             <div>
               <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
-                Owner Name
+                Cuisine
               </p>
               <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                {restaurant.ownerName}
+                {restaurant.cuisine || "N/A"}
               </p>
             </div>
 
             <div>
               <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
-                Restaurant Name
+                Contact Number
               </p>
               <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                {restaurant.restaurantName}
+                {restaurant.contactNumber || "N/A"}
               </p>
             </div>
 
             <div>
               <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
-                Delivery Fees
+                Website
               </p>
               <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                AFN {restaurant.deliveryFees.toFixed(2)}
+                {restaurant.website || "N/A"}
               </p>
             </div>
 
             <div>
               <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
-                Max Delivery Distance
+                Delivery Fee
               </p>
               <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                {restaurant.maxDeliveryDistance} KM
+                ${restaurant.deliveryFee.toFixed(2)}
               </p>
             </div>
 
@@ -128,10 +151,10 @@ export function RestaurantInfoCard({ restaurant }: RestaurantInfoCardProps) {
 
             <div>
               <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
-                Location
+                Max Delivery Distance
               </p>
               <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                {restaurant.location}
+                {restaurant.deliveryDistanceKm} KM
               </p>
             </div>
 
@@ -148,19 +171,19 @@ export function RestaurantInfoCard({ restaurant }: RestaurantInfoCardProps) {
 
             <div>
               <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
-                State
+                Average Price
               </p>
               <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                {restaurant.state}
+                ${restaurant.averagePrice.toFixed(2)}
               </p>
             </div>
 
             <div>
               <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
-                Created On
+                Status
               </p>
               <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                {restaurant.createdOn}
+                {restaurant.status.toUpperCase()}
               </p>
             </div>
           </div>
@@ -211,61 +234,63 @@ export function RestaurantInfoCard({ restaurant }: RestaurantInfoCardProps) {
 
                 <div className="grid grid-cols-1 gap-x-6 gap-y-5 lg:grid-cols-2">
                   <div className="col-span-2 lg:col-span-1">
-                    <Label>Merchant ID</Label>
+                    <Label>Restaurant Name *</Label>
                     <Input
                       type="text"
-                      value={formData.merchantId}
+                      value={formData.name}
                       onChange={(e) =>
-                        setFormData({ ...formData, merchantId: e.target.value })
+                        setFormData({ ...formData, name: e.target.value })
+                      }
+                      required
+                    />
+                  </div>
+
+                  <div className="col-span-2 lg:col-span-1">
+                    <Label>Cuisine</Label>
+                    <Input
+                      type="text"
+                      value={formData.cuisine}
+                      onChange={(e) =>
+                        setFormData({ ...formData, cuisine: e.target.value })
                       }
                     />
                   </div>
 
                   <div className="col-span-2 lg:col-span-1">
-                    <Label>Email</Label>
-                    <Input
-                      type="email"
-                      value={formData.email}
-                      onChange={(e) =>
-                        setFormData({ ...formData, email: e.target.value })
-                      }
-                    />
-                  </div>
-
-                  <div className="col-span-2 lg:col-span-1">
-                    <Label>Owner Name</Label>
+                    <Label>Contact Number</Label>
                     <Input
                       type="text"
-                      value={formData.ownerName}
-                      onChange={(e) =>
-                        setFormData({ ...formData, ownerName: e.target.value })
-                      }
-                    />
-                  </div>
-
-                  <div className="col-span-2 lg:col-span-1">
-                    <Label>Restaurant Name</Label>
-                    <Input
-                      type="text"
-                      value={formData.restaurantName}
+                      value={formData.contactNumber}
                       onChange={(e) =>
                         setFormData({
                           ...formData,
-                          restaurantName: e.target.value,
+                          contactNumber: e.target.value,
                         })
                       }
                     />
                   </div>
 
                   <div className="col-span-2 lg:col-span-1">
-                    <Label>Delivery Fees (AFN)</Label>
+                    <Label>Website</Label>
+                    <Input
+                      type="url"
+                      value={formData.website}
+                      onChange={(e) =>
+                        setFormData({ ...formData, website: e.target.value })
+                      }
+                    />
+                  </div>
+
+                  <div className="col-span-2 lg:col-span-1">
+                    <Label>Delivery Fee ($)</Label>
                     <Input
                       type="number"
-                      value={formData.deliveryFees}
+                      step="0.01"
+                      value={formData.deliveryFee}
                       onChange={(e) =>
                         setFormData({
                           ...formData,
-                          deliveryFees: parseFloat(e.target.value),
+                          deliveryFee: e.target.value,
                         })
                       }
                     />
@@ -275,11 +300,12 @@ export function RestaurantInfoCard({ restaurant }: RestaurantInfoCardProps) {
                     <Label>Max Delivery Distance (KM)</Label>
                     <Input
                       type="number"
-                      value={formData.maxDeliveryDistance}
+                      step="0.1"
+                      value={formData.deliveryDistanceKm}
                       onChange={(e) =>
                         setFormData({
                           ...formData,
-                          maxDeliveryDistance: parseFloat(e.target.value),
+                          deliveryDistanceKm: e.target.value,
                         })
                       }
                     />
@@ -289,23 +315,86 @@ export function RestaurantInfoCard({ restaurant }: RestaurantInfoCardProps) {
                     <Label>Platform Fee Percentage (%)</Label>
                     <Input
                       type="number"
+                      step="0.1"
                       value={formData.platformFeePercentage}
                       onChange={(e) =>
                         setFormData({
                           ...formData,
-                          platformFeePercentage: parseFloat(e.target.value),
+                          platformFeePercentage: e.target.value,
                         })
                       }
                     />
                   </div>
 
                   <div className="col-span-2 lg:col-span-1">
-                    <Label>Location</Label>
+                    <Label>Average Price ($)</Label>
+                    <Input
+                      type="number"
+                      step="0.01"
+                      value={formData.averagePrice}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          averagePrice: e.target.value,
+                        })
+                      }
+                    />
+                  </div>
+
+                  <div className="col-span-2">
+                    <Label>Address</Label>
                     <Input
                       type="text"
-                      value={formData.location}
+                      value={formData.addressLine}
                       onChange={(e) =>
-                        setFormData({ ...formData, location: e.target.value })
+                        setFormData({
+                          ...formData,
+                          addressLine: e.target.value,
+                        })
+                      }
+                    />
+                  </div>
+
+                  <div className="col-span-2 lg:col-span-1">
+                    <Label>Latitude</Label>
+                    <Input
+                      type="number"
+                      step="any"
+                      value={formData.latitude}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          latitude: e.target.value,
+                        })
+                      }
+                    />
+                  </div>
+
+                  <div className="col-span-2 lg:col-span-1">
+                    <Label>Longitude</Label>
+                    <Input
+                      type="number"
+                      step="any"
+                      value={formData.longitude}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          longitude: e.target.value,
+                        })
+                      }
+                    />
+                  </div>
+
+                  <div className="col-span-2">
+                    <Label>Description</Label>
+                    <textarea
+                      className="w-full min-h-[100px] px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      value={formData.description}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          description: e.target.value,
+                        })
                       }
                     />
                   </div>

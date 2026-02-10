@@ -1,40 +1,46 @@
-import * as React from "react";
+"use client";
+
+import { useParams } from "next/navigation";
+import { useRestaurantDetails } from "@/hooks/useRestaurantDetails";
 import { RestaurantHeader } from "./_components/RestaurantHeader";
 import { RestaurantInfoCard } from "./_components/RestaurantInfoCard";
 import { RestaurantLocationMap } from "./_components/RestaurantLocationMap";
 import { RestaurantImages } from "./_components/RestaurantImages";
 import { RestaurantDetailsSection } from "./_components/RestaurantDetailsSection";
+import { TableSkeleton } from "@/components/ui/TableSkeleton";
 
-// Mock restaurant data
-const mockRestaurant = {
-  id: 143,
-  merchantId: "Hasdiner",
-  email: "hasdiner@gmail.com",
-  ownerName: "Has Diner",
-  restaurantName: "Has diner",
-  deliveryFees: 5.0,
-  maxDeliveryDistance: 5,
-  platformFeePercentage: 5.0,
-  location: "Lafto Sq, Addis Ababa, Addis Ababa",
-  averageRating: null,
-  state: "Active",
-  createdOn: "29-Nov-2025 14:05:44 PM",
-  restaurantImage: "/images/demo-banners/banner1.png",
-  foodImages: [
-    "/images/demo-banners/banner2.png",
-    "/images/demo-banners/banner3.png",
-    "/images/demo-banners/banner4.webp",
-    "/images/demo-banners/banner5.jpg",
-  ],
-};
+export default function RestaurantDetailsPage() {
+  const params = useParams();
+  const id = params.id as string;
 
-export default async function RestaurantDetailsPage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
-  const { id } = await params;
-  const restaurant = mockRestaurant; // In real app, fetch based on id
+  const { restaurant, isLoading, error, updateRestaurant, isUpdating } =
+    useRestaurantDetails(id);
+
+  if (isLoading) {
+    return (
+      <div className="w-full space-y-5 mb-7">
+        <div className="bg-white dark:bg-gray-900 rounded-lg p-5 border border-gray-200 dark:border-gray-700">
+          <TableSkeleton
+            rows={10}
+            columns={2}
+            showHeader={false}
+          />
+        </div>
+      </div>
+    );
+  }
+
+  if (error || !restaurant) {
+    return (
+      <div className="w-full space-y-5 mb-7">
+        <div className="flex items-center justify-center py-12 bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700">
+          <div className="text-error-500">
+            Failed to load restaurant details. Please try again.
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full">
@@ -42,17 +48,21 @@ export default async function RestaurantDetailsPage({
         {/* Header */}
         <RestaurantHeader
           restaurantId={id}
-          restaurantName={restaurant.restaurantName}
-          status={restaurant.state}
+          restaurantName={restaurant.name}
+          status={restaurant.status}
         />
 
         {/* Main Content */}
         <div className="space-y-5">
-          <RestaurantInfoCard restaurant={restaurant} />
-          <RestaurantLocationMap location={restaurant.location} />
+          <RestaurantInfoCard
+            restaurant={restaurant}
+            updateRestaurant={updateRestaurant}
+            isUpdating={isUpdating}
+          />
+          <RestaurantLocationMap location={restaurant.addressLine} />
           <RestaurantImages
-            restaurantImage={restaurant.restaurantImage}
-            foodImages={restaurant.foodImages}
+            restaurantImage={restaurant.featuredImage}
+            foodImages={restaurant.images || []}
           />
         </div>
 

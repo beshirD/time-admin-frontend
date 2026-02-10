@@ -85,8 +85,12 @@ export function CreateRestaurantForm() {
       // Create FormData for multipart/form-data
       const formDataToSend = new FormData();
 
-      // Add the data object as JSON
-      formDataToSend.append("data", JSON.stringify(data));
+      // Add the data object as JSON blob with filename
+      formDataToSend.append(
+        "data",
+        new Blob([JSON.stringify(data)], { type: "application/json" }),
+        "data.json",
+      );
 
       // Add files
       if (featuredImage) {
