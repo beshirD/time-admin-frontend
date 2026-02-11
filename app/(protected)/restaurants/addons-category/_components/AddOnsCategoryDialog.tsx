@@ -11,7 +11,7 @@ interface AddOnsCategoryDialogProps {
   isOpen: boolean;
   onClose: () => void;
   category?: AddOnCategory | null;
-  onSave: (title: string) => void;
+  onSave: (data: { title: string; status: string }) => void;
 }
 
 export function AddOnsCategoryDialog({
@@ -33,7 +33,10 @@ export function AddOnsCategoryDialog({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (title.trim()) {
-      onSave(title.trim());
+      onSave({
+        title: title.trim(),
+        status: "active",
+      });
       setTitle("");
       onClose();
     }

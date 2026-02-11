@@ -8,15 +8,21 @@ import { CuisineDialog } from "./CuisineDialog";
 import { CuisineDetailsDialog } from "./CuisineDetailsDialog";
 import Button from "@/components/ui/Button";
 import PageTitle from "@/components/common/PageTitle";
+import { useCuisines } from "@/hooks/useCuisines";
 
-interface CuisinesContentProps {
-  initialData: Cuisine[];
-}
-
-export function CuisinesContent({ initialData }: CuisinesContentProps) {
+export function CuisinesContent() {
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [editingCuisine, setEditingCuisine] = useState<Cuisine | null>(null);
   const [detailsCuisine, setDetailsCuisine] = useState<Cuisine | null>(null);
+
+  const {
+    data,
+    isLoading,
+    createCuisine,
+    updateCuisine,
+    deleteCuisine,
+    isCreating,
+  } = useCuisines();
 
   const handleEdit = (cuisine: Cuisine) => {
     setEditingCuisine(cuisine);
@@ -26,19 +32,21 @@ export function CuisinesContent({ initialData }: CuisinesContentProps) {
     setDetailsCuisine(cuisine);
   };
 
-  const handleCreate = (title: string) => {
-    console.log("Creating cuisine:", title);
-    // TODO: Implement API call to create cuisine
-    // For now, just close the dialog
+  const handleCreate = (formData: FormData) => {
+    createCuisine(formData);
   };
 
-  const handleUpdate = (title: string) => {
-    console.log("Updating cuisine:", editingCuisine?.id, title);
-    // TODO: Implement API call to update cuisine
-    // For now, just close the dialog
+  const handleUpdate = (formData: FormData) => {
+    if (editingCuisine) {
+      updateCuisine({ id: editingCuisine.id, formData });
+    }
   };
 
-  const columns = createColumns(handleEdit);
+  const handleDelete = (id: number) => {
+    deleteCuisine(id);
+  };
+
+  const columns = createColumns(handleEdit, handleDelete);
 
   return (
     <>
@@ -47,17 +55,19 @@ export function CuisinesContent({ initialData }: CuisinesContentProps) {
           <PageTitle title="Cuisines Management" />
           <Button
             onClick={() => setIsCreateOpen(true)}
-            usage="create">
+            usage="create"
+            disabled={isCreating}>
             Create Cuisine
           </Button>
         </div>
         <div className="flex bg-white dark:bg-gray-900 p-5 rounded-lg">
           <DataTable
             columns={columns}
-            data={initialData}
+            data={data}
             searchPlaceholder="Search cuisine by title, id..."
             searchableColumns={["id", "title"]}
             onRowClick={handleRowClick}
+            isLoading={isLoading}
           />
         </div>
       </div>

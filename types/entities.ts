@@ -146,28 +146,94 @@ export type DriverAdvance = {
   expectedReturn?: number;
 };
 
+// API Response Types for Restaurants
+export type RestaurantCategory = {
+  id: number;
+  title: string;
+};
+
+export type RestaurantStatus = 
+  | "active" 
+  | "inactive" 
+  | "pending" 
+  | "approved" 
+  | "rejected" 
+  | "suspended";
+
 export type Restaurant = {
   id: number;
-  restaurantName: string;
-  fee?: string;
-  location: string;
-  image: string;
-  stateId: string;
-  createdOn: string;
+  ownerId: number;
+  name: string;
+  description: string;
+  featuredImage: string;
+  images: string[];
+  addressLine: string;
+  latitude: number;
+  longitude: number;
+  contactNumber?: string;
+  website?: string;
+  deliveryFee: number;
+  deliveryDistanceKm: number;
+  platformFeePercentage: number;
+  status: RestaurantStatus;
+  businessLicense?: string;
+  category: {
+    id: number;
+    title: string;
+  } | null;
+  cuisine: string | null;
+  openingHours: OpeningHour[];
+  averageRating: number | null;
+  numberOfRatings: number | null;
+  distanceKm: number | null;
+  isFavorite: boolean;
+  deliveryTimeMinutes: number | null;
+  isAvailable: boolean;
+  averagePrice: number;
+};
+
+export type PageMetadata = {
+  size: number;
+  number: number;
+  totalElements: number;
+  totalPages: number;
+};
+
+export type RestaurantsResponse = {
+  content: Restaurant[];
+  page: PageMetadata;
 };
 
 export type Cuisine = {
   id: number;
   title: string;
-  stateId: string;
-  createdOn: string;
+  image: string;
+  status: "active" | "inactive";
+};
+
+export type CuisinesResponse = {
+  content: Cuisine[];
+  page: PageMetadata;
+};
+
+export type AddOn = {
+  id: number;
+  title: string;
+  price: number;
+  image: string;
 };
 
 export type AddOnCategory = {
   id: number;
   title: string;
-  createdOn: string;
-  createdBy: string;
+  addons?: AddOn[];
+  createdOn?: string;
+  createdBy?: string;
+};
+
+export type AddOnCategoriesResponse = {
+  content: AddOnCategory[];
+  page: PageMetadata;
 };
 
 export type Feed = {
@@ -180,9 +246,16 @@ export type Feed = {
 export type FoodCategory = {
   id: number;
   title: string;
-  state: string;
   image?: string;
-  type: "Restaurant" | "Store";
+  status?: "active" | "inactive";
+  // Legacy fields for backward compatibility
+  state?: string;
+  type?: "Restaurant" | "Store";
+};
+
+export type FoodCategoriesResponse = {
+  content: FoodCategory[];
+  page: PageMetadata;
 };
 
 export type RestaurantTransaction = {
@@ -198,44 +271,248 @@ export type RestaurantTransaction = {
 
 export type RestaurantOffer = {
   id: number;
+  restaurantId: number;
   title: string;
-  code: string;
-  discountType: "amount" | "percentage";
-  discount: number;
-  minimumAmount?: number;
-  endTime: string;
   description: string;
-  image?: string;
+  imageUrl: string;
+  couponCode: string;
+  discountType: "percentage" | "fixed_amount";
+  discountValue: number;
+  maxDiscountAmount: number;
+  minOrderAmount: number;
+  startDate: string;
+  endDate: string;
+  status: "active" | "inactive";
+  usageLimitPerUser: number;
+  totalUsageLimit: number;
+  createdAt: string;
 };
+
+export type OffersResponse = {
+  content: RestaurantOffer[];
+  page: {
+    size: number;
+    number: number;
+    totalElements: number;
+    totalPages: number;
+  };
+};
+export type OrderStatus = 
+  | "pending" 
+  | "accepted" 
+  | "preparing" 
+  | "ready" 
+  | "out_for_delivery" 
+  | "delivered" 
+  | "cancelled";
+
+export type StatusOrder = {
+  orderId: number;
+  orderNo: string;
+  restaurantId: number;
+  restaurantName: string;
+  restaurantImage: string;
+  addressId: number;
+  status: OrderStatus;
+  paymentStatus: PaymentStatus;
+  paymentMethod: PaymentMethod;
+  totalPrice: number;
+  discount: number;
+  payableAmount: number;
+  deliveryFee: number;
+  createdAt: string;
+};
+
+export type OrderStatusGroup = {
+  status: OrderStatus;
+  orders: StatusOrder[];
+};
+
+export type OrdersStatusResponse = OrderStatusGroup[];
+
+export type PaymentMethod = "cash" | "card" | "online";
+
+export type PaymentStatus = "pending" | "paid" | "failed";
+
 export type Order = {
   id: number;
   orderNo: string;
-  store: string;
+  status: OrderStatus;
+  createdAt: string;
+  customerId: number;
+  customerName: string;
+  customerPhone: string;
+  restaurantId: number;
+  restaurantName: string;
   address: string;
-  totalPrice: number;
-  deliveryStatus:
-    | "RESTAURANT_REJECTED"
-    | "PENDING"
-    | "CONFIRMED"
-    | "PREPARING"
-    | "READY_FOR_PICKUP"
-    | "PICKED_UP"
-    | "DELIVERED"
-    | "COMPLETED"
-    | "CANCELLED"
-    | "PLACED"
-    | "ACCEPTED"
-    | "ON_THE_WAY"
-    | "DRIVER_REJECTED";
-  createdOn: string;
+  addressId: number;
   createdBy: string;
+  totalPrice: number;
+  deliveryFee: number;
+  offerDiscount: number;
+  finalTotal: number;
+  platformFeeAmount: number;
+  paymentMethod: PaymentMethod;
+  paymentStatus: PaymentStatus;
+  deliveryStatus: string;
+  driverId: number;
+  deliveryLatitude: number;
+  deliveryLongitude: number;
 };
-export type MenuItem = {
+
+export type OrdersResponse = {
+  total: number;
+  page: number;
+  size: number;
+  orders: Order[];
+};
+
+export type OrderItemAddon = {
+  addonId: number;
+  price: number;
+};
+
+export type OrderItem = {
+  itemId: number;
+  priceId: number;
+  quantity: number;
+  priceEach: number;
+  addons: OrderItemAddon[];
+};
+
+export type OrderDetail = {
   id: number;
-  name: string;
-  category: string;
-  type: string;
+  orderNo: string;
+  status: OrderStatus;
+  createdAt: string;
+  updatedAt: string;
+  customerId: number;
+  customerName: string;
+  customerPhone: string;
+  restaurantId: number;
+  restaurantName: string;
+  addressId: number;
+  address: string;
+  city: string;
+  postalCode: string;
+  totalPrice: number;
+  deliveryFee: number;
+  offerDiscount: number;
+  platformFeeAmount: number;
+  finalTotal: number;
+  paymentMethod: PaymentMethod;
+  paymentStatus: PaymentStatus;
+  deliveryStatus: string;
+  driverId: number;
+  deliveryId: string;
+  assignedRiderId: string;
+  specialInstructions: string;
+  rejectionReason: string;
+  cancellationReason: string;
+  couponCode: string;
+  referralCode: string;
+  items: OrderItem[];
+};
+
+export type OrderDetailResponse = {
+  success: boolean;
+  message: string;
+  data: OrderDetail;
+};
+
+export type ManualOrderItemAddon = {
+  addonId: number;
+  priceOverride?: number;
+};
+
+export type ManualOrderItem = {
+  itemId: number;
+  priceId: number;
+  quantity: number;
+  unitPriceOverride?: number;
+  addons?: ManualOrderItemAddon[];
+};
+
+export type CreateManualOrderRequest = {
+  customerId: number;
+  restaurantId: number;
+  addressId?: number;
+  address?: string;
+  items: ManualOrderItem[];
+  paymentMethod: PaymentMethod;
+  paymentStatus: PaymentStatus;
+  specialInstructions?: string;
+  discountOverride?: number;
+  deliveryFeeOverride?: number;
+  platformFeeOverride?: number;
+  initialStatus?: OrderStatus;
+  skipApproval?: boolean;
+};
+
+export type CreateManualOrderResponse = {
+  success: boolean;
+  message: string;
+  data: OrderDetail;
+};
+export type MenuItemType = "VEG" | "NON_VEG" | "VEGAN";
+
+export type MenuItemPrice = {
+  id: number;
+  title: string;
   description: string;
   price: number;
-  image?: string;
+  quantity: number;
+  sortOrder: number;
 };
+
+export type MenuItemAddOn = {
+  id: number;
+  title: string;
+  price: number;
+  image: string;
+};
+
+export type MenuItemCategory = {
+  id: number;
+  title: string;
+  description: string;
+  status: "active" | "inactive";
+};
+
+export type MenuItem = {
+  id: number;
+  restaurantId: number;
+  title: string;
+  description: string;
+  images: string[];
+  itemType: MenuItemType;
+  basePrice: number;
+  platformFeePercentage: number;
+  availabilityStartTime: string;
+  availabilityEndTime: string;
+  cookTimeMins: number;
+  isAvailable: boolean;
+  stock: number;
+  prices: MenuItemPrice[];
+  addons: MenuItemAddOn[];
+  category: MenuItemCategory;
+  averageRating: number;
+  numberOfRatings: number;
+  numberOfOrders: number;
+  totalQuantitySold: number;
+  estimatedDeliveryTimeMinutes: number;
+  isFavorite: boolean;
+};
+
+export type MenuItemsResponse = {
+  content: MenuItem[];
+  page: PageMetadata;
+};
+
+export type OpeningHour = {
+  dayOfWeek: string;
+  openTime: string;
+  closeTime: string;
+  isClosed: boolean;
+};
+

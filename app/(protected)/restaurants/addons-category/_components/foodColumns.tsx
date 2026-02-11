@@ -8,7 +8,11 @@ import Button from "@/components/ui/Button";
 
 // Status badge component
 const StatusBadge = ({ status }: { status: string }) => {
-  const statusStyles = {
+  const statusStyles: Record<string, string> = {
+    active:
+      "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400",
+    inactive:
+      "bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400",
     Active:
       "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400",
     Deleted: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400",
@@ -16,7 +20,7 @@ const StatusBadge = ({ status }: { status: string }) => {
 
   return (
     <span
-      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusStyles[status as keyof typeof statusStyles] || statusStyles.Active}`}>
+      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize ${statusStyles[status] || statusStyles.Active}`}>
       {status}
     </span>
   );
@@ -27,10 +31,12 @@ const ActionButtons = ({
   category,
   onEdit,
   onViewDetails,
+  onDelete,
 }: {
   category: FoodCategory;
   onEdit: (category: FoodCategory) => void;
   onViewDetails: (category: FoodCategory) => void;
+  onDelete: (id: number) => Promise<void>;
 }) => {
   return (
     <div className="flex items-center gap-2 justify-start">
@@ -51,10 +57,10 @@ const ActionButtons = ({
         Edit
       </Button>
       <DeleteConfirmationDialog
-        itemType="Food Category"
+        itemType="Restaurant Category"
         itemName={category.title}
-        onSuccess={() => {
-          window.location.reload();
+        onConfirm={async () => {
+          await onDelete(category.id);
         }}
         trigger={
           <Button
@@ -73,6 +79,7 @@ const ActionButtons = ({
 export const createFoodColumns = (
   onEdit: (category: FoodCategory) => void,
   onViewDetails: (category: FoodCategory) => void,
+  onDelete: (id: number) => Promise<void>,
 ): ColumnDef<FoodCategory>[] => [
   {
     accessorKey: "id",
@@ -94,9 +101,13 @@ export const createFoodColumns = (
     cell: ({ row }) => <div>{row.getValue("title")}</div>,
   },
   {
-    accessorKey: "state",
-    header: "State",
-    cell: ({ row }) => <StatusBadge status={row.getValue("state")} />,
+    accessorKey: "status",
+    header: "Status",
+    cell: ({ row }) => {
+      // Handle both new 'status' and legacy 'state' fields
+      const status = row.original.status || row.original.state || "active";
+      return <StatusBadge status={status} />;
+    },
   },
   {
     id: "actions",
@@ -109,6 +120,7 @@ export const createFoodColumns = (
           category={category}
           onEdit={onEdit}
           onViewDetails={onViewDetails}
+          onDelete={onDelete}
         />
       );
     },

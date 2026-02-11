@@ -2,7 +2,7 @@
  * Axios instance with interceptors for authentication and error handling
  */
 
-import axios, { AxiosError, AxiosInstance, InternalAxiosRequestConfig } from 'axios';
+import axios, { AxiosError, AxiosInstance, AxiosResponse, InternalAxiosRequestConfig } from 'axios';
 import { ApiErrorResponse } from '@/types/api';
 
 // Placeholder - will be replaced with actual API URL from env
@@ -32,14 +32,14 @@ class ApiService {
         // No need to manually attach Authorization header
         return config;
       },
-      (error) => {
+      (error: AxiosError) => {
         return Promise.reject(error);
       }
     );
 
     // Response interceptor - handle token refresh and errors
     this.api.interceptors.response.use(
-      (response) => response,
+      (response: AxiosResponse) => response,
       async (error: AxiosError<ApiErrorResponse>) => {
         const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean };
 

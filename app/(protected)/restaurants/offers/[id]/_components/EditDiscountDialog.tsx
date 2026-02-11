@@ -22,7 +22,7 @@ interface EditDiscountDialogProps {
   onClose: () => void;
   offer: RestaurantOffer;
   onSave: (data: {
-    discountType: "amount" | "percentage";
+    discountType: "fixed_amount" | "percentage";
     discount: number;
     minimumAmount?: number;
     endTime: string;
@@ -35,14 +35,14 @@ export function EditDiscountDialog({
   offer,
   onSave,
 }: EditDiscountDialogProps) {
-  const [discountType, setDiscountType] = useState<"amount" | "percentage">(
-    offer.discountType,
-  );
-  const [discount, setDiscount] = useState(offer.discount.toString());
+  const [discountType, setDiscountType] = useState<
+    "fixed_amount" | "percentage"
+  >(offer.discountType);
+  const [discount, setDiscount] = useState(offer.discountValue.toString());
   const [minimumAmount, setMinimumAmount] = useState(
-    offer.minimumAmount?.toString() || "",
+    offer.minOrderAmount?.toString() || "0",
   );
-  const [endTime, setEndTime] = useState<Date>(new Date(offer.endTime));
+  const [endTime, setEndTime] = useState<Date>(new Date(offer.endDate));
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const calendarRef = useRef<HTMLDivElement>(null);
 
@@ -79,9 +79,9 @@ export function EditDiscountDialog({
 
   const handleClose = () => {
     setDiscountType(offer.discountType);
-    setDiscount(offer.discount.toString());
-    setMinimumAmount(offer.minimumAmount?.toString() || "");
-    setEndTime(new Date(offer.endTime));
+    setDiscount(offer.discountValue.toString());
+    setMinimumAmount(offer.minOrderAmount?.toString() || "0");
+    setEndTime(new Date(offer.endDate));
     onClose();
   };
 
@@ -108,13 +108,13 @@ export function EditDiscountDialog({
               <Select
                 value={discountType}
                 onValueChange={(value) =>
-                  setDiscountType(value as "amount" | "percentage")
+                  setDiscountType(value as "fixed_amount" | "percentage")
                 }>
                 <SelectTrigger className="w-full h-11">
                   <SelectValue placeholder="Select discount type" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="amount">Amount (AFN)</SelectItem>
+                  <SelectItem value="fixed_amount">Amount (AFN)</SelectItem>
                   <SelectItem value="percentage">Percentage (%)</SelectItem>
                 </SelectContent>
               </Select>
@@ -122,7 +122,7 @@ export function EditDiscountDialog({
 
             <div>
               <Label htmlFor="discount">
-                Discount ({discountType === "amount" ? "AFN" : "%"}){" "}
+                Discount ({discountType === "fixed_amount" ? "AFN" : "%"}){" "}
                 <span className="text-red-500">*</span>
               </Label>
               <Input

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { RestaurantTabs } from "./RestaurantTabs";
-import { FoodItemsTable } from "./FoodItemsTable";
+import { MenuItemsTable } from "./MenuItemsTable";
 import { AvailabilitySection } from "./AvailabilitySection";
 import { RatingsTable } from "./RatingsTable";
 
@@ -13,7 +13,7 @@ export function RestaurantDetailsSection() {
 
   return (
     <div className="mt-6 bg-white border dark:bg-gray-900 rounded-xl">
-      <div className="bg-brand-600 text-white px-4 py-2 rounded-lg">
+      <div className="bg-brand-600 text-white px-4 py-2 rounded-t-lg">
         <h2 className="text-lg font-semibold">Restaurant Details</h2>
       </div>
 
@@ -25,7 +25,7 @@ export function RestaurantDetailsSection() {
 
       {/* Tab Content */}
       <div className="overflow-hidden">
-        {activeTab === "food-items" && <FoodItemsTable />}
+        {activeTab === "food-items" && <MenuItemsTable />}
         {activeTab === "availability" && <AvailabilitySection />}
         {activeTab === "ratings" && <RatingsTable />}
       </div>

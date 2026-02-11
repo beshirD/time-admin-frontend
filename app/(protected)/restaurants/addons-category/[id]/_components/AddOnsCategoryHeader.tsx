@@ -17,8 +17,8 @@ export function AddOnsCategoryHeader({ category }: AddOnsCategoryHeaderProps) {
   const router = useRouter();
   const [isEditOpen, setIsEditOpen] = useState(false);
 
-  const handleUpdate = (title: string) => {
-    console.log("Updating category:", category.id, title);
+  const handleUpdate = (data: { title: string; status: string }) => {
+    console.log("Updating category:", category.id, data.title);
     // TODO: Implement API call
     setIsEditOpen(false);
   };

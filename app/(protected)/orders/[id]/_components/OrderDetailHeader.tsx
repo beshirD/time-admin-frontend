@@ -5,8 +5,7 @@ import Button from "@/components/ui/Button";
 import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, PrinterIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
-
-// NO Interface needed here as we use inline type
+import { OrderStatus } from "@/types/entities";
 
 export default function OrderDetailHeader({
   orderNo,
@@ -14,14 +13,14 @@ export default function OrderDetailHeader({
 }: {
   orderId?: string;
   orderNo: string;
-  status: string;
+  status: OrderStatus;
 }) {
   const router = useRouter();
 
   let variant: "outline" | "destructive" | "default" = "default";
-  if (status.includes("REJECTED") || status.includes("CANCELLED")) {
+  if (status === "cancelled") {
     variant = "destructive";
-  } else if (status.includes("COMPLETED") || status.includes("DELIVERED")) {
+  } else if (status === "delivered") {
     variant = "default";
   } else {
     variant = "outline";
@@ -43,7 +42,7 @@ export default function OrderDetailHeader({
             <Badge
               variant={variant}
               className="capitalize">
-              {status.toLowerCase().replace(/_/g, " ")}
+              {status.replace(/_/g, " ")}
             </Badge>
           </div>
         </div>

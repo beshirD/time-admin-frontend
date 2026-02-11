@@ -8,43 +8,106 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { TrendingDown, TrendingUp } from "lucide-react";
+import { Restaurant } from "@/types/entities";
 
-const metricsData = [
-  {
-    title: "Total Restaurants",
-    value: "143",
-    trend: "+15.2%",
-    isPositive: true,
-    footerTitle: "Growing restaurant network",
-    footerDescription: "Registered restaurants",
-  },
-  {
-    title: "Active Restaurants",
-    value: "128",
-    trend: "+10.5%",
-    isPositive: true,
-    footerTitle: "Currently active",
-    footerDescription: "Available for orders",
-  },
-  {
-    title: "Pending Approval",
-    value: "8",
-    trend: "+2.0%",
-    isPositive: false,
-    footerTitle: "Awaiting verification",
-    footerDescription: "Needs admin review",
-  },
-  {
-    title: "Total Orders",
-    value: "5,234",
-    trend: "+22.8%",
-    isPositive: true,
-    footerTitle: "Orders completed",
-    footerDescription: "This month",
-  },
-];
+interface RestaurantsMetricsProps {
+  restaurants: Restaurant[];
+  totalCount: number;
+}
 
-export function RestaurantsMetrics() {
+export function RestaurantsMetrics({
+  restaurants,
+  totalCount,
+}: RestaurantsMetricsProps) {
+  // Calculate metrics from actual data for all status types
+  const activeCount = restaurants.filter((r) => r.status === "active").length;
+  const inactiveCount = restaurants.filter(
+    (r) => r.status === "inactive",
+  ).length;
+  const pendingCount = restaurants.filter((r) => r.status === "pending").length;
+  const approvedCount = restaurants.filter(
+    (r) => r.status === "approved",
+  ).length;
+  const rejectedCount = restaurants.filter(
+    (r) => r.status === "rejected",
+  ).length;
+  const suspendedCount = restaurants.filter(
+    (r) => r.status === "suspended",
+  ).length;
+
+  const averageRating =
+    restaurants.length > 0
+      ? restaurants.reduce((sum, r) => sum + (r.averageRating || 0), 0) /
+        restaurants.length
+      : 0;
+
+  const metricsData = [
+    {
+      title: "Total Restaurants",
+      value: totalCount.toString(),
+      trend: "+15.2%",
+      isPositive: true,
+      footerTitle: "Growing restaurant network",
+      footerDescription: "All registered restaurants",
+    },
+    {
+      title: "Approved",
+      value: approvedCount.toString(),
+      trend: "+12.5%",
+      isPositive: true,
+      footerTitle: "Approved & ready",
+      footerDescription: "Available for orders",
+    },
+    {
+      title: "Active",
+      value: activeCount.toString(),
+      trend: "+10.5%",
+      isPositive: true,
+      footerTitle: "Currently active",
+      footerDescription: "Operating now",
+    },
+    {
+      title: "Pending Approval",
+      value: pendingCount.toString(),
+      trend: pendingCount > 5 ? "+2.0%" : "-1.5%",
+      isPositive: pendingCount <= 5,
+      footerTitle: "Awaiting verification",
+      footerDescription: "Needs admin review",
+    },
+    {
+      title: "Inactive",
+      value: inactiveCount.toString(),
+      trend: inactiveCount > 3 ? "+1.2%" : "-0.8%",
+      isPositive: inactiveCount <= 3,
+      footerTitle: "Temporarily inactive",
+      footerDescription: "Not currently operating",
+    },
+    {
+      title: "Suspended",
+      value: suspendedCount.toString(),
+      trend: suspendedCount > 0 ? "+0.5%" : "0%",
+      isPositive: suspendedCount === 0,
+      footerTitle: "Suspended accounts",
+      footerDescription: "Requires attention",
+    },
+    {
+      title: "Rejected",
+      value: rejectedCount.toString(),
+      trend: rejectedCount > 0 ? "+0.3%" : "0%",
+      isPositive: rejectedCount === 0,
+      footerTitle: "Rejected applications",
+      footerDescription: "Did not meet criteria",
+    },
+    {
+      title: "Average Rating",
+      value: averageRating.toFixed(1),
+      trend: "+0.3",
+      isPositive: true,
+      footerTitle: "Customer satisfaction",
+      footerDescription: "Overall rating",
+    },
+  ];
+
   return (
     <div className="grid grid-cols-1 gap-5 @xl/main:grid-cols-2 lg:grid-cols-4">
       {metricsData.map((metric, index) => (

@@ -71,7 +71,31 @@ async function proxyRequest(
       console.log('[Proxy] No access token found in cookies');
     }
     
-    headers['Content-Type'] = 'application/json';
+    // Forward X-Admin-User-Id header if present
+    const adminUserId = request.headers.get('x-admin-user-id');
+    if (adminUserId) {
+      headers['X-Admin-User-Id'] = adminUserId;
+      console.log('[Proxy] Forwarding X-Admin-User-Id header:', adminUserId);
+    }
+    
+    // Get the original Content-Type from the request
+    const requestContentType = request.headers.get('content-type');
+    
+    // For multipart/form-data, do NOT set Content-Type header
+    // The browser will set it automatically with the correct boundary
+    const isMultipart = requestContentType?.includes('multipart/form-data');
+    
+    if (!isMultipart) {
+      // Only set Content-Type for non-multipart requests
+      if (requestContentType) {
+        headers['Content-Type'] = requestContentType;
+        console.log(`[Proxy] Using original Content-Type: ${requestContentType}`);
+      } else {
+        headers['Content-Type'] = 'application/json';
+      }
+    } else {
+      console.log('[Proxy] Skipping Content-Type for multipart/form-data (will be set automatically)');
+    }
 
     const options: RequestInit = {
       method,
@@ -80,23 +104,57 @@ async function proxyRequest(
 
     // Add body for POST, PUT, PATCH
     if (['POST', 'PUT', 'PATCH'].includes(method)) {
-      const body = await request.text();
-      if (body) {
-        options.body = body;
-        console.log(`[Proxy] Request body:`, body);
+      // For multipart/form-data, use FormData directly
+      if (isMultipart) {
+        const formData = await request.formData();
+        options.body = formData as any;
+        console.log(`[Proxy] Forwarding FormData request`);
+      } else {
+        const body = await request.text();
+        if (body) {
+          options.body = body;
+          console.log(`[Proxy] Request body:`, body);
+        }
       }
     }
 
     console.log(`[Proxy] Sending request to: ${url}`);
     const response = await fetch(url, options);
     
-    // console.log(`[Proxy] Response status: ${response.status}`);
+    console.log(`[Proxy] Response status: ${response.status}`);
+    
+    // Handle 204 No Content (common for DELETE operations)
+    if (response.status === 204) {
+      console.log('[Proxy] 204 No Content response');
+      return NextResponse.json(
+        { 
+          success: true, 
+          message: 'Operation completed successfully',
+          data: null 
+        },
+        { status: 200 }
+      );
+    }
     
     const contentType = response.headers.get('content-type');
     
-    // Handle non-JSON responses
+    // Handle empty responses (no content-type or empty body)
     if (!contentType || !contentType.includes('application/json')) {
       const text = await response.text();
+      
+      // If the response is successful but has no content, treat it as success
+      if (response.ok && (!text || text.trim() === '')) {
+        console.log('[Proxy] Empty successful response');
+        return NextResponse.json(
+          { 
+            success: true, 
+            message: 'Operation completed successfully',
+            data: null 
+          },
+          { status: 200 }
+        );
+      }
+      
       console.error(`[Proxy] Non-JSON response:`, text);
       return NextResponse.json(
         { 

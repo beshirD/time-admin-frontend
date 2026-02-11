@@ -7,7 +7,7 @@ interface TabsProps {
 
 export function RestaurantTabs({ activeTab, onTabChange }: TabsProps) {
   const tabs = [
-    { id: "food-items" as const, label: "Food Items" },
+    { id: "food-items" as const, label: "Menu Items" },
     { id: "availability" as const, label: "Availability" },
     { id: "ratings" as const, label: "Ratings & Reviews" },
   ];

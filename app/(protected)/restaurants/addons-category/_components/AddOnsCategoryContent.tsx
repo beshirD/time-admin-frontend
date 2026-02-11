@@ -6,15 +6,14 @@ import { DataTable } from "@/components/shared/DataTable";
 import { createColumns } from "./columns";
 import { AddOnCategory } from "@/types/entities";
 import { AddOnsCategoryDialog } from "./AddOnsCategoryDialog";
+import { useAddOnCategories } from "@/hooks/useAddOnCategories";
 
 interface AddOnsCategoryContentProps {
-  initialData: AddOnCategory[];
   isCreateOpen: boolean;
   setIsCreateOpen: (open: boolean) => void;
 }
 
 export function AddOnsCategoryContent({
-  initialData,
   isCreateOpen,
   setIsCreateOpen,
 }: AddOnsCategoryContentProps) {
@@ -22,6 +21,15 @@ export function AddOnsCategoryContent({
   const [editingCategory, setEditingCategory] = useState<AddOnCategory | null>(
     null,
   );
+
+  const {
+    data,
+    isLoading,
+    createCategory,
+    updateCategory,
+    deleteCategory,
+    isCreating,
+  } = useAddOnCategories();
 
   const handleEdit = (category: AddOnCategory) => {
     setEditingCategory(category);
@@ -31,38 +39,34 @@ export function AddOnsCategoryContent({
     router.push(`/restaurants/addons-category/${category.id}`);
   };
 
-  const handleCreate = (title: string) => {
-    console.log("Creating add-on category:", title);
-    // TODO: Implement API call to create category
+  const handleCreate = (data: { title: string; status: string }) => {
+    // Do nothing - just close dialog
+    setIsCreateOpen(false);
   };
 
-  const handleUpdate = (title: string) => {
-    console.log("Updating add-on category:", editingCategory?.id, title);
-    // TODO: Implement API call to update category
+  const handleUpdate = (data: { title: string; status: string }) => {
+    // Do nothing - just close dialog
+    setEditingCategory(null);
   };
 
-  const columns = createColumns(handleEdit);
+  const handleDelete = (id: number) => {
+    // Do nothing - delete confirmation dialog will handle closing itself
+  };
+
+  const columns = createColumns(handleEdit, handleDelete);
 
   return (
     <>
       <div className="flex flex-col gap-5">
-        {/* <div className="flex px-5 py-2 rounded-lg border bg-white dark:bg-gray-900 items-center justify-between">
-          <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
-            Add-Ons Categories
-          </h2>
-          <Button
-            onClick={() => setIsCreateOpen(true)}
-            usage="create">
-            Create Add-On Category
-          </Button>
-        </div> */}
         <div className="flex bg-white dark:bg-gray-900 p-5 rounded-lg">
           <DataTable
             columns={columns}
-            data={initialData}
+            data={data}
             searchPlaceholder="Search by title, id..."
             searchableColumns={["id", "title"]}
             onRowClick={handleRowClick}
+            isLoading={isLoading}
+            enableColumnVisibility={false}
           />
         </div>
       </div>

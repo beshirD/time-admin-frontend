@@ -14,9 +14,13 @@ import { EditDescriptionDialog } from "./EditDescriptionDialog";
 
 interface OfferDetailsContentProps {
   offer: RestaurantOffer;
+  restaurantName: string;
 }
 
-export function OfferDetailsContent({ offer }: OfferDetailsContentProps) {
+export function OfferDetailsContent({
+  offer,
+  restaurantName,
+}: OfferDetailsContentProps) {
   const router = useRouter();
   const [isEditBasicOpen, setIsEditBasicOpen] = useState(false);
   const [isEditDiscountOpen, setIsEditDiscountOpen] = useState(false);
@@ -28,7 +32,7 @@ export function OfferDetailsContent({ offer }: OfferDetailsContentProps) {
   };
 
   const handleUpdateDiscount = (data: {
-    discountType: "amount" | "percentage";
+    discountType: "fixed_amount" | "percentage";
     discount: number;
     minimumAmount?: number;
     endTime: string;
@@ -99,6 +103,14 @@ export function OfferDetailsContent({ offer }: OfferDetailsContentProps) {
             </div>
             <div>
               <label className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                Restaurant
+              </label>
+              <p className="mt-1 text-base text-gray-800 dark:text-white/90">
+                {restaurantName || `ID: ${offer.restaurantId}`}
+              </p>
+            </div>
+            <div>
+              <label className="text-sm font-medium text-gray-500 dark:text-gray-400">
                 Title
               </label>
               <p className="mt-1 text-base text-gray-800 dark:text-white/90">
@@ -107,10 +119,25 @@ export function OfferDetailsContent({ offer }: OfferDetailsContentProps) {
             </div>
             <div>
               <label className="text-sm font-medium text-gray-500 dark:text-gray-400">
-                Code
+                Coupon Code
               </label>
               <p className="mt-1 text-base text-gray-800 dark:text-white/90 font-mono">
-                {offer.code}
+                {offer.couponCode}
+              </p>
+            </div>
+            <div>
+              <label className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                Status
+              </label>
+              <p className="mt-1">
+                <span
+                  className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
+                    offer.status === "active"
+                      ? "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400"
+                      : "bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400"
+                  }`}>
+                  {offer.status.toUpperCase()}
+                </span>
               </p>
             </div>
             <div>
@@ -118,37 +145,69 @@ export function OfferDetailsContent({ offer }: OfferDetailsContentProps) {
                 Discount Type
               </label>
               <p className="mt-1 text-base text-gray-800 dark:text-white/90 capitalize">
-                {offer.discountType === "amount"
+                {offer.discountType === "fixed_amount"
                   ? "Amount (AFN)"
                   : "Percentage (%)"}
               </p>
             </div>
             <div>
               <label className="text-sm font-medium text-gray-500 dark:text-gray-400">
-                Discount
+                Discount Value
               </label>
               <p className="mt-1 text-base text-gray-800 dark:text-white/90 font-semibold">
-                {offer.discountType === "amount"
-                  ? `${offer.discount} AFN`
-                  : `${offer.discount}%`}
+                {offer.discountType === "fixed_amount"
+                  ? `${offer.discountValue} AFN`
+                  : `${offer.discountValue}%`}
               </p>
             </div>
-            {offer.minimumAmount && (
+            {offer.maxDiscountAmount > 0 && (
               <div>
                 <label className="text-sm font-medium text-gray-500 dark:text-gray-400">
-                  Minimum Amount
+                  Max Discount
                 </label>
                 <p className="mt-1 text-base text-gray-800 dark:text-white/90">
-                  {offer.minimumAmount} AFN
+                  {offer.maxDiscountAmount} AFN
                 </p>
               </div>
             )}
             <div>
               <label className="text-sm font-medium text-gray-500 dark:text-gray-400">
-                End Time
+                Min Order Amount
               </label>
               <p className="mt-1 text-base text-gray-800 dark:text-white/90">
-                {new Date(offer.endTime).toLocaleDateString()}
+                {offer.minOrderAmount} AFN
+              </p>
+            </div>
+            <div>
+              <label className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                Start Date
+              </label>
+              <p className="mt-1 text-base text-gray-800 dark:text-white/90">
+                {new Date(offer.startDate).toLocaleDateString()}
+              </p>
+            </div>
+            <div>
+              <label className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                End Date
+              </label>
+              <p className="mt-1 text-base text-gray-800 dark:text-white/90">
+                {new Date(offer.endDate).toLocaleDateString()}
+              </p>
+            </div>
+            <div>
+              <label className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                Usage Limit Per User
+              </label>
+              <p className="mt-1 text-base text-gray-800 dark:text-white/90">
+                {offer.usageLimitPerUser}
+              </p>
+            </div>
+            <div>
+              <label className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                Total Usage Limit
+              </label>
+              <p className="mt-1 text-base text-gray-800 dark:text-white/90">
+                {offer.totalUsageLimit}
               </p>
             </div>
           </div>
@@ -173,7 +232,7 @@ export function OfferDetailsContent({ offer }: OfferDetailsContentProps) {
               </label>
               <div className="relative w-full h-64 border rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-800">
                 <Image
-                  src={offer.image || "/demo-banner.jpg"}
+                  src={offer.imageUrl || "/demo-banner.jpg"}
                   alt={offer.title}
                   fill
                   className="object-cover"

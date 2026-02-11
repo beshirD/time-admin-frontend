@@ -24,7 +24,9 @@ export function EditDescriptionDialog({
 }: EditDescriptionDialogProps) {
   const [description, setDescription] = useState(offer.description);
   const [imageFile, setImageFile] = useState<File | null>(null);
-  const [imagePreview, setImagePreview] = useState<string>(offer.image || "");
+  const [imagePreview, setImagePreview] = useState<string>(
+    offer.imageUrl || "",
+  );
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -49,7 +51,7 @@ export function EditDescriptionDialog({
 
   const handleClose = () => {
     setDescription(offer.description);
-    setImagePreview(offer.image || "");
+    setImagePreview(offer.imageUrl || "");
     setImageFile(null);
     onClose();
   };

@@ -19,14 +19,13 @@ interface OrdersFiltersProps {
 }
 
 const statuses = [
-  "PLACED",
-  "PENDING",
-  "ACCEPTED",
-  "ON_THE_WAY",
-  "DELIVERED",
-  "RESTAURANT_REJECTED",
-  "DRIVER_REJECTED",
-  "CANCELLED",
+  "pending",
+  "accepted",
+  "preparing",
+  "ready",
+  "out_for_delivery",
+  "delivered",
+  "cancelled",
 ];
 
 export default function OrdersFilters({

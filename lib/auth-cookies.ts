@@ -31,6 +31,21 @@ export async function setRefreshCookie(refreshToken: string) {
   });
 }
 
+/**
+ * Store user ID in a client-accessible cookie
+ * This is NOT sensitive data and can be read by client-side JavaScript
+ */
+export async function setUserIdCookie(userId: number) {
+  const cookieStore = await cookies();
+  cookieStore.set('userId', userId.toString(), {
+    httpOnly: false, // Allow client-side access
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax',
+    maxAge: TOKEN_MAX_AGE,
+    path: '/',
+  });
+}
+
 export async function removeAuthCookie() {
   const cookieStore = await cookies();
   cookieStore.delete('accessToken');
@@ -39,6 +54,11 @@ export async function removeAuthCookie() {
 export async function removeRefreshCookie() {
   const cookieStore = await cookies();
   cookieStore.delete('refreshToken');
+}
+
+export async function removeUserIdCookie() {
+  const cookieStore = await cookies();
+  cookieStore.delete('userId');
 }
 
 export async function getAuthCookie() {

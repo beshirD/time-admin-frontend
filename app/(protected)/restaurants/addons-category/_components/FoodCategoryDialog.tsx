@@ -43,7 +43,7 @@ export function FoodCategoryDialog({
   useEffect(() => {
     if (category) {
       setTitle(category.title);
-      setType(category.type);
+      setType(category.type || "Restaurant");
       if (category.image) {
         setImagePreview(category.image);
       }

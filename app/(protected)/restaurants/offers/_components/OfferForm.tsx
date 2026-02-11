@@ -18,6 +18,8 @@ import { Calendar } from "@/components/ui/calendar";
 import { CalendarIcon, Upload } from "lucide-react";
 import { format } from "date-fns";
 import Image from "next/image";
+import { useCreateOffer } from "@/hooks/useCreateOffer";
+import { useRestaurants } from "@/hooks/useRestaurants";
 
 interface OfferFormProps {
   offer?: RestaurantOffer;
@@ -26,43 +28,79 @@ interface OfferFormProps {
 
 export function OfferForm({ offer, mode }: OfferFormProps) {
   const router = useRouter();
+  const createOffer = useCreateOffer();
+  const { data: restaurants, isLoading: restaurantsLoading } = useRestaurants({
+    page: 0,
+    size: 100,
+  });
+
+  const [restaurantId, setRestaurantId] = useState(
+    offer?.restaurantId?.toString() || "",
+  );
   const [title, setTitle] = useState(offer?.title || "");
-  const [code, setCode] = useState(offer?.code || "");
-  const [discountType, setDiscountType] = useState<"amount" | "percentage">(
-    offer?.discountType || "amount",
+  const [couponCode, setCouponCode] = useState(offer?.couponCode || "");
+  const [discountType, setDiscountType] = useState<
+    "percentage" | "fixed_amount"
+  >(offer?.discountType || "fixed_amount");
+  const [discountValue, setDiscountValue] = useState(
+    offer?.discountValue?.toString() || "",
   );
-  const [discount, setDiscount] = useState(offer?.discount?.toString() || "");
-  const [minimumAmount, setMinimumAmount] = useState(
-    offer?.minimumAmount?.toString() || "",
+  const [maxDiscountAmount, setMaxDiscountAmount] = useState(
+    offer?.maxDiscountAmount?.toString() || "0",
   );
-  const [endTime, setEndTime] = useState<Date | undefined>(
-    offer?.endTime ? new Date(offer.endTime) : undefined,
+  const [minOrderAmount, setMinOrderAmount] = useState(
+    offer?.minOrderAmount?.toString() || "0",
+  );
+  const [startDate, setStartDate] = useState<Date | undefined>(
+    offer?.startDate ? new Date(offer.startDate) : undefined,
+  );
+  const [endDate, setEndDate] = useState<Date | undefined>(
+    offer?.endDate ? new Date(offer.endDate) : undefined,
+  );
+  const [status, setStatus] = useState<"active" | "inactive">(
+    offer?.status || "active",
+  );
+  const [usageLimitPerUser, setUsageLimitPerUser] = useState(
+    offer?.usageLimitPerUser?.toString() || "1",
+  );
+  const [totalUsageLimit, setTotalUsageLimit] = useState(
+    offer?.totalUsageLimit?.toString() || "100",
   );
   const [description, setDescription] = useState(offer?.description || "");
   const [imageFile, setImageFile] = useState<File | null>(null);
-  const [imagePreview, setImagePreview] = useState<string>(offer?.image || "");
-  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
-  const calendarRef = useRef<HTMLDivElement>(null);
+  const [imagePreview, setImagePreview] = useState<string>(
+    offer?.imageUrl || "",
+  );
+  const [isStartCalendarOpen, setIsStartCalendarOpen] = useState(false);
+  const [isEndCalendarOpen, setIsEndCalendarOpen] = useState(false);
+  const startCalendarRef = useRef<HTMLDivElement>(null);
+  const endCalendarRef = useRef<HTMLDivElement>(null);
 
-  // Close calendar when clicking outside
+  // Close calendars when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
-        calendarRef.current &&
-        !calendarRef.current.contains(event.target as Node)
+        startCalendarRef.current &&
+        !startCalendarRef.current.contains(event.target as Node)
       ) {
-        setIsCalendarOpen(false);
+        setIsStartCalendarOpen(false);
+      }
+      if (
+        endCalendarRef.current &&
+        !endCalendarRef.current.contains(event.target as Node)
+      ) {
+        setIsEndCalendarOpen(false);
       }
     };
 
-    if (isCalendarOpen) {
+    if (isStartCalendarOpen || isEndCalendarOpen) {
       document.addEventListener("mousedown", handleClickOutside);
     }
 
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [isCalendarOpen]);
+  }, [isStartCalendarOpen, isEndCalendarOpen]);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -78,18 +116,44 @@ export function OfferForm({ offer, mode }: OfferFormProps) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Submitting offer:", {
+
+    if (!startDate || !endDate) {
+      alert("Please select both start and end dates");
+      return;
+    }
+
+    const data = {
+      restaurantId: parseInt(restaurantId),
       title,
-      code,
-      discountType,
-      discount,
-      minimumAmount,
-      endTime,
       description,
-      imageFile,
+      couponCode,
+      discountType,
+      discountValue: parseFloat(discountValue),
+      maxDiscountAmount: parseFloat(maxDiscountAmount),
+      minOrderAmount: parseFloat(minOrderAmount),
+      startDate: startDate.toISOString(),
+      endDate: endDate.toISOString(),
+      status,
+      usageLimitPerUser: parseInt(usageLimitPerUser),
+      totalUsageLimit: parseInt(totalUsageLimit),
+    };
+
+    const formData = new FormData();
+    formData.append(
+      "data",
+      new Blob([JSON.stringify(data)], { type: "application/json" }),
+      "data.json",
+    );
+
+    if (imageFile) {
+      formData.append("image", imageFile);
+    }
+
+    createOffer.mutate(formData, {
+      onSuccess: () => {
+        router.push("/restaurants/offers");
+      },
     });
-    // TODO: Implement API call
-    router.push("/restaurants/offers");
   };
 
   return (
@@ -111,20 +175,75 @@ export function OfferForm({ offer, mode }: OfferFormProps) {
             placeholder="Enter offer title"
           />
         </div>
-
-        {/* Code */}
+        {/* Restaurant */}
         <div>
-          <Label htmlFor="code">
-            Code <span className="text-red-500">*</span>
+          <Label htmlFor="restaurantId">
+            Restaurant <span className="text-red-500">*</span>
+          </Label>
+          <Select
+            required
+            value={restaurantId}
+            onValueChange={setRestaurantId}>
+            <SelectTrigger className="w-full h-11">
+              <SelectValue placeholder="Select restaurant" />
+            </SelectTrigger>
+            <SelectContent>
+              {restaurantsLoading ? (
+                <SelectItem
+                  value="loading"
+                  disabled>
+                  Loading restaurants...
+                </SelectItem>
+              ) : !restaurants || restaurants.length === 0 ? (
+                <SelectItem
+                  value="no-data"
+                  disabled>
+                  No restaurants available
+                </SelectItem>
+              ) : (
+                restaurants.map((restaurant) => (
+                  <SelectItem
+                    key={restaurant.id}
+                    value={restaurant.id.toString()}>
+                    {restaurant.name}
+                  </SelectItem>
+                ))
+              )}
+            </SelectContent>
+          </Select>
+        </div>
+        {/* Coupon Code */}
+        <div>
+          <Label htmlFor="couponCode">
+            Coupon Code <span className="text-red-500">*</span>
           </Label>
           <Input
-            id="code"
+            id="couponCode"
             type="text"
             required
-            value={code}
-            onChange={(e) => setCode(e.target.value)}
-            placeholder="Enter offer code"
+            value={couponCode}
+            onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
+            placeholder="Enter coupon code"
+            className="font-mono"
           />
+        </div>
+
+        {/* Status */}
+        <div>
+          <Label htmlFor="status">
+            Status <span className="text-red-500">*</span>
+          </Label>
+          <Select
+            value={status}
+            onValueChange={(value: "active" | "inactive") => setStatus(value)}>
+            <SelectTrigger className="w-full h-11">
+              <SelectValue placeholder="Select status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="active">Active</SelectItem>
+              <SelectItem value="inactive">Inactive</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
 
         {/* Discount Type */}
@@ -134,31 +253,32 @@ export function OfferForm({ offer, mode }: OfferFormProps) {
           </Label>
           <Select
             value={discountType}
-            onValueChange={(value) =>
-              setDiscountType(value as "amount" | "percentage")
+            onValueChange={(value: "percentage" | "fixed_amount") =>
+              setDiscountType(value)
             }>
             <SelectTrigger className="w-full h-11">
               <SelectValue placeholder="Select discount type" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="amount">Amount (AFN)</SelectItem>
               <SelectItem value="percentage">Percentage (%)</SelectItem>
+              <SelectItem value="fixed_amount">Amount (AFN)</SelectItem>
             </SelectContent>
           </Select>
         </div>
 
-        {/* Discount */}
+        {/* Discount Value */}
         <div>
-          <Label htmlFor="discount">
-            Discount ({discountType === "amount" ? "AFN" : "%"}){" "}
+          <Label htmlFor="discountValue">
+            Discount Value ({discountType === "fixed_amount" ? "AFN" : "%"}){" "}
             <span className="text-red-500">*</span>
           </Label>
           <Input
-            id="discount"
+            id="discountValue"
             type="number"
+            step="0.01"
             required
-            value={discount}
-            onChange={(e) => setDiscount(e.target.value)}
+            value={discountValue}
+            onChange={(e) => setDiscountValue(e.target.value)}
             placeholder={
               discountType === "percentage"
                 ? "Enter value between 1 and 100"
@@ -167,75 +287,75 @@ export function OfferForm({ offer, mode }: OfferFormProps) {
             min={discountType === "percentage" ? "1" : "0"}
             max={discountType === "percentage" ? "100" : undefined}
           />
-          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-            {discountType === "percentage"
-              ? "For percentage, enter value between 1 and 100."
-              : "For amount, enter AFN value."}
-          </p>
         </div>
 
-        {/* Minimum Amount */}
+        {/* Max Discount Amount */}
         <div>
-          <Label htmlFor="minimumAmount">Minimum Amount (AFN)</Label>
+          <Label htmlFor="maxDiscountAmount">Max Discount Amount (AFN)</Label>
           <Input
-            id="minimumAmount"
+            id="maxDiscountAmount"
             type="number"
-            value={minimumAmount}
-            onChange={(e) => setMinimumAmount(e.target.value)}
-            placeholder="Enter minimum amount"
+            step="0.01"
+            value={maxDiscountAmount}
+            onChange={(e) => setMaxDiscountAmount(e.target.value)}
+            placeholder="Enter max discount"
             min="0"
           />
         </div>
 
-        {/* End Time */}
+        {/* Min Order Amount */}
         <div>
-          <Label htmlFor="endTime">
-            End Time <span className="text-red-500">*</span>
+          <Label htmlFor="minOrderAmount">
+            Min Order Amount (AFN) <span className="text-red-500">*</span>
+          </Label>
+          <Input
+            id="minOrderAmount"
+            type="number"
+            step="0.01"
+            required
+            value={minOrderAmount}
+            onChange={(e) => setMinOrderAmount(e.target.value)}
+            placeholder="Enter minimum order amount"
+            min="0"
+          />
+        </div>
+
+        {/* Start Date */}
+        <div>
+          <Label htmlFor="startDate">
+            Start Date <span className="text-red-500">*</span>
           </Label>
           <div
             className="relative"
-            ref={calendarRef}>
+            ref={startCalendarRef}>
             <button
               type="button"
-              onClick={() => setIsCalendarOpen(!isCalendarOpen)}
+              onClick={() => setIsStartCalendarOpen(!isStartCalendarOpen)}
               className="w-full h-11 px-3 py-2 text-sm border border-gray-300 dark:border-gray-700 rounded-md bg-white dark:bg-gray-800 text-left flex items-center justify-between hover:border-primary transition">
               <span className="flex items-center gap-2">
                 <CalendarIcon className="h-4 w-4 text-gray-500" />
-                {endTime ? (
+                {startDate ? (
                   <span className="text-gray-900 dark:text-white">
-                    {format(endTime, "PPP")}
+                    {format(startDate, "PPP")}
                   </span>
                 ) : (
-                  <span className="text-gray-500">Select end date...</span>
+                  <span className="text-gray-500">Select start date...</span>
                 )}
               </span>
             </button>
 
-            {isCalendarOpen && (
+            {isStartCalendarOpen && (
               <div className="absolute left-0 top-full mt-2 z-50 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg p-4">
-                <div className="flex items-center justify-between mb-3">
-                  <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                    Select End Date
-                  </h3>
-                  {endTime && (
-                    <button
-                      type="button"
-                      onClick={() => setEndTime(undefined)}
-                      className="text-xs text-primary hover:underline">
-                      Clear
-                    </button>
-                  )}
-                </div>
                 <Calendar
                   mode="single"
-                  selected={endTime}
-                  onSelect={setEndTime}
+                  selected={startDate}
+                  onSelect={setStartDate}
                   className="rounded-md"
                 />
                 <div className="mt-3 flex justify-end">
                   <button
                     type="button"
-                    onClick={() => setIsCalendarOpen(false)}
+                    onClick={() => setIsStartCalendarOpen(false)}
                     className="px-4 py-2 text-sm font-medium text-white bg-primary rounded-md hover:bg-primary/90 transition">
                     Done
                   </button>
@@ -243,6 +363,83 @@ export function OfferForm({ offer, mode }: OfferFormProps) {
               </div>
             )}
           </div>
+        </div>
+
+        {/* End Date */}
+        <div>
+          <Label htmlFor="endDate">
+            End Date <span className="text-red-500">*</span>
+          </Label>
+          <div
+            className="relative"
+            ref={endCalendarRef}>
+            <button
+              type="button"
+              onClick={() => setIsEndCalendarOpen(!isEndCalendarOpen)}
+              className="w-full h-11 px-3 py-2 text-sm border border-gray-300 dark:border-gray-700 rounded-md bg-white dark:bg-gray-800 text-left flex items-center justify-between hover:border-primary transition">
+              <span className="flex items-center gap-2">
+                <CalendarIcon className="h-4 w-4 text-gray-500" />
+                {endDate ? (
+                  <span className="text-gray-900 dark:text-white">
+                    {format(endDate, "PPP")}
+                  </span>
+                ) : (
+                  <span className="text-gray-500">Select end date...</span>
+                )}
+              </span>
+            </button>
+
+            {isEndCalendarOpen && (
+              <div className="absolute left-0 top-full mt-2 z-50 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg p-4">
+                <Calendar
+                  mode="single"
+                  selected={endDate}
+                  onSelect={setEndDate}
+                  className="rounded-md"
+                />
+                <div className="mt-3 flex justify-end">
+                  <button
+                    type="button"
+                    onClick={() => setIsEndCalendarOpen(false)}
+                    className="px-4 py-2 text-sm font-medium text-white bg-primary rounded-md hover:bg-primary/90 transition">
+                    Done
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Usage Limit Per User */}
+        <div>
+          <Label htmlFor="usageLimitPerUser">
+            Usage Limit Per User <span className="text-red-500">*</span>
+          </Label>
+          <Input
+            id="usageLimitPerUser"
+            type="number"
+            required
+            value={usageLimitPerUser}
+            onChange={(e) => setUsageLimitPerUser(e.target.value)}
+            placeholder="Enter usage limit per user"
+            min="1"
+          />
+        </div>
+
+        {/* Total Usage Limit */}
+        <div>
+          <Label htmlFor="totalUsageLimit">
+            Total Usage Limit <span className="text-red-500">*</span>
+          </Label>
+          <Input
+            id="totalUsageLimit"
+            type="number"
+            required
+            value={totalUsageLimit}
+            onChange={(e) => setTotalUsageLimit(e.target.value)}
+            placeholder="Enter total usage limit"
+            min="1"
+          />
         </div>
       </div>
 
@@ -299,11 +496,18 @@ export function OfferForm({ offer, mode }: OfferFormProps) {
         <Button
           type="button"
           variant="outline"
-          onClick={() => router.push("/restaurants/offers")}>
+          onClick={() => router.push("/restaurants/offers")}
+          disabled={createOffer.isPending}>
           Cancel
         </Button>
-        <Button type="submit">
-          {mode === "create" ? "Create Offer" : "Update Offer"}
+        <Button
+          type="submit"
+          disabled={createOffer.isPending}>
+          {createOffer.isPending
+            ? "Creating..."
+            : mode === "create"
+              ? "Create Offer"
+              : "Update Offer"}
         </Button>
       </div>
     </form>

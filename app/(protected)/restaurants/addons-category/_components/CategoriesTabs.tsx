@@ -1,22 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import { AddOnCategory, FoodCategory } from "@/types/entities";
+import { AddOnCategory } from "@/types/entities";
 import { AddOnsCategoryContent } from "./AddOnsCategoryContent";
-import { FoodCategoryContent } from "./FoodCategoryContent";
+import { RestaurantCategoryTable } from "./RestaurantCategoryTable";
 import PageTitle from "@/components/common/PageTitle";
 import Button from "@/components/ui/Button";
 
-interface CategoriesTabsProps {
-  addOnCategoriesData: AddOnCategory[];
-  foodCategoriesData: FoodCategory[];
-}
+interface CategoriesTabsProps {}
 
-export function CategoriesTabs({
-  addOnCategoriesData,
-  foodCategoriesData,
-}: CategoriesTabsProps) {
-  const [activeTab, setActiveTab] = useState<"addons" | "food">("addons");
+export function CategoriesTabs({}: CategoriesTabsProps) {
+  const [activeTab, setActiveTab] = useState<"addons" | "restaurant">("addons");
   const [isCreateOpen, setIsCreateOpen] = useState(false);
 
   return (
@@ -27,7 +21,7 @@ export function CategoriesTabs({
           title={
             activeTab === "addons"
               ? "Add-Ons Categories Management"
-              : "Food Categories Management"
+              : "Restaurant Categories Management"
           }
         />
         <div className="flex items-center gap-4">
@@ -36,7 +30,7 @@ export function CategoriesTabs({
             usage="create">
             {activeTab === "addons"
               ? "Create Add-On Category"
-              : "Create Food Category"}
+              : "Create Restaurant Category"}
           </Button>
           <div className="flex gap-2">
             <button
@@ -49,32 +43,32 @@ export function CategoriesTabs({
               Add-Ons Category
             </button>
             <button
-              onClick={() => setActiveTab("food")}
+              onClick={() => setActiveTab("restaurant")}
               className={`px-4 py-2 text-sm border border-primary font-medium rounded-md transition-colors ${
-                activeTab === "food"
+                activeTab === "restaurant"
                   ? "bg-primary text-white"
                   : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800"
               }`}>
-              Food Category
+              Restaurant Category
             </button>
           </div>
         </div>
       </div>
 
       {/* Tab Content */}
-      {activeTab === "addons" ? (
-        <AddOnsCategoryContent
-          initialData={addOnCategoriesData}
-          isCreateOpen={isCreateOpen}
-          setIsCreateOpen={setIsCreateOpen}
-        />
-      ) : (
-        <FoodCategoryContent
-          initialData={foodCategoriesData}
-          isCreateOpen={isCreateOpen}
-          setIsCreateOpen={setIsCreateOpen}
-        />
-      )}
+      <div className="flex bg-white dark:bg-gray-900 p-5 rounded-lg">
+        {activeTab === "addons" ? (
+          <AddOnsCategoryContent
+            isCreateOpen={isCreateOpen}
+            setIsCreateOpen={setIsCreateOpen}
+          />
+        ) : (
+          <RestaurantCategoryTable
+            isCreateOpen={isCreateOpen}
+            setIsCreateOpen={setIsCreateOpen}
+          />
+        )}
+      </div>
     </div>
   );
 }

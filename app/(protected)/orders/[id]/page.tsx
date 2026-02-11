@@ -3,27 +3,8 @@ import OrderDetailHeader from "./_components/OrderDetailHeader";
 import OrderInfoCard from "./_components/OrderInfoCard";
 import CustomerInfoCard from "./_components/CustomerInfoCard";
 import OrderLocationMap from "./_components/OrderLocationMap";
-
-// Mock order data based on user input
-const mockOrderDetail = {
-  id: "9175",
-  orderNo: "#5802",
-  customerName: "Bele Shewa",
-  customerPhone: "93 911112222",
-  store: "Mus diner",
-  address: "XQMQ+9G8, Addis Ababa, Addis Ababa, Ethiopia",
-  totalPrice: "AFN 495",
-  deliveryCharge: "AFN 30",
-  offerDiscount: "AFN 0",
-  finalTotal: "AFN 525",
-  state: "RESTAURANT_REJECTED",
-  paymentStatus: "Paid",
-  paymentMode: "Cash on Delivery",
-  createdOn: "24-Dec-2025 10:49",
-  specialInstructions: "N/A",
-  rejectionReason:
-    "Auto-rejected: Restaurant did not respond within 20 minutes",
-};
+import { apiServer } from "@/lib/api-server";
+import { OrderDetailResponse } from "@/types/entities";
 
 export default async function OrderDetailPage({
   params,
@@ -32,15 +13,36 @@ export default async function OrderDetailPage({
 }) {
   const { id } = await params;
 
-  // In real application, fetch the order details by id
-  const order = mockOrderDetail;
+  let orderData: OrderDetailResponse | null = null;
+  let error: string | null = null;
+
+  try {
+    orderData = await apiServer<OrderDetailResponse>(`/api/admin/orders/${id}`);
+  } catch (err) {
+    console.error("Failed to fetch order details:", err);
+    error = "Error loading order details. Please try again later.";
+  }
+
+  if (error || !orderData) {
+    return (
+      <div className="flex flex-col gap-4">
+        <div className="bg-white dark:bg-gray-900 rounded-lg p-8 border border-gray-200 dark:border-gray-800 text-center">
+          <p className="text-red-600 dark:text-red-400">
+            {error || "Order not found."}
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  const order = orderData.data;
 
   return (
     <div className="flex flex-col gap-4">
       <OrderDetailHeader
         orderId={id}
         orderNo={order.orderNo}
-        status={order.state}
+        status={order.status}
       />
 
       {/* Order Information Card */}
@@ -52,6 +54,8 @@ export default async function OrderDetailPage({
           customerName: order.customerName,
           customerPhone: order.customerPhone,
           address: order.address,
+          city: order.city,
+          postalCode: order.postalCode,
         }}
       />
 

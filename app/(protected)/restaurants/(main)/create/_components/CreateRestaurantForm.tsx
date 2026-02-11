@@ -16,58 +16,37 @@ import {
 import { RichTextEditor } from "@/components/ui/RichTextEditor";
 import { FileUploadWithPreview } from "@/components/ui/FileUploadWithPreview";
 import { AvailabilitySelector } from "@/components/ui/AvailabilitySelector";
-
-// Mock data for dropdowns
-const CATEGORIES = [
-  "Soda",
-  "Food",
-  "Burger",
-  "Sweets",
-  "Ice cream",
-  "Juice",
-  "Pizza",
-  "Rice",
-];
-
-const FOOD_TYPES = [
-  "Italian",
-  "Chinese",
-  "Indian",
-  "Mexican",
-  "Japanese",
-  "American",
-  "Mediterranean",
-  "Ethiopian",
-  "Mixed",
-];
-
-const MERCHANTS = [
-  { id: "1", name: "Restaurant Owner 1" },
-  { id: "2", name: "Restaurant Owner 2" },
-  { id: "3", name: "Restaurant Owner 3" },
-  { id: "4", name: "Restaurant Owner 4" },
-  { id: "5", name: "Restaurant Owner 5" },
-];
+import { useRestaurantCategories } from "@/hooks/useRestaurantCategories";
+import { useCuisines } from "@/hooks/useCuisines";
 
 export function CreateRestaurantForm() {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Fetch categories and cuisines using hooks
+  const { data: categories } = useRestaurantCategories();
+  const { data: cuisines } = useCuisines();
+
   const [formData, setFormData] = useState({
-    restaurantName: "",
-    category: "",
-    foodType: "",
-    location: "",
+    name: "",
+    categoryId: "",
+    cuisine: "",
+    addressLine: "",
+    latitude: "",
+    longitude: "",
+    contactNumber: "",
+    website: "",
     description: "",
-    pricePerPerson: "",
+    averagePrice: "",
     deliveryFee: "",
-    maxDeliveryDistance: "",
+    deliveryDistanceKm: "",
     platformFeePercentage: "",
-    merchantId: "",
+    ownerId: "",
   });
 
-  const [restaurantImage, setRestaurantImage] = useState<File | null>(null);
-  const [foodImages, setFoodImages] = useState<File[]>([]);
+  const [featuredImage, setFeaturedImage] = useState<File | null>(null);
+  const [images, setImages] = useState<File[]>([]);
+  const [businessLicense, setBusinessLicense] = useState<File | null>(null);
   const [availability, setAvailability] = useState<
     Record<string, { enabled: boolean; openTime: string; closeTime: string }>
   >({});
@@ -76,26 +55,106 @@ export function CreateRestaurantForm() {
     e.preventDefault();
     setIsSubmitting(true);
 
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1500));
+    try {
+      // Prepare the data object
+      const data = {
+        name: formData.name,
+        categoryId: parseInt(formData.categoryId),
+        cuisine: formData.cuisine,
+        addressLine: formData.addressLine,
+        latitude: parseFloat(formData.latitude) || 0,
+        longitude: parseFloat(formData.longitude) || 0,
+        contactNumber: formData.contactNumber,
+        website: formData.website,
+        description: formData.description,
+        averagePrice: parseFloat(formData.averagePrice) || 0,
+        deliveryFee: parseFloat(formData.deliveryFee) || 0,
+        deliveryDistanceKm: parseFloat(formData.deliveryDistanceKm) || 0,
+        platformFeePercentage: parseFloat(formData.platformFeePercentage) || 0,
+        ownerId: parseInt(formData.ownerId),
+        openingHours: Object.entries(availability)
+          .filter(([_, value]) => value.enabled)
+          .map(([day, value]) => ({
+            dayOfWeek: getDayNumber(day),
+            openTime: value.openTime,
+            closeTime: value.closeTime,
+            status: "active" as const,
+          })),
+      };
 
-    console.log("Form Data:", {
-      ...formData,
-      restaurantImage,
-      foodImages,
-      availability,
-    });
+      // Create FormData for multipart/form-data
+      const formDataToSend = new FormData();
 
-    toast.success("Restaurant created successfully!");
-    setIsSubmitting(false);
-    router.push("/restaurants");
+      // Add the data object as JSON blob with filename
+      formDataToSend.append(
+        "data",
+        new Blob([JSON.stringify(data)], { type: "application/json" }),
+        "data.json",
+      );
+
+      // Add files
+      if (featuredImage) {
+        formDataToSend.append("featuredImage", featuredImage);
+      }
+
+      images.forEach((image) => {
+        formDataToSend.append("images", image);
+      });
+
+      if (businessLicense) {
+        formDataToSend.append("businessLicense", businessLicense);
+      }
+
+      // Make API call using fetch
+      const response = await fetch("/api/proxy/api/v1/restaurants", {
+        method: "POST",
+        body: formDataToSend,
+        credentials: "include",
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to create restaurant");
+      }
+
+      toast.success("Restaurant created successfully!");
+      router.push("/restaurants");
+    } catch (error) {
+      console.error("Error creating restaurant:", error);
+      const errorMessage =
+        error instanceof Error ? error.message : "Failed to create restaurant";
+      toast.error(errorMessage);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
-  const handleRestaurantImageChange = (
+  const getDayNumber = (day: string): number => {
+    const days: Record<string, number> = {
+      monday: 1,
+      tuesday: 2,
+      wednesday: 3,
+      thursday: 4,
+      friday: 5,
+      saturday: 6,
+      sunday: 0,
+    };
+    return days[day.toLowerCase()] || 0;
+  };
+
+  const handleFeaturedImageChange = (
     e: React.ChangeEvent<HTMLInputElement>,
   ) => {
     if (e.target.files && e.target.files[0]) {
-      setRestaurantImage(e.target.files[0]);
+      setFeaturedImage(e.target.files[0]);
+    }
+  };
+
+  const handleBusinessLicenseChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    if (e.target.files && e.target.files[0]) {
+      setBusinessLicense(e.target.files[0]);
     }
   };
 
@@ -109,16 +168,16 @@ export function CreateRestaurantForm() {
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             <div>
-              <Label htmlFor="restaurantName">
+              <Label htmlFor="name">
                 Restaurant Name <span className="text-red-500">*</span>
               </Label>
               <Input
-                id="restaurantName"
+                id="name"
                 type="text"
                 required
-                value={formData.restaurantName}
+                value={formData.name}
                 onChange={(e) =>
-                  setFormData({ ...formData, restaurantName: e.target.value })
+                  setFormData({ ...formData, name: e.target.value })
                 }
                 placeholder="e.g., Golden Palace Restaurant"
               />
@@ -129,19 +188,19 @@ export function CreateRestaurantForm() {
                 Category <span className="text-red-500">*</span>
               </Label>
               <Select
-                value={formData.category}
+                value={formData.categoryId}
                 onValueChange={(value) =>
-                  setFormData({ ...formData, category: value })
+                  setFormData({ ...formData, categoryId: value })
                 }>
                 <SelectTrigger className="w-full h-11">
                   <SelectValue placeholder="Select category" />
                 </SelectTrigger>
                 <SelectContent>
-                  {CATEGORIES.map((cat) => (
+                  {categories.map((cat) => (
                     <SelectItem
-                      key={cat}
-                      value={cat}>
-                      {cat}
+                      key={cat.id}
+                      value={cat.id.toString()}>
+                      {cat.title}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -149,27 +208,77 @@ export function CreateRestaurantForm() {
             </div>
 
             <div>
-              <Label htmlFor="foodType">
-                Food Type <span className="text-red-500">*</span>
+              <Label htmlFor="cuisine">
+                Cuisine <span className="text-red-500">*</span>
               </Label>
               <Select
-                value={formData.foodType}
+                value={formData.cuisine}
                 onValueChange={(value) =>
-                  setFormData({ ...formData, foodType: value })
+                  setFormData({ ...formData, cuisine: value })
                 }>
                 <SelectTrigger className="w-full h-11">
-                  <SelectValue placeholder="Select food type" />
+                  <SelectValue placeholder="Select cuisine" />
                 </SelectTrigger>
                 <SelectContent>
-                  {FOOD_TYPES.map((type) => (
+                  {cuisines.map((cuisine) => (
                     <SelectItem
-                      key={type}
-                      value={type}>
-                      {type}
+                      key={cuisine.id}
+                      value={cuisine.title}>
+                      {cuisine.title}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
+            </div>
+
+            <div>
+              <Label htmlFor="ownerId">
+                Owner ID <span className="text-red-500">*</span>
+              </Label>
+              <Input
+                id="ownerId"
+                type="number"
+                required
+                value={formData.ownerId}
+                onChange={(e) =>
+                  setFormData({ ...formData, ownerId: e.target.value })
+                }
+                placeholder="Enter owner ID"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Contact Information */}
+        <div>
+          <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-4">
+            Contact Information
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div>
+              <Label htmlFor="contactNumber">Contact Number</Label>
+              <Input
+                id="contactNumber"
+                type="tel"
+                value={formData.contactNumber}
+                onChange={(e) =>
+                  setFormData({ ...formData, contactNumber: e.target.value })
+                }
+                placeholder="e.g., +251912345678"
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="website">Website</Label>
+              <Input
+                id="website"
+                type="url"
+                value={formData.website}
+                onChange={(e) =>
+                  setFormData({ ...formData, website: e.target.value })
+                }
+                placeholder="e.g., https://example.com"
+              />
             </div>
           </div>
         </div>
@@ -194,21 +303,21 @@ export function CreateRestaurantForm() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               <div>
-                <Label htmlFor="pricePerPerson">Price Per Person (AFN)</Label>
+                <Label htmlFor="averagePrice">Average Price ($)</Label>
                 <Input
-                  id="pricePerPerson"
+                  id="averagePrice"
                   type="number"
                   step={0.01}
-                  value={formData.pricePerPerson}
+                  value={formData.averagePrice}
                   onChange={(e) =>
-                    setFormData({ ...formData, pricePerPerson: e.target.value })
+                    setFormData({ ...formData, averagePrice: e.target.value })
                   }
-                  placeholder="e.g., 250.00"
+                  placeholder="e.g., 15.00"
                 />
               </div>
 
               <div>
-                <Label htmlFor="deliveryFee">Delivery Fee (AFN)</Label>
+                <Label htmlFor="deliveryFee">Delivery Fee ($)</Label>
                 <Input
                   id="deliveryFee"
                   type="number"
@@ -217,35 +326,27 @@ export function CreateRestaurantForm() {
                   onChange={(e) =>
                     setFormData({ ...formData, deliveryFee: e.target.value })
                   }
-                  placeholder="e.g., 2.50 for AFN 2.50"
+                  placeholder="e.g., 2.50"
                 />
-                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                  Fixed delivery fee for this restaurant. Leave empty to use
-                  dynamic pricing based on distance.
-                </p>
               </div>
 
               <div>
-                <Label htmlFor="maxDeliveryDistance">
+                <Label htmlFor="deliveryDistanceKm">
                   Max Delivery Distance (KM)
                 </Label>
                 <Input
-                  id="maxDeliveryDistance"
+                  id="deliveryDistanceKm"
                   type="number"
                   step={0.1}
-                  value={formData.maxDeliveryDistance}
+                  value={formData.deliveryDistanceKm}
                   onChange={(e) =>
                     setFormData({
                       ...formData,
-                      maxDeliveryDistance: e.target.value,
+                      deliveryDistanceKm: e.target.value,
                     })
                   }
-                  placeholder="e.g., 5 for 5 KM"
+                  placeholder="e.g., 5"
                 />
-                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                  Maximum delivery radius in kilometers. Leave empty to use
-                  default settings.
-                </p>
               </div>
 
               <div>
@@ -263,9 +364,69 @@ export function CreateRestaurantForm() {
                       platformFeePercentage: e.target.value,
                     })
                   }
-                  placeholder="e.g., 15.0 for 15%"
+                  placeholder="e.g., 15.0"
                 />
               </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Location */}
+        <div>
+          <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-4">
+            Restaurant Location
+          </h3>
+          <div className="space-y-5">
+            <div>
+              <Label htmlFor="addressLine">
+                Address <span className="text-red-500">*</span>
+              </Label>
+              <Input
+                id="addressLine"
+                type="text"
+                required
+                value={formData.addressLine}
+                onChange={(e) =>
+                  setFormData({ ...formData, addressLine: e.target.value })
+                }
+                placeholder="e.g., Bole, Addis Ababa, Ethiopia"
+              />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              <div>
+                <Label htmlFor="latitude">Latitude</Label>
+                <Input
+                  id="latitude"
+                  type="number"
+                  step="any"
+                  value={formData.latitude}
+                  onChange={(e) =>
+                    setFormData({ ...formData, latitude: e.target.value })
+                  }
+                  placeholder="e.g., 9.0320"
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="longitude">Longitude</Label>
+                <Input
+                  id="longitude"
+                  type="number"
+                  step="any"
+                  value={formData.longitude}
+                  onChange={(e) =>
+                    setFormData({ ...formData, longitude: e.target.value })
+                  }
+                  placeholder="e.g., 38.7469"
+                />
+              </div>
+            </div>
+
+            <div className="py-28 border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-800/50 flex items-center justify-center">
+              <p className="text-sm text-gray-500 dark:text-gray-400 text-center">
+                📍 Map integration coming soon
+              </p>
             </div>
           </div>
         </div>
@@ -277,27 +438,48 @@ export function CreateRestaurantForm() {
           </h3>
           <div className="space-y-5">
             <div>
-              <Label htmlFor="restaurantImage">Restaurant Image</Label>
+              <Label htmlFor="featuredImage">
+                Featured Image <span className="text-red-500">*</span>
+              </Label>
               <Input
-                id="restaurantImage"
+                id="featuredImage"
                 type="file"
                 accept="image/*"
-                onChange={handleRestaurantImageChange}
+                required
+                onChange={handleFeaturedImageChange}
               />
-              {restaurantImage && (
+              {featuredImage && (
                 <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
-                  Selected: {restaurantImage.name}
+                  Selected: {featuredImage.name}
                 </p>
               )}
             </div>
 
             <div>
-              <Label>Add Food Images</Label>
+              <Label>Additional Images</Label>
               <FileUploadWithPreview
-                value={foodImages}
-                onChange={setFoodImages}
+                value={images}
+                onChange={setImages}
                 maxFiles={10}
               />
+            </div>
+
+            <div>
+              <Label htmlFor="businessLicense">
+                Business License <span className="text-red-500">*</span>
+              </Label>
+              <Input
+                id="businessLicense"
+                type="file"
+                accept=".pdf,.jpg,.jpeg,.png"
+                required
+                onChange={handleBusinessLicenseChange}
+              />
+              {businessLicense && (
+                <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
+                  Selected: {businessLicense.name}
+                </p>
+              )}
             </div>
           </div>
         </div>
@@ -311,57 +493,6 @@ export function CreateRestaurantForm() {
             value={availability}
             onChange={setAvailability}
           />
-        </div>
-
-        {/* Merchant Assignment */}
-        <div>
-          <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-4">
-            Restaurant Owner
-          </h3>
-          <div>
-            <Label htmlFor="merchantId">
-              Restaurant Owner ID <span className="text-red-500">*</span>
-            </Label>
-            <Select
-              value={formData.merchantId}
-              onValueChange={(value) =>
-                setFormData({ ...formData, merchantId: value })
-              }>
-              <SelectTrigger className="w-full h-11">
-                <SelectValue placeholder="Select restaurant owner" />
-              </SelectTrigger>
-              <SelectContent>
-                {MERCHANTS.map((merchant) => (
-                  <SelectItem
-                    key={merchant.id}
-                    value={merchant.id}>
-                    {merchant.name} (ID: {merchant.id})
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
-
-        {/* Location */}
-        <div>
-          <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-4">
-            Restaurant Location
-          </h3>
-          <div className="space-y-5">
-            <div>
-              <Label htmlFor="location">
-                Select Restaurant Location{" "}
-                <span className="text-red-500">*</span>
-              </Label>
-
-              <div className="mt-3 py-28 border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-800/50 flex items-center justify-center">
-                <p className="text-sm text-gray-500 dark:text-gray-400 text-center">
-                  📍 Map will be displayed here
-                </p>
-              </div>
-            </div>
-          </div>
         </div>
 
         {/* Form Actions */}
