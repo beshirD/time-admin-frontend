@@ -37,6 +37,41 @@ export type TailorAdmin = {
 };
 
 
+
+export type BannerPackageStatus = "active" | "inactive";
+
+export type BannerPackage = {
+  id: number;
+  title: string;
+  description: string;
+  price: number;
+  durationDays: number;
+  maxBanners: number;
+  isPopular: boolean;
+  status: BannerPackageStatus;
+  createdAt: string;
+};
+
+export type BannerPackagesResponse = {
+  content: BannerPackage[];
+  page: PageMetadata;
+};
+
+export type CreateBannerPackageRequest = {
+  title: string;
+  description: string;
+  price: number;
+  durationDays: number;
+  maxBanners: number;
+};
+
+export type CreateBannerPackageResponse = {
+  success: boolean;
+  message: string;
+  data: BannerPackage;
+};
+
+// Legacy type for backward compatibility
 export type BannerPackages = {
   sNo: number;
   id: number;
@@ -50,6 +85,7 @@ export type BannerPackages = {
   createdOn: string;
   createdBy: string;
 };
+
 
 export type Subscription = {
   id: number;
@@ -71,6 +107,17 @@ export type Subscription = {
   created: string;
   createdBy?: string;
 };
+
+export type CreateSubscriptionRequest = {
+  packageId: number;
+};
+
+export type CreateSubscriptionResponse = {
+  success: boolean;
+  message: string;
+  data: string;
+};
+
 
 export type SubscriptionQueue = {
   id: number;
@@ -514,5 +561,28 @@ export type OpeningHour = {
   openTime: string;
   closeTime: string;
   isClosed: boolean;
+};
+
+export type BannerStatus = "active" | "inactive" | "pending" | "archive";
+
+export type Banner = {
+  id: number;
+  subscriptionId: number;
+  restaurantId: number;
+  itemId: number;
+  bannerImage: string;
+  status: BannerStatus;
+  createdAt: string;
+};
+
+export type BannersResponse = {
+  content: Banner[];
+  page: PageMetadata;
+};
+
+export type CreateBannerResponse = {
+  success: boolean;
+  message: string;
+  data: Banner;
 };
 

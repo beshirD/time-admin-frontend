@@ -4,14 +4,7 @@ import React from "react";
 import { Search, Plus } from "lucide-react";
 import Button from "@/components/ui/Button";
 import BannerCard from "./BannerCard";
-
-interface Banner {
-  id: number;
-  name: string;
-  restaurant: string;
-  status: "active" | "pending" | "archive";
-  imageUrl: string;
-}
+import { Banner } from "@/types/entities";
 
 interface BannerGridProps {
   banners: Banner[];
