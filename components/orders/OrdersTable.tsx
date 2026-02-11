@@ -100,6 +100,7 @@ const ActionsButtons = ({
 interface OrdersTableProps {
   data: Order[];
   variant?: "recent" | "all";
+  isLoading?: boolean;
   onView?: (id: number) => void;
   onEdit?: (id: number) => void;
   onDelete?: (id: number) => void;
@@ -109,6 +110,7 @@ interface OrdersTableProps {
 export default function OrdersTable({
   data,
   variant = "all",
+  isLoading = false,
   onView,
   onEdit,
   onDelete,
@@ -204,6 +206,7 @@ export default function OrdersTable({
     <DataTable
       columns={columns}
       data={data}
+      isLoading={isLoading}
       enableSearch={false}
       enableColumnVisibility={false}
       hasPagination={variant === "all"}

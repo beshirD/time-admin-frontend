@@ -393,6 +393,40 @@ export type OrderDetailResponse = {
   message: string;
   data: OrderDetail;
 };
+
+export type ManualOrderItemAddon = {
+  addonId: number;
+  priceOverride?: number;
+};
+
+export type ManualOrderItem = {
+  itemId: number;
+  priceId: number;
+  quantity: number;
+  unitPriceOverride?: number;
+  addons?: ManualOrderItemAddon[];
+};
+
+export type CreateManualOrderRequest = {
+  customerId: number;
+  restaurantId: number;
+  addressId: number;
+  items: ManualOrderItem[];
+  paymentMethod: PaymentMethod;
+  paymentStatus: PaymentStatus;
+  specialInstructions?: string;
+  discountOverride?: number;
+  deliveryFeeOverride?: number;
+  platformFeeOverride?: number;
+  initialStatus?: OrderStatus;
+  skipApproval?: boolean;
+};
+
+export type CreateManualOrderResponse = {
+  success: boolean;
+  message: string;
+  data: OrderDetail;
+};
 export type MenuItemType = "VEG" | "NON_VEG" | "VEGAN";
 
 export type MenuItemPrice = {

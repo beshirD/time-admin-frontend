@@ -11,14 +11,21 @@ import {
 } from "lucide-react";
 import Button from "@/components/ui/Button";
 import Textarea from "@/components/ui/Textarea";
+import { PaymentMethod, PaymentStatus } from "@/types/entities";
+import Label from "@/components/ui/Label";
 
 interface OrderSummaryStickyProps {
   cartItems: CartItem[];
   onUpdateQuantity: (itemId: number, delta: number) => void;
   specialInstructions: string;
   onInstructionsChange: (val: string) => void;
+  paymentMethod: PaymentMethod;
+  onPaymentMethodChange: (method: PaymentMethod) => void;
+  paymentStatus: PaymentStatus;
+  onPaymentStatusChange: (status: PaymentStatus) => void;
   onSubmit: () => void;
-  selectedRestaurantId: string;
+  selectedRestaurantId: number | null;
+  isSubmitting?: boolean;
 }
 
 export default function OrderSummarySticky({
@@ -26,16 +33,21 @@ export default function OrderSummarySticky({
   onUpdateQuantity,
   specialInstructions,
   onInstructionsChange,
+  paymentMethod,
+  onPaymentMethodChange,
+  paymentStatus,
+  onPaymentStatusChange,
   onSubmit,
   selectedRestaurantId,
+  isSubmitting = false,
 }: OrderSummaryStickyProps) {
   const subtotal = cartItems.reduce(
-    (acc, item) => acc + item.price * item.quantity,
+    (acc, item) => acc + item.basePrice * item.quantity,
     0,
   );
   const deliveryFee = selectedRestaurantId ? 50 : 0; // Mock delivery fee
-  const tax = subtotal * 0.15; // 15% tax
-  const total = subtotal + deliveryFee + tax;
+  const platformFee = subtotal * 0.05; // 5% platform fee
+  const total = subtotal + deliveryFee + platformFee;
 
   return (
     <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden flex flex-col max-h-[calc(100vh-120px)]">
@@ -55,10 +67,10 @@ export default function OrderSummarySticky({
                 className="flex justify-between items-start gap-4 pb-3 border-b border-gray-50 dark:border-gray-800 last:border-0">
                 <div className="flex-1 space-y-1">
                   <p className="text-sm font-semibold text-gray-800 dark:text-gray-100">
-                    {item.name}
+                    {item.title}
                   </p>
                   <p className="text-xs text-gray-500">
-                    ETB {item.price.toFixed(2)}
+                    ETB {item.basePrice.toFixed(2)}
                   </p>
                 </div>
 
@@ -79,7 +91,7 @@ export default function OrderSummarySticky({
                     </button>
                   </div>
                   <p className="text-sm font-bold text-gray-900 dark:text-gray-100">
-                    ETB {(item.price * item.quantity).toFixed(2)}
+                    ETB {(item.basePrice * item.quantity).toFixed(2)}
                   </p>
                 </div>
               </div>
@@ -94,16 +106,50 @@ export default function OrderSummarySticky({
           </div>
         )}
 
-        <div className="pt-4 space-y-2">
-          <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">
-            Special Instructions
-          </label>
-          <Textarea
-            placeholder="Enter Special Instructions (e.g. no onions, extra spicy...)"
-            value={specialInstructions}
-            onChange={(e) => onInstructionsChange(e.target.value)}
-            className="text-xs min-h-[80px] bg-gray-50/50 dark:bg-gray-800/30"
-          />
+        <div className="pt-4 space-y-3">
+          <div className="space-y-2">
+            <Label className="text-sm font-semibold text-gray-700 dark:text-gray-300">
+              Payment Method *
+            </Label>
+            <select
+              value={paymentMethod}
+              onChange={(e) =>
+                onPaymentMethodChange(e.target.value as PaymentMethod)
+              }
+              className="w-full h-10 px-3 border-2 border-gray-100 dark:border-gray-800 rounded-md bg-white dark:bg-gray-900 text-sm focus:border-primary focus:outline-none">
+              <option value="cash">Cash</option>
+              <option value="card">Card</option>
+              <option value="online">Online</option>
+            </select>
+          </div>
+
+          <div className="space-y-2">
+            <Label className="text-sm font-semibold text-gray-700 dark:text-gray-300">
+              Payment Status *
+            </Label>
+            <select
+              value={paymentStatus}
+              onChange={(e) =>
+                onPaymentStatusChange(e.target.value as PaymentStatus)
+              }
+              className="w-full h-10 px-3 border-2 border-gray-100 dark:border-gray-800 rounded-md bg-white dark:bg-gray-900 text-sm focus:border-primary focus:outline-none">
+              <option value="pending">Pending</option>
+              <option value="paid">Paid</option>
+              <option value="failed">Failed</option>
+            </select>
+          </div>
+
+          <div className="space-y-2">
+            <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">
+              Special Instructions
+            </label>
+            <Textarea
+              placeholder="Enter Special Instructions (e.g. no onions, extra spicy...)"
+              value={specialInstructions}
+              onChange={(e) => onInstructionsChange(e.target.value)}
+              className="text-xs min-h-[80px] bg-gray-50/50 dark:bg-gray-800/30"
+            />
+          </div>
         </div>
       </div>
 
@@ -123,9 +169,9 @@ export default function OrderSummarySticky({
           <div className="flex justify-between text-sm text-gray-600 dark:text-gray-400">
             <div className="flex items-center gap-1">
               <Landmark className="h-3 w-3" />
-              <span>Tax (15%)</span>
+              <span>Platform Fee (5%)</span>
             </div>
-            <span>ETB {tax.toFixed(2)}</span>
+            <span>ETB {platformFee.toFixed(2)}</span>
           </div>
         </div>
 
@@ -146,8 +192,9 @@ export default function OrderSummarySticky({
         <Button
           usage="create"
           className="w-full h-12 text-lg font-bold shadow-lg shadow-primary/20"
-          onClick={onSubmit}>
-          Create Order
+          onClick={onSubmit}
+          disabled={isSubmitting}>
+          {isSubmitting ? "Creating Order..." : "Create Order"}
         </Button>
       </div>
     </div>

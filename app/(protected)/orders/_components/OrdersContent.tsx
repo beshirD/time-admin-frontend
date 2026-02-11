@@ -100,6 +100,7 @@ export default function OrdersContent() {
           <OrdersTable
             data={filteredOrders}
             variant="all"
+            isLoading={isLoading}
             onView={handleView}
             onInvoice={handleInvoice}
           />

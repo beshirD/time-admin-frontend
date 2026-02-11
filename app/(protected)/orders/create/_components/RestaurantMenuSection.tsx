@@ -11,8 +11,8 @@ import { cn } from "@/lib/utils";
 import { CartItem } from "./CreateOrderContent";
 
 interface RestaurantMenuSectionProps {
-  selectedRestaurantId: string;
-  onRestaurantChange: (id: string) => void;
+  selectedRestaurantId: number | null;
+  onRestaurantChange: (id: number | null) => void;
   cartItems: CartItem[];
   onAddToCart: (item: MenuItem) => void;
   onRemoveFromCart: (itemId: number) => void;
