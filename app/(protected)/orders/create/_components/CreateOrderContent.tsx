@@ -9,23 +9,29 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import CustomerInfoSection from "./CustomerInfoSection";
 import { useCreateManualOrder } from "@/hooks/useCreateManualOrder";
-import { getUserIdFromCookie } from "@/lib/client-cookies";
 
 export interface CartItem extends MenuItem {
   quantity: number;
   selectedPriceId?: number; // Track which price variant is selected
 }
 
-export default function CreateOrderContent() {
+interface CreateOrderContentProps {
+  initialAdminUserId?: number;
+}
+
+export default function CreateOrderContent({
+  initialAdminUserId,
+}: CreateOrderContentProps) {
   const router = useRouter();
-  const adminUserId = getUserIdFromCookie();
+  const [adminUserId] = useState<number | undefined>(initialAdminUserId);
+
   const { createOrderAsync, isLoading } = useCreateManualOrder(
     adminUserId || undefined,
   );
 
   // State for Customer Info
   const [customerId, setCustomerId] = useState<number | null>(null);
-  const [customerInfo, setCustomerInfo] = useState({
+  const [, setCustomerInfo] = useState({
     name: "",
     email: "",
     mobile: "",

@@ -89,7 +89,7 @@ export const createColumns = (
     header: "Discount Type",
     cell: ({ row }) => (
       <div className="capitalize">
-        {row.getValue("discountType") === "amount"
+        {row.getValue("discountType") === "fixed_amount"
           ? "Amount (AFN)"
           : "Percentage (%)"}
       </div>
@@ -103,7 +103,7 @@ export const createColumns = (
       const discount = row.getValue("discountValue") as number;
       return (
         <div className="font-medium">
-          {type === "amount" ? `${discount} AFN` : `${discount}%`}
+          {type === "fixed_amount" ? `${discount} AFN` : `${discount}%`}
         </div>
       );
     },

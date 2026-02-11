@@ -2,7 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api-client";
-import { OrdersResponse, OrderStatus, OrdersStatusResponse, PaymentStatus } from "@/types/entities";
+import { Order, OrdersResponse, OrderStatus, OrdersStatusResponse, PaymentStatus } from "@/types/entities";
 
 interface UseOrdersParams {
   orderId?: number;
@@ -80,16 +80,20 @@ export function useOrders(params: UseOrdersParams = {}) {
       }
 
       const url = `/api/admin/orders?${queryParams.toString()}`;
-      const response = await api.get<{ success: boolean; message: string; data: OrdersResponse }>(url);
+      const response = await api.get<{ success: boolean; message: string; data: any }>(url);
       return response.data;
     },
     staleTime: 2 * 60 * 1000, // 2 minutes
   });
 
+  const ordersList: Order[] = Array.isArray(data)
+    ? data
+    : (data?.orders || data?.content || []);
+
   return {
-    orders: data?.orders || [],
-    total: data?.total || 0,
-    currentPage: data?.page || 0,
+    orders: ordersList,
+    total: data?.total || data?.totalElements || (Array.isArray(data) ? data.length : 0),
+    currentPage: data?.page || data?.number || 0,
     pageSize: data?.size || 20,
     isLoading,
     error,

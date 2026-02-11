@@ -1,43 +1,41 @@
-"use client";
-
 import React from "react";
 import OrderDetailHeader from "./_components/OrderDetailHeader";
 import OrderInfoCard from "./_components/OrderInfoCard";
 import CustomerInfoCard from "./_components/CustomerInfoCard";
 import OrderLocationMap from "./_components/OrderLocationMap";
-import { useOrderDetail } from "@/hooks/useOrderDetail";
+import { apiServer } from "@/lib/api-server";
+import { OrderDetailResponse } from "@/types/entities";
 
-export default function OrderDetailPage({
+export default async function OrderDetailPage({
   params,
 }: {
   params: Promise<{ id: string }>;
 }) {
-  const { id } = React.use(params);
-  const { order, isLoading, error } = useOrderDetail(id);
+  const { id } = await params;
 
-  if (isLoading) {
-    return (
-      <div className="flex flex-col gap-4">
-        <div className="bg-white dark:bg-gray-900 rounded-lg p-8 border border-gray-200 dark:border-gray-800 text-center">
-          <p className="text-gray-600 dark:text-gray-400">
-            Loading order details...
-          </p>
-        </div>
-      </div>
-    );
+  let orderData: OrderDetailResponse | null = null;
+  let error: string | null = null;
+
+  try {
+    orderData = await apiServer<OrderDetailResponse>(`/api/admin/orders/${id}`);
+  } catch (err) {
+    console.error("Failed to fetch order details:", err);
+    error = "Error loading order details. Please try again later.";
   }
 
-  if (error || !order) {
+  if (error || !orderData) {
     return (
       <div className="flex flex-col gap-4">
         <div className="bg-white dark:bg-gray-900 rounded-lg p-8 border border-gray-200 dark:border-gray-800 text-center">
           <p className="text-red-600 dark:text-red-400">
-            Error loading order details. Please try again later.
+            {error || "Order not found."}
           </p>
         </div>
       </div>
     );
   }
+
+  const order = orderData.data;
 
   return (
     <div className="flex flex-col gap-4">

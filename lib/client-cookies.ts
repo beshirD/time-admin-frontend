@@ -27,7 +27,9 @@ export function getCookie(name: string): string | null {
 export function getUserIdFromCookie(): number | null {
   const userId = getCookie('userId');
   console.log('[Client Cookies] Reading userId from cookie:', userId);
-  console.log('[Client Cookies] All cookies:', document.cookie);
+  if (typeof document !== 'undefined') {
+    console.log('[Client Cookies] All cookies:', document.cookie);
+  }
   
   if (!userId) {
     console.warn('[Client Cookies] No userId found in cookie. User may need to log in again.');

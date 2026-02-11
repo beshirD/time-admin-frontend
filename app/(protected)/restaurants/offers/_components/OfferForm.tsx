@@ -39,9 +39,9 @@ export function OfferForm({ offer, mode }: OfferFormProps) {
   );
   const [title, setTitle] = useState(offer?.title || "");
   const [couponCode, setCouponCode] = useState(offer?.couponCode || "");
-  const [discountType, setDiscountType] = useState<"percentage" | "amount">(
-    offer?.discountType || "percentage",
-  );
+  const [discountType, setDiscountType] = useState<
+    "percentage" | "fixed_amount"
+  >(offer?.discountType || "fixed_amount");
   const [discountValue, setDiscountValue] = useState(
     offer?.discountValue?.toString() || "",
   );
@@ -253,7 +253,7 @@ export function OfferForm({ offer, mode }: OfferFormProps) {
           </Label>
           <Select
             value={discountType}
-            onValueChange={(value: "percentage" | "amount") =>
+            onValueChange={(value: "percentage" | "fixed_amount") =>
               setDiscountType(value)
             }>
             <SelectTrigger className="w-full h-11">
@@ -261,7 +261,7 @@ export function OfferForm({ offer, mode }: OfferFormProps) {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="percentage">Percentage (%)</SelectItem>
-              <SelectItem value="amount">Amount (AFN)</SelectItem>
+              <SelectItem value="fixed_amount">Amount (AFN)</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -269,7 +269,7 @@ export function OfferForm({ offer, mode }: OfferFormProps) {
         {/* Discount Value */}
         <div>
           <Label htmlFor="discountValue">
-            Discount Value ({discountType === "amount" ? "AFN" : "%"}){" "}
+            Discount Value ({discountType === "fixed_amount" ? "AFN" : "%"}){" "}
             <span className="text-red-500">*</span>
           </Label>
           <Input

@@ -261,7 +261,7 @@ export function CreateMenuItemDialog({
                     <Input
                       id="basePrice"
                       type="number"
-                      step="0.01"
+                      step={0.01}
                       required
                       value={formData.basePrice}
                       onChange={(e) =>
@@ -278,7 +278,7 @@ export function CreateMenuItemDialog({
                     <Input
                       id="platformFeePercentage"
                       type="number"
-                      step="0.1"
+                      step={0.1}
                       required
                       value={formData.platformFeePercentage}
                       onChange={(e) =>

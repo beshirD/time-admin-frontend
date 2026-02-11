@@ -226,7 +226,9 @@ export type AddOn = {
 export type AddOnCategory = {
   id: number;
   title: string;
-  addons: AddOn[];
+  addons?: AddOn[];
+  createdOn?: string;
+  createdBy?: string;
 };
 
 export type AddOnCategoriesResponse = {

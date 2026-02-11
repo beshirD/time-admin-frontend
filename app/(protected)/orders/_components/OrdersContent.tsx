@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { DateRange } from "react-day-picker";
-import { OrderStatus } from "@/types/entities";
+import { Order, OrderStatus } from "@/types/entities";
 import OrdersHeader from "./OrdersHeader";
 import OrdersMetrics from "./OrdersMetrics";
 import OrdersFilters from "./OrdersFilters";
@@ -12,7 +12,14 @@ import { useRouter } from "next/navigation";
 import { useOrders, useOrdersStats } from "@/hooks/useOrders";
 import { TableSkeleton } from "@/components/ui/TableSkeleton";
 
-export default function OrdersContent() {
+interface OrdersContentProps {
+  initialAdminUserId?: number;
+}
+
+export default function OrdersContent({
+  initialAdminUserId,
+}: OrdersContentProps) {
+  const [adminUserId] = useState<number | undefined>(initialAdminUserId);
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
   const [dateRange, setDateRange] = useState<DateRange | undefined>({
@@ -49,6 +56,7 @@ export default function OrdersContent() {
     search: searchQuery || undefined,
     fromDate,
     toDate,
+    // Add userId if the stats endpoint supports it (assuming it does based on useOrders pattern)
   });
 
   // Handlers
@@ -84,7 +92,7 @@ export default function OrdersContent() {
   // Filter orders client-side for multiple status selection
   const filteredOrders =
     selectedStatuses.length > 1
-      ? orders.filter((order) => selectedStatuses.includes(order.status))
+      ? orders.filter((order: Order) => selectedStatuses.includes(order.status))
       : orders;
 
   if (error) {

@@ -32,7 +32,7 @@ export function OfferDetailsContent({
   };
 
   const handleUpdateDiscount = (data: {
-    discountType: "amount" | "percentage";
+    discountType: "fixed_amount" | "percentage";
     discount: number;
     minimumAmount?: number;
     endTime: string;
@@ -145,7 +145,7 @@ export function OfferDetailsContent({
                 Discount Type
               </label>
               <p className="mt-1 text-base text-gray-800 dark:text-white/90 capitalize">
-                {offer.discountType === "amount"
+                {offer.discountType === "fixed_amount"
                   ? "Amount (AFN)"
                   : "Percentage (%)"}
               </p>
@@ -155,7 +155,7 @@ export function OfferDetailsContent({
                 Discount Value
               </label>
               <p className="mt-1 text-base text-gray-800 dark:text-white/90 font-semibold">
-                {offer.discountType === "amount"
+                {offer.discountType === "fixed_amount"
                   ? `${offer.discountValue} AFN`
                   : `${offer.discountValue}%`}
               </p>
