@@ -10,9 +10,10 @@ import { useOrderDetail } from "@/hooks/useOrderDetail";
 export default function OrderDetailPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
-  const { order, isLoading, error } = useOrderDetail(params.id);
+  const { id } = React.use(params);
+  const { order, isLoading, error } = useOrderDetail(id);
 
   if (isLoading) {
     return (
@@ -41,7 +42,7 @@ export default function OrderDetailPage({
   return (
     <div className="flex flex-col gap-4">
       <OrderDetailHeader
-        orderId={params.id}
+        orderId={id}
         orderNo={order.orderNo}
         status={order.status}
       />

@@ -9,7 +9,8 @@ import OrdersFilters from "./OrdersFilters";
 import OrdersTable from "@/components/orders/OrdersTable";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import { useOrders } from "@/hooks/useOrders";
+import { useOrders, useOrdersStats } from "@/hooks/useOrders";
+import { TableSkeleton } from "@/components/ui/TableSkeleton";
 
 export default function OrdersContent() {
   const router = useRouter();
@@ -19,22 +20,35 @@ export default function OrdersContent() {
     to: undefined,
   });
   const [selectedStatuses, setSelectedStatuses] = useState<string[]>([]);
+  const [selectedMetricStatus, setSelectedMetricStatus] =
+    useState<OrderStatus | null>(null);
 
   // Format dates for API
   const fromDate = dateRange?.from?.toISOString();
   const toDate = dateRange?.to?.toISOString();
 
+  // Determine which status to use for API call
+  const apiStatus =
+    selectedMetricStatus ||
+    (selectedStatuses.length === 1
+      ? (selectedStatuses[0] as OrderStatus)
+      : undefined);
+
   // Fetch orders with filters
   const { orders, isLoading, error } = useOrders({
     search: searchQuery || undefined,
-    status:
-      selectedStatuses.length === 1
-        ? (selectedStatuses[0] as OrderStatus)
-        : undefined,
+    status: apiStatus,
     fromDate,
     toDate,
     page: 0,
     size: 20,
+  });
+
+  // Fetch stats for metrics (stays consistent)
+  const { data: stats, isLoading: isStatsLoading } = useOrdersStats({
+    search: searchQuery || undefined,
+    fromDate,
+    toDate,
   });
 
   // Handlers
@@ -51,11 +65,20 @@ export default function OrdersContent() {
   };
 
   const handleStatusToggle = (status: string) => {
+    // Clear metric selection when using filter chips
+    setSelectedMetricStatus(null);
+
     setSelectedStatuses((prev) =>
       prev.includes(status)
         ? prev.filter((s) => s !== status)
         : [...prev, status],
     );
+  };
+
+  const handleMetricClick = (status: OrderStatus | null) => {
+    // Clear filter chips when using metric cards
+    setSelectedStatuses([]);
+    setSelectedMetricStatus(status);
   };
 
   // Filter orders client-side for multiple status selection
@@ -83,7 +106,12 @@ export default function OrdersContent() {
       <OrdersHeader onAddOrderManual={handleAddOrderManual} />
 
       {/* Metrics */}
-      <OrdersMetrics orders={orders} />
+      <OrdersMetrics
+        stats={stats}
+        isLoading={isStatsLoading}
+        selectedStatus={selectedMetricStatus}
+        onStatusClick={handleMetricClick}
+      />
 
       {/* Filters & Table */}
       <div className="bg-white py-6 dark:bg-gray-900 rounded-lg p-5 border border-gray-200 dark:border-gray-800">
@@ -97,13 +125,21 @@ export default function OrdersContent() {
         />
 
         <div className="mt-4">
-          <OrdersTable
-            data={filteredOrders}
-            variant="all"
-            isLoading={isLoading}
-            onView={handleView}
-            onInvoice={handleInvoice}
-          />
+          {isLoading ? (
+            <TableSkeleton
+              rows={10}
+              columns={7}
+              showHeader={true}
+            />
+          ) : (
+            <OrdersTable
+              data={filteredOrders}
+              variant="all"
+              isLoading={isLoading}
+              onView={handleView}
+              onInvoice={handleInvoice}
+            />
+          )}
         </div>
       </div>
     </div>

@@ -304,6 +304,30 @@ export type OrderStatus =
   | "delivered" 
   | "cancelled";
 
+export type StatusOrder = {
+  orderId: number;
+  orderNo: string;
+  restaurantId: number;
+  restaurantName: string;
+  restaurantImage: string;
+  addressId: number;
+  status: OrderStatus;
+  paymentStatus: PaymentStatus;
+  paymentMethod: PaymentMethod;
+  totalPrice: number;
+  discount: number;
+  payableAmount: number;
+  deliveryFee: number;
+  createdAt: string;
+};
+
+export type OrderStatusGroup = {
+  status: OrderStatus;
+  orders: StatusOrder[];
+};
+
+export type OrdersStatusResponse = OrderStatusGroup[];
+
 export type PaymentMethod = "cash" | "card" | "online";
 
 export type PaymentStatus = "pending" | "paid" | "failed";
