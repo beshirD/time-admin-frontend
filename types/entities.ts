@@ -295,28 +295,103 @@ export type OffersResponse = {
     totalPages: number;
   };
 };
+export type OrderStatus = 
+  | "pending" 
+  | "accepted" 
+  | "preparing" 
+  | "ready" 
+  | "out_for_delivery" 
+  | "delivered" 
+  | "cancelled";
+
+export type PaymentMethod = "cash" | "card" | "online";
+
+export type PaymentStatus = "pending" | "paid" | "failed";
+
 export type Order = {
   id: number;
   orderNo: string;
-  store: string;
+  status: OrderStatus;
+  createdAt: string;
+  customerId: number;
+  customerName: string;
+  customerPhone: string;
+  restaurantId: number;
+  restaurantName: string;
   address: string;
-  totalPrice: number;
-  deliveryStatus:
-    | "RESTAURANT_REJECTED"
-    | "PENDING"
-    | "CONFIRMED"
-    | "PREPARING"
-    | "READY_FOR_PICKUP"
-    | "PICKED_UP"
-    | "DELIVERED"
-    | "COMPLETED"
-    | "CANCELLED"
-    | "PLACED"
-    | "ACCEPTED"
-    | "ON_THE_WAY"
-    | "DRIVER_REJECTED";
-  createdOn: string;
+  addressId: number;
   createdBy: string;
+  totalPrice: number;
+  deliveryFee: number;
+  offerDiscount: number;
+  finalTotal: number;
+  platformFeeAmount: number;
+  paymentMethod: PaymentMethod;
+  paymentStatus: PaymentStatus;
+  deliveryStatus: string;
+  driverId: number;
+  deliveryLatitude: number;
+  deliveryLongitude: number;
+};
+
+export type OrdersResponse = {
+  total: number;
+  page: number;
+  size: number;
+  orders: Order[];
+};
+
+export type OrderItemAddon = {
+  addonId: number;
+  price: number;
+};
+
+export type OrderItem = {
+  itemId: number;
+  priceId: number;
+  quantity: number;
+  priceEach: number;
+  addons: OrderItemAddon[];
+};
+
+export type OrderDetail = {
+  id: number;
+  orderNo: string;
+  status: OrderStatus;
+  createdAt: string;
+  updatedAt: string;
+  customerId: number;
+  customerName: string;
+  customerPhone: string;
+  restaurantId: number;
+  restaurantName: string;
+  addressId: number;
+  address: string;
+  city: string;
+  postalCode: string;
+  totalPrice: number;
+  deliveryFee: number;
+  offerDiscount: number;
+  platformFeeAmount: number;
+  finalTotal: number;
+  paymentMethod: PaymentMethod;
+  paymentStatus: PaymentStatus;
+  deliveryStatus: string;
+  driverId: number;
+  deliveryId: string;
+  assignedRiderId: string;
+  specialInstructions: string;
+  rejectionReason: string;
+  cancellationReason: string;
+  couponCode: string;
+  referralCode: string;
+  items: OrderItem[];
+};
+
+export type OrderDetailResponse = {
+  success: boolean;
+  message: string;
+  data: OrderDetail;
 };
 export type MenuItemType = "VEG" | "NON_VEG" | "VEGAN";
 

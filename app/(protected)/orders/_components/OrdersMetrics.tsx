@@ -18,15 +18,9 @@ interface OrdersMetricsProps {
 
 export default function OrdersMetrics({ orders }: OrdersMetricsProps) {
   const totalOrders = orders.length;
-  const pendingOrders = orders.filter(
-    (o) => o.deliveryStatus === "PENDING" || o.deliveryStatus === "PLACED",
-  ).length;
-  const deliveredOrders = orders.filter(
-    (o) => o.deliveryStatus === "DELIVERED" || o.deliveryStatus === "COMPLETED",
-  ).length;
-  const rejectedOrders = orders.filter((o) =>
-    o.deliveryStatus.includes("REJECTED"),
-  ).length;
+  const pendingOrders = orders.filter((o) => o.status === "pending").length;
+  const deliveredOrders = orders.filter((o) => o.status === "delivered").length;
+  const rejectedOrders = orders.filter((o) => o.status === "cancelled").length;
 
   const metricsData = [
     {

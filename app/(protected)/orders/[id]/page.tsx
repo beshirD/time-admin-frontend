@@ -1,46 +1,49 @@
+"use client";
+
 import React from "react";
 import OrderDetailHeader from "./_components/OrderDetailHeader";
 import OrderInfoCard from "./_components/OrderInfoCard";
 import CustomerInfoCard from "./_components/CustomerInfoCard";
 import OrderLocationMap from "./_components/OrderLocationMap";
+import { useOrderDetail } from "@/hooks/useOrderDetail";
 
-// Mock order data based on user input
-const mockOrderDetail = {
-  id: "9175",
-  orderNo: "#5802",
-  customerName: "Bele Shewa",
-  customerPhone: "93 911112222",
-  store: "Mus diner",
-  address: "XQMQ+9G8, Addis Ababa, Addis Ababa, Ethiopia",
-  totalPrice: "AFN 495",
-  deliveryCharge: "AFN 30",
-  offerDiscount: "AFN 0",
-  finalTotal: "AFN 525",
-  state: "RESTAURANT_REJECTED",
-  paymentStatus: "Paid",
-  paymentMode: "Cash on Delivery",
-  createdOn: "24-Dec-2025 10:49",
-  specialInstructions: "N/A",
-  rejectionReason:
-    "Auto-rejected: Restaurant did not respond within 20 minutes",
-};
-
-export default async function OrderDetailPage({
+export default function OrderDetailPage({
   params,
 }: {
-  params: Promise<{ id: string }>;
+  params: { id: string };
 }) {
-  const { id } = await params;
+  const { order, isLoading, error } = useOrderDetail(params.id);
 
-  // In real application, fetch the order details by id
-  const order = mockOrderDetail;
+  if (isLoading) {
+    return (
+      <div className="flex flex-col gap-4">
+        <div className="bg-white dark:bg-gray-900 rounded-lg p-8 border border-gray-200 dark:border-gray-800 text-center">
+          <p className="text-gray-600 dark:text-gray-400">
+            Loading order details...
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error || !order) {
+    return (
+      <div className="flex flex-col gap-4">
+        <div className="bg-white dark:bg-gray-900 rounded-lg p-8 border border-gray-200 dark:border-gray-800 text-center">
+          <p className="text-red-600 dark:text-red-400">
+            Error loading order details. Please try again later.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col gap-4">
       <OrderDetailHeader
-        orderId={id}
+        orderId={params.id}
         orderNo={order.orderNo}
-        status={order.state}
+        status={order.status}
       />
 
       {/* Order Information Card */}
@@ -52,6 +55,8 @@ export default async function OrderDetailPage({
           customerName: order.customerName,
           customerPhone: order.customerPhone,
           address: order.address,
+          city: order.city,
+          postalCode: order.postalCode,
         }}
       />
 

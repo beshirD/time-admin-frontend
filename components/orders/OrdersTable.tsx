@@ -8,44 +8,27 @@ import { useRouter } from "next/navigation";
 import { FileText } from "lucide-react";
 
 // Status badge component
-export const StatusBadge = ({
-  status,
-}: {
-  status: Order["deliveryStatus"];
-}) => {
+export const StatusBadge = ({ status }: { status: Order["status"] }) => {
   const statusStyles: Record<string, string> = {
-    PENDING:
+    pending:
       "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400",
-    PLACED:
-      "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400",
-    CONFIRMED:
+    accepted:
       "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400",
-    ACCEPTED:
-      "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400",
-    PREPARING:
+    preparing:
       "bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400",
-    READY_FOR_PICKUP:
-      "bg-cyan-100 text-cyan-800 dark:bg-cyan-900/30 dark:text-cyan-400",
-    PICKED_UP:
+    ready: "bg-cyan-100 text-cyan-800 dark:bg-cyan-900/30 dark:text-cyan-400",
+    out_for_delivery:
       "bg-indigo-100 text-indigo-800 dark:bg-indigo-900/30 dark:text-indigo-400",
-    ON_THE_WAY:
-      "bg-indigo-100 text-indigo-800 dark:bg-indigo-900/30 dark:text-indigo-400",
-    DELIVERED:
+    delivered:
       "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400",
-    COMPLETED:
-      "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400",
-    CANCELLED:
-      "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400 text-red-500 border-red-500",
-    RESTAURANT_REJECTED:
-      "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400 text-red-500 border-red-500",
-    DRIVER_REJECTED:
+    cancelled:
       "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400 text-red-500 border-red-500",
   };
 
   return (
     <span
       className={`px-2 py-1 rounded-md text-xs font-medium ${statusStyles[status] || "bg-gray-100 text-gray-800"}`}>
-      {status.replace(/_/g, " ")}
+      {status.replace(/_/g, " ").toUpperCase()}
     </span>
   );
 };
@@ -148,11 +131,11 @@ export default function OrdersTable({
       ),
     },
     {
-      accessorKey: "store",
-      header: "Store",
+      accessorKey: "restaurantName",
+      header: "Restaurant",
       cell: ({ row }) => (
         <span className="text-gray-900 dark:text-gray-100">
-          {row.original.store}
+          {row.original.restaurantName}
         </span>
       ),
     },
@@ -178,16 +161,16 @@ export default function OrdersTable({
       ),
     },
     {
-      accessorKey: "deliveryStatus",
-      header: "Delivery Status",
-      cell: ({ row }) => <StatusBadge status={row.original.deliveryStatus} />,
+      accessorKey: "status",
+      header: "Status",
+      cell: ({ row }) => <StatusBadge status={row.original.status} />,
     },
     {
-      accessorKey: "createdOn",
-      header: "Created On",
+      accessorKey: "createdAt",
+      header: "Created At",
       cell: ({ row }) => (
         <span className="text-sm text-gray-700 dark:text-gray-300">
-          {row.original.createdOn}
+          {new Date(row.original.createdAt).toLocaleString()}
         </span>
       ),
     },
