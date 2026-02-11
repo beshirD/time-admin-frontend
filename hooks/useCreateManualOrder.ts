@@ -3,31 +3,39 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api-client";
 import { CreateManualOrderRequest, CreateManualOrderResponse } from "@/types/entities";
-import { useCurrentUser } from "@/hooks/useAuth";
 
 /**
  * Hook for creating a manual order
+ * @param adminUserId - The ID of the admin user creating the order
  */
-export function useCreateManualOrder() {
+export function useCreateManualOrder(adminUserId?: number) {
   const queryClient = useQueryClient();
-  const { data: currentUser } = useCurrentUser();
+
+  console.log('[useCreateManualOrder] Hook initialized with adminUserId:', adminUserId);
 
   const mutation = useMutation({
     mutationFn: async (orderData: CreateManualOrderRequest) => {
-      // Get admin user ID from auth context
-      if (!currentUser?.userId) {
-        throw new Error("User not authenticated");
+      console.log('[useCreateManualOrder] mutationFn called with adminUserId:', adminUserId);
+      console.log('[useCreateManualOrder] orderData:', orderData);
+      
+      // Validate that we have an admin user ID
+      if (!adminUserId) {
+        console.error('[useCreateManualOrder] No adminUserId - throwing error');
+        throw new Error("Admin user ID is required to create an order");
       }
 
+      console.log('[useCreateManualOrder] Sending request with X-Admin-User-Id header:', adminUserId.toString());
+      
       const response = await api.post<CreateManualOrderResponse>(
         "/api/admin/orders/manual",
         orderData,
         {
           headers: {
-            "X-Admin-User-Id": currentUser.userId.toString(),
+            "X-Admin-User-Id": adminUserId.toString(),
           },
         }
       );
+      console.log('[useCreateManualOrder] Response received:', response);
       return response.data;
     },
     onSuccess: () => {

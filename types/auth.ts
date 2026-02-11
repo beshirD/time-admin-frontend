@@ -36,7 +36,7 @@ export interface SignInCredentials {
   password: string;
 }
 
-// Backend response structure
+// Backend response structure - all fields are at the top level
 export interface AuthUserData {
   userId: number;
   email?: string;
@@ -46,8 +46,10 @@ export interface AuthUserData {
   countryCode?: string;
   gender?: string;
   status: UserStatus;
-  accessToken?: string;
-  refreshToken?: string;
+  role?: UserRole;
+  image?: string | null;
+  accessToken: string;
+  refreshToken: string;
   expiresIn?: number;
 }
 

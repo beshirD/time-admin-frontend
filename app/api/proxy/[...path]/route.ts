@@ -71,6 +71,13 @@ async function proxyRequest(
       console.log('[Proxy] No access token found in cookies');
     }
     
+    // Forward X-Admin-User-Id header if present
+    const adminUserId = request.headers.get('x-admin-user-id');
+    if (adminUserId) {
+      headers['X-Admin-User-Id'] = adminUserId;
+      console.log('[Proxy] Forwarding X-Admin-User-Id header:', adminUserId);
+    }
+    
     // Get the original Content-Type from the request
     const requestContentType = request.headers.get('content-type');
     

@@ -90,48 +90,6 @@ export default function DeliveryAddressSection({
           </p>
         </div>
 
-        {/* Show saved addresses if available (for reference) */}
-        {customerId && addresses.length > 0 && (
-          <div className="p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
-            <p className="text-sm font-medium text-blue-800 dark:text-blue-300 mb-2">
-              Customer&apos;s Saved Addresses:
-            </p>
-            <div className="space-y-2">
-              {addresses.slice(0, 3).map((addr) => {
-                const addressParts = [
-                  addr.addressLine1,
-                  addr.addressLine2,
-                  addr.city,
-                  addr.state,
-                  addr.postalCode,
-                ].filter(Boolean);
-
-                const displayAddress =
-                  addr.fullAddress || addressParts.join(", ");
-
-                return (
-                  <button
-                    key={addr.id}
-                    type="button"
-                    onClick={() => {
-                      onAddressIdChange(addr.id);
-                      onAddressChange(displayAddress);
-                    }}
-                    className="w-full text-left p-2 text-xs bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
-                    {displayAddress || `Address #${addr.id}`}
-                  </button>
-                );
-              })}
-              {addresses.length > 3 && (
-                <p className="text-xs text-gray-500 dark:text-gray-400 italic">
-                  +{addresses.length - 3} more saved address
-                  {addresses.length - 3 > 1 ? "es" : ""}
-                </p>
-              )}
-            </div>
-          </div>
-        )}
-
         <div className="w-full mt-4 h-[350px] bg-gray-100 dark:bg-gray-900 rounded-2xl border-2 border-dashed border-gray-300 dark:border-gray-700 flex items-center justify-center">
           <div className="text-center">
             <div className="text-5xl mb-4">📍</div>
@@ -148,9 +106,8 @@ export default function DeliveryAddressSection({
 
       <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
         <p className="text-sm text-blue-800 dark:text-blue-300">
-          <strong>Note:</strong> Enter the delivery address manually. You can
-          also click on saved addresses above to auto-fill. Map-based address
-          selection will be available in a future update.
+          <strong>Note:</strong> Enter the delivery address manually. Map-based
+          address selection will be available in a future update.
         </p>
       </div>
     </div>

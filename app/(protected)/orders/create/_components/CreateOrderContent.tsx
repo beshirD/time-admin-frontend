@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import CustomerInfoSection from "./CustomerInfoSection";
 import { useCreateManualOrder } from "@/hooks/useCreateManualOrder";
+import { getUserIdFromCookie } from "@/lib/client-cookies";
 
 export interface CartItem extends MenuItem {
   quantity: number;
@@ -17,7 +18,10 @@ export interface CartItem extends MenuItem {
 
 export default function CreateOrderContent() {
   const router = useRouter();
-  const { createOrderAsync, isLoading } = useCreateManualOrder();
+  const adminUserId = getUserIdFromCookie();
+  const { createOrderAsync, isLoading } = useCreateManualOrder(
+    adminUserId || undefined,
+  );
 
   // State for Customer Info
   const [customerId, setCustomerId] = useState<number | null>(null);
@@ -100,6 +104,14 @@ export default function CreateOrderContent() {
     }
     if (cartItems.length === 0) {
       toast.error("Please add at least one item to the order.");
+      return;
+    }
+
+    // Check if we have admin user ID
+    if (!adminUserId) {
+      toast.error(
+        "Session expired. Please log out and log back in to continue.",
+      );
       return;
     }
 

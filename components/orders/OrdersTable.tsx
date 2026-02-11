@@ -28,7 +28,7 @@ export const StatusBadge = ({ status }: { status: Order["status"] }) => {
   return (
     <span
       className={`px-2 py-1 rounded-md text-xs font-medium ${statusStyles[status] || "bg-gray-100 text-gray-800"}`}>
-      {status.replace(/_/g, " ").toUpperCase()}
+      {status}
     </span>
   );
 };
