@@ -41,10 +41,14 @@ export default function OrderSummarySticky({
   selectedRestaurantId,
   isSubmitting = false,
 }: OrderSummaryStickyProps) {
-  const subtotal = cartItems.reduce(
-    (acc, item) => acc + item.basePrice * item.quantity,
-    0,
-  );
+  const subtotal = cartItems.reduce((acc, item) => {
+    // Find the selected price variant
+    const selectedPrice = item.prices?.find(
+      (p) => p.id === item.selectedPriceId,
+    );
+    const itemPrice = selectedPrice?.price || 0;
+    return acc + itemPrice * item.quantity;
+  }, 0);
   const deliveryFee = selectedRestaurantId ? 50 : 0; // Mock delivery fee
   const platformFee = subtotal * 0.05; // 5% platform fee
   const total = subtotal + deliveryFee + platformFee;

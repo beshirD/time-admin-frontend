@@ -3,25 +3,28 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api-client";
 import { CreateManualOrderRequest, CreateManualOrderResponse } from "@/types/entities";
+import { useCurrentUser } from "@/hooks/useAuth";
 
 /**
  * Hook for creating a manual order
  */
 export function useCreateManualOrder() {
   const queryClient = useQueryClient();
+  const { data: currentUser } = useCurrentUser();
 
   const mutation = useMutation({
     mutationFn: async (orderData: CreateManualOrderRequest) => {
-      // Get admin user ID from session/auth context
-      // For now, using a placeholder - you'll need to get this from your auth context
-      const adminUserId = 1; // TODO: Get from auth context
+      // Get admin user ID from auth context
+      if (!currentUser?.userId) {
+        throw new Error("User not authenticated");
+      }
 
       const response = await api.post<CreateManualOrderResponse>(
         "/api/admin/orders/manual",
         orderData,
         {
           headers: {
-            "X-Admin-User-Id": adminUserId.toString(),
+            "X-Admin-User-Id": currentUser.userId.toString(),
           },
         }
       );

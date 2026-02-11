@@ -410,7 +410,8 @@ export type ManualOrderItem = {
 export type CreateManualOrderRequest = {
   customerId: number;
   restaurantId: number;
-  addressId: number;
+  addressId?: number;
+  address?: string;
   items: ManualOrderItem[];
   paymentMethod: PaymentMethod;
   paymentStatus: PaymentStatus;

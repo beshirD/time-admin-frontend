@@ -94,7 +94,7 @@ export default function CreateOrderContent() {
       toast.error("Please select a restaurant.");
       return;
     }
-    if (!addressId) {
+    if (!addressId && !address.trim()) {
       toast.error("Please provide a delivery address.");
       return;
     }
@@ -115,7 +115,8 @@ export default function CreateOrderContent() {
       await createOrderAsync({
         customerId,
         restaurantId: selectedRestaurantId,
-        addressId,
+        addressId: addressId || undefined,
+        address: address || undefined,
         items,
         paymentMethod,
         paymentStatus,
@@ -139,12 +140,9 @@ export default function CreateOrderContent() {
       {/* Main Content Area (70%) */}
       <div className="flex-1 w-full lg:w-[70%] space-y-5">
         <CustomerInfoSection
-          data={customerInfo}
           customerId={customerId}
           onCustomerIdChange={setCustomerId}
-          onChange={(field: string, value: string) =>
-            setCustomerInfo((prev) => ({ ...prev, [field]: value }))
-          }
+          onCustomerDataChange={(data) => setCustomerInfo(data)}
         />
 
         <RestaurantMenuSection
@@ -160,10 +158,11 @@ export default function CreateOrderContent() {
         />
 
         <DeliveryAddressSection
-          address={address}
+          customerId={customerId}
           addressId={addressId}
+          address={address}
           onAddressIdChange={setAddressId}
-          onChange={(value: string) => setAddress(value)}
+          onAddressChange={setAddress}
         />
       </div>
 

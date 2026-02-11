@@ -2,13 +2,14 @@
 
 import { useState, useMemo } from "react";
 import { SearchableSelect } from "@/components/ui/SearchableSelect";
-import { RESTAURANTS, CATEGORIES, MENU_ITEMS } from "./mockData";
 import { MenuItem } from "@/types/entities";
 import Input from "@/components/ui/Input";
 import { Search, Plus, Minus } from "lucide-react";
 import Button from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
 import { CartItem } from "./CreateOrderContent";
+import { useRestaurants } from "@/hooks/useRestaurants";
+import { useMenuItems } from "@/hooks/useMenuItems";
 
 interface RestaurantMenuSectionProps {
   selectedRestaurantId: number | null;
@@ -30,22 +31,49 @@ export default function RestaurantMenuSection({
   const [selectedCategory, setSelectedCategory] = useState("All Categories");
   const [searchQuery, setSearchQuery] = useState("");
 
-  const currentMenuItems = useMemo(() => {
-    if (!selectedRestaurantId) return [];
-    return MENU_ITEMS[selectedRestaurantId] || [];
-  }, [selectedRestaurantId]);
+  // Fetch restaurants
+  const { data: restaurants, isLoading: isLoadingRestaurants } = useRestaurants(
+    {
+      status: "approved",
+      size: 100, // Fetch more restaurants for better selection
+    },
+  );
 
+  // Fetch menu items for selected restaurant
+  const { menuItems, isLoading: isLoadingMenuItems } = useMenuItems({
+    restaurantId: selectedRestaurantId?.toString() || "",
+    size: 100, // Fetch all menu items
+  });
+
+  // Map restaurants to searchable select options
+  const restaurantOptions = useMemo(() => {
+    return restaurants.map((restaurant) => ({
+      value: restaurant.id.toString(),
+      label: restaurant.name,
+      description: restaurant.cuisine || restaurant.description,
+    }));
+  }, [restaurants]);
+
+  // Extract unique categories from menu items
+  const categories = useMemo(() => {
+    const uniqueCategories = new Set(
+      menuItems.map((item) => item.category?.title).filter(Boolean),
+    );
+    return ["All Categories", ...Array.from(uniqueCategories)];
+  }, [menuItems]);
+
+  // Filter menu items by category and search
   const filteredItems = useMemo(() => {
-    return currentMenuItems.filter((item) => {
+    return menuItems.filter((item) => {
       const matchesCategory =
         selectedCategory === "All Categories" ||
-        item.category === selectedCategory;
-      const matchesSearch = item.name
+        item.category?.title === selectedCategory;
+      const matchesSearch = item.title
         .toLowerCase()
         .includes(searchQuery.toLowerCase());
       return matchesCategory && matchesSearch;
     });
-  }, [currentMenuItems, selectedCategory, searchQuery]);
+  }, [menuItems, selectedCategory, searchQuery]);
 
   const getItemQuantity = (itemId: number) => {
     return cartItems.find((i) => i.id === itemId)?.quantity || 0;
@@ -59,14 +87,19 @@ export default function RestaurantMenuSection({
         </h3>
         <div className="space-y-2">
           <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-            Select Restaurant
+            Select Restaurant *
           </label>
           <SearchableSelect
-            options={RESTAURANTS}
-            value={selectedRestaurantId}
-            onChange={onRestaurantChange}
-            placeholder="Select Restaurant"
+            options={restaurantOptions}
+            value={selectedRestaurantId?.toString() || ""}
+            onChange={(value) => onRestaurantChange(parseInt(value))}
+            placeholder={
+              isLoadingRestaurants
+                ? "Loading restaurants..."
+                : "Select Restaurant"
+            }
             searchPlaceholder="Search restaurant..."
+            disabled={isLoadingRestaurants}
           />
           <p className="text-xs text-gray-500">
             Select the restaurant to prepare this order
@@ -78,105 +111,152 @@ export default function RestaurantMenuSection({
         <div className="space-y-6 pt-6 border-t border-gray-100 dark:border-gray-800">
           <div className="flex flex-col md:flex-row gap-4 justify-between items-start md:items-center">
             {/* Categories */}
-            <div className="flex gap-2 p-1 bg-gray-100 border dark:bg-gray-800 rounded-lg overflow-x-auto no-scrollbar w-full md:w-auto">
-              {CATEGORIES.map((cat) => (
+            <div className="flex gap-2 flex-wrap">
+              {categories.map((category) => (
                 <button
-                  key={cat}
-                  onClick={() => setSelectedCategory(cat)}
+                  key={category}
+                  onClick={() => setSelectedCategory(category)}
                   className={cn(
-                    "px-4 py-1.5 text-sm font-medium rounded-md whitespace-nowrap transition-all",
-                    selectedCategory === cat
-                      ? "bg-primary/30 text-primary shadow-sm"
-                      : "text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200",
+                    "px-4 py-2 rounded-lg text-sm font-medium transition-all",
+                    selectedCategory === category
+                      ? "bg-primary text-white shadow-md"
+                      : "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700",
                   )}>
-                  {cat}
+                  {category}
                 </button>
               ))}
             </div>
 
             {/* Search */}
-            <div className="relative w-full md:w-md">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+            <div className="relative w-full md:w-64">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
               <Input
+                type="text"
                 placeholder="Search menu items..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-6 h-10 border-primary dark:border-primary/60"
+                className="pl-10"
               />
             </div>
           </div>
 
-          {/* Menu Items Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {filteredItems.length > 0 ? (
-              filteredItems.map((item) => {
-                const quantity = getItemQuantity(item.id);
-                return (
+          {/* Menu Items */}
+          <div className="space-y-4">
+            <h4 className="text-md font-semibold text-gray-800 dark:text-white">
+              Menu Items
+            </h4>
+
+            {isLoadingMenuItems ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {[1, 2, 3, 4].map((i) => (
                   <div
-                    key={item.id}
-                    className="flex flex-col p-4 border border-gray-100 dark:border-gray-800 rounded-xl hover:border-primary/30 transition-colors bg-gray-50/30 dark:bg-gray-800/20">
-                    <div className="flex justify-between items-start gap-3">
-                      <div className="space-y-1">
-                        <span className="text-xs font-medium px-2 py-0.5 bg-primary/10 text-primary rounded-full">
-                          {item.category}
-                        </span>
-                        <h4 className="font-semibold text-gray-900 dark:text-gray-100">
-                          {item.name}
-                        </h4>
-                        <p className="text-xs text-gray-500 dark:text-gray-400 line-clamp-2 leading-relaxed">
-                          {item.description}
-                        </p>
-                      </div>
-                      <span className="font-bold text-primary whitespace-nowrap">
-                        ETB {item.price.toFixed(2)}
-                      </span>
-                    </div>
-
-                    <div className="mt-4 flex items-center justify-between">
-                      <span className="text-xs text-gray-400 uppercase tracking-wider font-bold">
-                        {item.type}
-                      </span>
-
-                      {quantity > 0 ? (
-                        <div className="flex items-center gap-3 bg-white dark:bg-gray-800 border-2 border-primary rounded-lg p-1">
-                          <button
-                            onClick={() => onUpdateQuantity(item.id, -1)}
-                            className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md transition-colors">
-                            <Minus className="h-4 w-4 text-primary" />
-                          </button>
-                          <span className="font-bold text-sm min-w-[20px] text-center">
-                            {quantity}
-                          </span>
-                          <button
-                            onClick={() => onUpdateQuantity(item.id, 1)}
-                            className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md transition-colors">
-                            <Plus className="h-4 w-4 text-primary" />
-                          </button>
-                        </div>
-                      ) : (
-                        <Button
-                          size="sm"
-                          onClick={() => onAddToCart(item)}
-                          className="rounded-lg px-4 h-9">
-                          Add Item
-                        </Button>
-                      )}
-                    </div>
+                    key={i}
+                    className="p-4 border border-gray-200 dark:border-gray-700 rounded-lg animate-pulse">
+                    <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-3/4 mb-2"></div>
+                    <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-1/2"></div>
                   </div>
-                );
-              })
+                ))}
+              </div>
+            ) : filteredItems.length === 0 ? (
+              <div className="text-center py-12 text-gray-500 dark:text-gray-400">
+                <p className="text-lg font-medium">No menu items found</p>
+                <p className="text-sm mt-2">
+                  {searchQuery
+                    ? "Try adjusting your search or category filter"
+                    : "This restaurant has no menu items yet"}
+                </p>
+              </div>
             ) : (
-              <div className="col-span-full py-12 flex flex-col items-center justify-center text-gray-400 space-y-2">
-                <Search className="h-8 w-8 opacity-20" />
-                <p>No menu items found</p>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-h-[600px] overflow-y-auto custom-scrollbar pr-2">
+                {filteredItems.map((item) => {
+                  const quantity = getItemQuantity(item.id);
+                  const isInCart = quantity > 0;
+
+                  // Get the first price or default price
+                  const defaultPrice = item.prices?.[0];
+                  const displayPrice = defaultPrice?.price || 0;
+
+                  return (
+                    <div
+                      key={item.id}
+                      className={cn(
+                        "p-4 border rounded-lg transition-all hover:shadow-md",
+                        isInCart
+                          ? "border-primary bg-primary/5 dark:bg-primary/10"
+                          : "border-gray-200 dark:border-gray-700",
+                      )}>
+                      <div className="flex justify-between items-start mb-3">
+                        <div className="flex-1">
+                          <h5 className="font-semibold text-gray-800 dark:text-white">
+                            {item.title}
+                          </h5>
+                          {item.description && (
+                            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 line-clamp-2">
+                              {item.description}
+                            </p>
+                          )}
+                          <p className="text-sm font-bold text-primary mt-2">
+                            ETB {displayPrice.toFixed(2)}
+                          </p>
+                          {item.prices && item.prices.length > 1 && (
+                            <p className="text-xs text-gray-400 mt-1">
+                              {item.prices.length} size options available
+                            </p>
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-2">
+                        {isInCart ? (
+                          <>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => onUpdateQuantity(item.id, -1)}
+                              className="h-8 w-8 p-0">
+                              <Minus className="h-4 w-4" />
+                            </Button>
+                            <span className="text-sm font-semibold min-w-8 text-center">
+                              {quantity}
+                            </span>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => onUpdateQuantity(item.id, 1)}
+                              className="h-8 w-8 p-0">
+                              <Plus className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => onRemoveFromCart(item.id)}
+                              className="ml-auto text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20">
+                              Remove
+                            </Button>
+                          </>
+                        ) : (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => onAddToCart(item)}
+                            className="w-full">
+                            <Plus className="h-4 w-4 mr-2" />
+                            Add to Cart
+                          </Button>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             )}
           </div>
         </div>
       ) : (
-        <div className="flex flex-col items-center justify-center py-20 bg-gray-50/50 dark:bg-gray-800/30 rounded-xl border-2 border-dashed border-gray-200 dark:border-gray-800">
-          <p className="text-gray-500 font-medium">
-            Please select a restaurant to view its menu items
+        <div className="text-center py-12 text-gray-500 dark:text-gray-400">
+          <p className="text-lg font-medium">No restaurant selected</p>
+          <p className="text-sm mt-2">
+            Please select a restaurant to view menu items
           </p>
         </div>
       )}
