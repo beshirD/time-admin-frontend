@@ -1,45 +1,38 @@
-import { api } from "@/lib/api-client";
-import { OffersResponse } from "@/types/entities";
+"use client";
+
+import { useParams } from "next/navigation";
+import { useOffers } from "@/hooks/useOffers";
+import { useRestaurants } from "@/hooks/useRestaurants";
 import { OfferDetailsContent } from "./_components/OfferDetailsContent";
-import { RestaurantsResponse } from "@/types/entities";
+import { TableSkeleton } from "@/components/ui/TableSkeleton";
 import Link from "next/link";
 
-async function getOfferData(id: string) {
-  try {
-    // Fetch offers
-    const offersResponse = await api.get<OffersResponse>(
-      `/api/v1/offers?page=0&size=1000&sortBy=createdAt&direction=DESC&status=active`,
-    );
+export default function OfferDetailsPage() {
+  const params = useParams();
+  const id = parseInt(params.id as string);
 
-    // Fetch restaurants for name lookup
-    const restaurantsResponse = await api.get<RestaurantsResponse>(
-      `/api/v1/restaurants?page=0&size=1000&sortBy=id&direction=DESC&status=approved`,
-    );
+  const { offers, isLoading: offersLoading } = useOffers();
+  const { data: restaurants, isLoading: restaurantsLoading } = useRestaurants({
+    page: 0,
+    size: 100,
+  });
 
-    const offer = offersResponse.content.find((o) => o.id === parseInt(id));
-    const restaurant = restaurantsResponse.content.find(
-      (r) => r.id === offer?.restaurantId,
+  if (offersLoading || restaurantsLoading) {
+    return (
+      <div className="w-full space-y-5 mb-7">
+        <div className="bg-white dark:bg-gray-900 rounded-lg p-5 border border-gray-200 dark:border-gray-700">
+          <TableSkeleton
+            rows={10}
+            columns={2}
+            showHeader={false}
+          />
+        </div>
+      </div>
     );
-
-    return {
-      offer,
-      restaurantName: restaurant?.name || "",
-    };
-  } catch (error) {
-    console.error("Error fetching offer:", error);
-    return {
-      offer: null,
-      restaurantName: "",
-    };
   }
-}
 
-export default async function OfferDetailsPage({
-  params,
-}: {
-  params: { id: string };
-}) {
-  const { offer, restaurantName } = await getOfferData(params.id);
+  const offer = offers.find((o) => o.id === id);
+  const restaurant = restaurants?.find((r) => r.id === offer?.restaurantId);
 
   if (!offer) {
     return (
@@ -65,7 +58,9 @@ export default async function OfferDetailsPage({
     <div suppressHydrationWarning>
       <OfferDetailsContent
         offer={offer}
-        restaurantName={restaurantName}
+        restaurantName={
+          restaurant?.name || `Restaurant ID: ${offer.restaurantId}`
+        }
       />
     </div>
   );

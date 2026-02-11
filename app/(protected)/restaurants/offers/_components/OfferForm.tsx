@@ -31,7 +31,7 @@ export function OfferForm({ offer, mode }: OfferFormProps) {
   const createOffer = useCreateOffer();
   const { data: restaurants, isLoading: restaurantsLoading } = useRestaurants({
     page: 0,
-    size: 1000,
+    size: 100,
   });
 
   const [restaurantId, setRestaurantId] = useState(
@@ -161,6 +161,20 @@ export function OfferForm({ offer, mode }: OfferFormProps) {
       onSubmit={handleSubmit}
       className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* Title */}
+        <div>
+          <Label htmlFor="title">
+            Title <span className="text-red-500">*</span>
+          </Label>
+          <Input
+            id="title"
+            type="text"
+            required
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            placeholder="Enter offer title"
+          />
+        </div>
         {/* Restaurant */}
         <div>
           <Label htmlFor="restaurantId">
@@ -176,13 +190,13 @@ export function OfferForm({ offer, mode }: OfferFormProps) {
             <SelectContent>
               {restaurantsLoading ? (
                 <SelectItem
-                  value=""
+                  value="loading"
                   disabled>
                   Loading restaurants...
                 </SelectItem>
-              ) : restaurants.length === 0 ? (
+              ) : !restaurants || restaurants.length === 0 ? (
                 <SelectItem
-                  value=""
+                  value="no-data"
                   disabled>
                   No restaurants available
                 </SelectItem>
@@ -198,22 +212,6 @@ export function OfferForm({ offer, mode }: OfferFormProps) {
             </SelectContent>
           </Select>
         </div>
-
-        {/* Title */}
-        <div>
-          <Label htmlFor="title">
-            Title <span className="text-red-500">*</span>
-          </Label>
-          <Input
-            id="title"
-            type="text"
-            required
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            placeholder="Enter offer title"
-          />
-        </div>
-
         {/* Coupon Code */}
         <div>
           <Label htmlFor="couponCode">

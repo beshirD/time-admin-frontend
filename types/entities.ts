@@ -274,7 +274,7 @@ export type RestaurantOffer = {
   description: string;
   imageUrl: string;
   couponCode: string;
-  discountType: "percentage" | "amount";
+  discountType: "percentage" | "fixed_amount";
   discountValue: number;
   maxDiscountAmount: number;
   minOrderAmount: number;

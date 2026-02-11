@@ -16,7 +16,7 @@ export function OffersContent() {
   const { offers, isLoading: offersLoading, error: offersError } = useOffers();
   const { data: restaurants, isLoading: restaurantsLoading } = useRestaurants({
     page: 0,
-    size: 1000, // Fetch all restaurants for lookup
+    size: 100, // API max is 100
   });
 
   // Create restaurant ID to name lookup map

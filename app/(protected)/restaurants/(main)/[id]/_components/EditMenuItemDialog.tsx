@@ -238,13 +238,13 @@ export function EditMenuItemDialog({
                       <SelectContent>
                         {categoriesLoading ? (
                           <SelectItem
-                            value=""
+                            value="loading"
                             disabled>
                             Loading categories...
                           </SelectItem>
                         ) : categories.length === 0 ? (
                           <SelectItem
-                            value=""
+                            value="no-data"
                             disabled>
                             No categories available
                           </SelectItem>
