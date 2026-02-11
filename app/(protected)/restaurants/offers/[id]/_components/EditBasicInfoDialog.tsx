@@ -21,7 +21,7 @@ export function EditBasicInfoDialog({
   onSave,
 }: EditBasicInfoDialogProps) {
   const [title, setTitle] = useState(offer.title);
-  const [code, setCode] = useState(offer.code);
+  const [code, setCode] = useState(offer.couponCode);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -31,7 +31,7 @@ export function EditBasicInfoDialog({
 
   const handleClose = () => {
     setTitle(offer.title);
-    setCode(offer.code);
+    setCode(offer.couponCode);
     onClose();
   };
 

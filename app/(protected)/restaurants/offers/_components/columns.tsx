@@ -46,11 +46,22 @@ const ActionButtons = ({
 
 export const createColumns = (
   onView: (offer: RestaurantOffer) => void,
+  restaurantMap: Map<number, string>,
 ): ColumnDef<RestaurantOffer>[] => [
   {
     accessorKey: "id",
     header: "ID",
     cell: ({ row }) => <div className="font-medium">{row.getValue("id")}</div>,
+  },
+  {
+    accessorKey: "restaurantId",
+    header: "Restaurant",
+    cell: ({ row }) => {
+      const restaurantId = row.getValue("restaurantId") as number;
+      const restaurantName =
+        restaurantMap.get(restaurantId) || `ID: ${restaurantId}`;
+      return <div>{restaurantName}</div>;
+    },
   },
   {
     accessorKey: "title",
@@ -67,6 +78,13 @@ export const createColumns = (
     cell: ({ row }) => <div>{row.getValue("title")}</div>,
   },
   {
+    accessorKey: "couponCode",
+    header: "Coupon Code",
+    cell: ({ row }) => (
+      <div className="font-mono text-sm">{row.getValue("couponCode")}</div>
+    ),
+  },
+  {
     accessorKey: "discountType",
     header: "Discount Type",
     cell: ({ row }) => (
@@ -78,16 +96,41 @@ export const createColumns = (
     ),
   },
   {
-    accessorKey: "discount",
+    accessorKey: "discountValue",
     header: "Discount",
     cell: ({ row }) => {
       const type = row.original.discountType;
-      const discount = row.getValue("discount") as number;
+      const discount = row.getValue("discountValue") as number;
       return (
         <div className="font-medium">
           {type === "amount" ? `${discount} AFN` : `${discount}%`}
         </div>
       );
+    },
+  },
+  {
+    accessorKey: "status",
+    header: "Status",
+    cell: ({ row }) => {
+      const status = row.getValue("status") as string;
+      return (
+        <span
+          className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
+            status === "active"
+              ? "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400"
+              : "bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400"
+          }`}>
+          {status.toUpperCase()}
+        </span>
+      );
+    },
+  },
+  {
+    accessorKey: "endDate",
+    header: "End Date",
+    cell: ({ row }) => {
+      const date = new Date(row.getValue("endDate"));
+      return <div>{date.toLocaleDateString()}</div>;
     },
   },
   {

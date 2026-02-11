@@ -269,14 +269,31 @@ export type RestaurantTransaction = {
 
 export type RestaurantOffer = {
   id: number;
+  restaurantId: number;
   title: string;
-  code: string;
-  discountType: "amount" | "percentage";
-  discount: number;
-  minimumAmount?: number;
-  endTime: string;
   description: string;
-  image?: string;
+  imageUrl: string;
+  couponCode: string;
+  discountType: "percentage" | "amount";
+  discountValue: number;
+  maxDiscountAmount: number;
+  minOrderAmount: number;
+  startDate: string;
+  endDate: string;
+  status: "active" | "inactive";
+  usageLimitPerUser: number;
+  totalUsageLimit: number;
+  createdAt: string;
+};
+
+export type OffersResponse = {
+  content: RestaurantOffer[];
+  page: {
+    size: number;
+    number: number;
+    totalElements: number;
+    totalPages: number;
+  };
 };
 export type Order = {
   id: number;

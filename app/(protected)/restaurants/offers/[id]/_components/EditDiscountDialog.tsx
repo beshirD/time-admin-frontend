@@ -38,11 +38,11 @@ export function EditDiscountDialog({
   const [discountType, setDiscountType] = useState<"amount" | "percentage">(
     offer.discountType,
   );
-  const [discount, setDiscount] = useState(offer.discount.toString());
+  const [discount, setDiscount] = useState(offer.discountValue.toString());
   const [minimumAmount, setMinimumAmount] = useState(
-    offer.minimumAmount?.toString() || "",
+    offer.minOrderAmount?.toString() || "0",
   );
-  const [endTime, setEndTime] = useState<Date>(new Date(offer.endTime));
+  const [endTime, setEndTime] = useState<Date>(new Date(offer.endDate));
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const calendarRef = useRef<HTMLDivElement>(null);
 
@@ -79,9 +79,9 @@ export function EditDiscountDialog({
 
   const handleClose = () => {
     setDiscountType(offer.discountType);
-    setDiscount(offer.discount.toString());
-    setMinimumAmount(offer.minimumAmount?.toString() || "");
-    setEndTime(new Date(offer.endTime));
+    setDiscount(offer.discountValue.toString());
+    setMinimumAmount(offer.minOrderAmount?.toString() || "0");
+    setEndTime(new Date(offer.endDate));
     onClose();
   };
 

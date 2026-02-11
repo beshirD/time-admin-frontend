@@ -1,47 +1,37 @@
-import { RestaurantOffer } from "@/types/entities";
+import { api } from "@/lib/api-client";
+import { OffersResponse } from "@/types/entities";
 import { OfferDetailsContent } from "./_components/OfferDetailsContent";
+import { RestaurantsResponse } from "@/types/entities";
+import Link from "next/link";
 
-async function getOfferData(id: string): Promise<RestaurantOffer> {
-  // Mock data - in real app, fetch from API
-  const offers = [
-    {
-      id: 45,
-      title: "For private users",
-      code: "PRIVATE2024",
-      discountType: "percentage" as const,
-      discount: 15,
-      minimumAmount: 500,
-      endTime: "2026-12-31",
-      description:
-        "<p>Special offer for private users. Enjoy exclusive discounts!</p>",
-      image: "/demo-banner.jpg",
-    },
-    {
-      id: 44,
-      title: "Eid special",
-      code: "EID2024",
-      discountType: "amount" as const,
-      discount: 100,
-      minimumAmount: 1000,
-      endTime: "2026-06-30",
-      description:
-        "<p>Eid special discount for all orders above minimum amount.</p>",
-      image: "/demo-banner.jpg",
-    },
-    {
-      id: 43,
-      title: "Eid Ul Fitar",
-      code: "EIDFITAR",
-      discountType: "percentage" as const,
-      discount: 20,
-      minimumAmount: 750,
-      endTime: "2026-05-15",
-      description: "<p>Celebrate Eid Ul Fitar with special discount</p>",
-      image: "/demo-banner.jpg",
-    },
-  ];
+async function getOfferData(id: string) {
+  try {
+    // Fetch offers
+    const offersResponse = await api.get<OffersResponse>(
+      `/api/v1/offers?page=0&size=1000&sortBy=createdAt&direction=DESC&status=active`,
+    );
 
-  return offers.find((o) => o.id === parseInt(id)) || offers[0];
+    // Fetch restaurants for name lookup
+    const restaurantsResponse = await api.get<RestaurantsResponse>(
+      `/api/v1/restaurants?page=0&size=1000&sortBy=id&direction=DESC&status=approved`,
+    );
+
+    const offer = offersResponse.content.find((o) => o.id === parseInt(id));
+    const restaurant = restaurantsResponse.content.find(
+      (r) => r.id === offer?.restaurantId,
+    );
+
+    return {
+      offer,
+      restaurantName: restaurant?.name || "",
+    };
+  } catch (error) {
+    console.error("Error fetching offer:", error);
+    return {
+      offer: null,
+      restaurantName: "",
+    };
+  }
 }
 
 export default async function OfferDetailsPage({
@@ -49,11 +39,34 @@ export default async function OfferDetailsPage({
 }: {
   params: { id: string };
 }) {
-  const offer = await getOfferData(params.id);
+  const { offer, restaurantName } = await getOfferData(params.id);
+
+  if (!offer) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-2">
+            Offer Not Found
+          </h2>
+          <p className="text-gray-600 dark:text-gray-400 mb-4">
+            The offer you're looking for doesn't exist.
+          </p>
+          <Link
+            href="/restaurants/offers"
+            className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition inline-block">
+            Back to Offers
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div suppressHydrationWarning>
-      <OfferDetailsContent offer={offer} />
+      <OfferDetailsContent
+        offer={offer}
+        restaurantName={restaurantName}
+      />
     </div>
   );
 }
