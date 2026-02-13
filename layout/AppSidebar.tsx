@@ -100,12 +100,12 @@ const othersItems: NavItem[] = [
     subItems: [
       {
         name: "Roles & Permissions",
-        path: "/system-settings/roles-permissions",
+        path: "/system-setting/role-permissions",
       },
-      { name: "Delivery Fee", path: "/system-settings/delivery-fee" },
-      { name: "Payments", path: "/system-settings/payments" },
-      { name: "Referral", path: "/system-settings/referral" },
-      { name: "Advanced", path: "/system-settings/advanced" },
+      { name: "Delivery Fee", path: "/system-setting/delivery-fee" },
+      { name: "Payments", path: "/system-setting/payments" },
+      { name: "Referral", path: "/system-setting/referral" },
+      { name: "Advanced", path: "/system-setting/advanced" },
     ],
   },
   {

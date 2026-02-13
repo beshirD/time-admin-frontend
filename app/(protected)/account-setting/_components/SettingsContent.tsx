@@ -4,7 +4,6 @@ import { useSearchParams } from "next/navigation";
 import { SettingsTabs } from "./SettingsTabs";
 import { ProfileTab } from "./ProfileTab";
 import { PreferencesTab } from "./PreferencesTab";
-import { RolesPermissionsTab } from "./RolesPermissionsTab";
 
 export function SettingsContent() {
   const searchParams = useSearchParams();
@@ -19,7 +18,6 @@ export function SettingsContent() {
       <div className="">
         {activeTab === "profile" && <ProfileTab />}
         {activeTab === "preferences" && <PreferencesTab />}
-        {activeTab === "roles-permissions" && <RolesPermissionsTab />}
         {activeTab === "security" && (
           <div className="p-8 text-center text-gray-500 dark:text-gray-400">
             Security tab - Coming soon

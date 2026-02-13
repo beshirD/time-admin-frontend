@@ -3,11 +3,13 @@
 import { useState } from "react";
 import { useRoles } from "@/hooks/useRoles";
 import { usePermissions } from "@/hooks/usePermissions";
+// import { CreateRoleDialog } from "./_components/CreateRoleDialog";
+// import { CreatePermissionDialog } from "../../../account-setting/_components/CreatePermissionDialog";
+import { Loader2, Shield, Key } from "lucide-react";
 import { CreateRoleDialog } from "./CreateRoleDialog";
 import { CreatePermissionDialog } from "./CreatePermissionDialog";
-import { Loader2, Shield, Key } from "lucide-react";
 
-export function RolesPermissionsTab() {
+export function RolesPermissionsContent() {
   const [activeView, setActiveView] = useState<"roles" | "permissions">(
     "roles",
   );
