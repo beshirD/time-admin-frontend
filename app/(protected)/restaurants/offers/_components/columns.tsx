@@ -5,6 +5,7 @@ import { ArrowUpDown } from "lucide-react";
 import { RestaurantOffer } from "@/types/entities";
 import { DeleteConfirmationDialog } from "@/components/common/DeleteConfirmationDialog";
 import Button from "@/components/ui/Button";
+import { useDeleteOffer } from "@/hooks/useDeleteOffer";
 
 // Action buttons component
 const ActionButtons = ({
@@ -14,6 +15,12 @@ const ActionButtons = ({
   offer: RestaurantOffer;
   onView: (offer: RestaurantOffer) => void;
 }) => {
+  const deleteOffer = useDeleteOffer();
+
+  const handleDelete = async () => {
+    await deleteOffer.mutateAsync(offer.id);
+  };
+
   return (
     <div className="flex items-center gap-2 justify-start">
       <Button
@@ -27,9 +34,7 @@ const ActionButtons = ({
       <DeleteConfirmationDialog
         itemType="Offer"
         itemName={offer.title}
-        onSuccess={() => {
-          window.location.reload();
-        }}
+        onConfirm={handleDelete}
         trigger={
           <Button
             usage="delete"

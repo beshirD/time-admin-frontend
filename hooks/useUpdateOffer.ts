@@ -5,15 +5,15 @@ import { RestaurantOffer } from '@/types/entities';
 import { toast } from 'sonner';
 
 /**
- * Hook for creating a restaurant offer
+ * Hook for updating a restaurant offer
  */
-export function useCreateOffer() {
+export function useUpdateOffer(offerId: number) {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async (formData: FormData) => {
-      const response = await fetch('/api/proxy/api/v1/admin/offers', {
-        method: 'POST',
+      const response = await fetch(`/api/proxy/api/v1/admin/offers/${offerId}`, {
+        method: 'PATCH',
         body: formData,
         credentials: 'include',
       });
@@ -29,17 +29,19 @@ export function useCreateOffer() {
           throw new Error(validationMessages);
         }
         
-        throw new Error(errorData.message || 'Failed to create offer');
+        throw new Error(errorData.message || 'Failed to update offer');
       }
 
       return response.json() as Promise<RestaurantOffer>;
     },
     onSuccess: () => {
-      toast.success('Offer created successfully');
+      toast.success('Offer updated successfully');
+      // Invalidate both the offers list and the specific offer detail
       queryClient.invalidateQueries({ queryKey: ['offers'] });
+      queryClient.invalidateQueries({ queryKey: ['offer', offerId] });
     },
     onError: (error: any) => {
-      const errorMessage = error?.message || 'Failed to create offer';
+      const errorMessage = error?.message || 'Failed to update offer';
       toast.error(errorMessage);
     },
   });
