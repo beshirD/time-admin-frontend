@@ -586,3 +586,29 @@ export type CreateBannerResponse = {
   data: Banner;
 };
 
+export type Activity = {
+  id: number;
+  content: string;
+  userIp: string;
+  userAgent: string;
+  state: string;
+  createdOn: string;
+  createdBy: string;
+  modelType: string;
+  model: string;
+  type: string;
+};
+
+export type Page = {
+  id: number;
+  title: string;
+  description: string;
+  state: string;
+  type: string;
+  createdOn: string;
+};
+
+export type PageType = {
+  id: number;
+  name: string;
+};

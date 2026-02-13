@@ -113,6 +113,7 @@ const othersItems: NavItem[] = [
     name: "Manage Operations",
     subItems: [
       { name: "Activities", path: "/manage/activities" },
+      { name: "Pages", path: "/manage/pages" },
       { name: "Backup", path: "/manage/backup" },
       { name: "Scheduler", path: "/manage/scheduler" },
       { name: "Logger", path: "/manage/logger" },
