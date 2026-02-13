@@ -27,19 +27,18 @@ const tabs = [
   { id: "notifications", label: "Notifications", icon: Bell },
   { id: "privacy", label: "Privacy", icon: Lock },
   { id: "billing", label: "Billing", icon: CreditCard },
-  { id: "advanced", label: "Advanced", icon: Sliders },
 ];
 
 export function SettingsTabs({ activeTab }: SettingsTabsProps) {
   const router = useRouter();
 
   const handleTabClick = (tabId: string) => {
-    router.push(`/settings?tab=${tabId}`);
+    router.push(`/account-setting?tab=${tabId}`);
   };
 
   return (
     <div className="bg-white flex justify-between items-center dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 px-6 py-2">
-      <PageTitle title="System Settings" />
+      <PageTitle title="Account Settings" />
       <div className="flex items-center gap-2 overflow-x-auto">
         {tabs.map((tab) => {
           const Icon = tab.icon;
