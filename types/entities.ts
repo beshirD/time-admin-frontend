@@ -649,3 +649,18 @@ export type CronJobLog = {
   createdOn: string;
   createdBy: string;
 };
+
+export type ErrorLog = {
+  id: number;
+  error: string;
+  state: string;
+  link: string;
+  type: string;
+  userIp: string;
+  user: string;
+  createdOn: string;
+  refererLink?: string;
+  url?: string;
+  userAgent?: string;
+  stackTrace?: string;
+};
