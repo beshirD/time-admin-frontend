@@ -18,6 +18,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import PageTitle from "@/components/common/PageTitle";
 
 // Mock data based on the provided sample
 const mockTypes: CronJobType[] = [
@@ -72,19 +73,22 @@ export function TypesTable({ onCreateClick }: TypesTableProps) {
     <>
       <div className="space-y-4">
         {/* Action Buttons */}
-        <div className="flex gap-3 justify-end">
-          <Button
-            usage="create"
-            onClick={onCreateClick}>
-            Create New Type
-          </Button>
-          <Button
-            size="sm"
-            variant="destructive"
-            onClick={() => setIsClearDialogOpen(true)}
-            startIcon={<Trash2 className="w-4 h-4" />}>
-            Clear Types
-          </Button>
+        <div className="flex items-center justify-between">
+          <PageTitle title="Manage Cron Job Types" />
+          <div className="flex gap-3 justify-end">
+            <Button
+              usage="create"
+              onClick={onCreateClick}>
+              Create New Type
+            </Button>
+            <Button
+              size="sm"
+              variant="destructive"
+              onClick={() => setIsClearDialogOpen(true)}
+              startIcon={<Trash2 className="w-4 h-4" />}>
+              Clear Types
+            </Button>
+          </div>
         </div>
 
         {/* Table */}
@@ -93,7 +97,6 @@ export function TypesTable({ onCreateClick }: TypesTableProps) {
           data={mockTypes}
           searchPlaceholder="Search by ID, title, state..."
           searchableColumns={["id", "name", "state"]}
-          enableColumnVisibility={false}
         />
       </div>
 

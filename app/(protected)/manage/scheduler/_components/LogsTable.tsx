@@ -19,6 +19,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import PageTitle from "@/components/common/PageTitle";
 
 // Mock data based on the provided sample
 const mockLogs: CronJobLog[] = [
@@ -85,19 +86,22 @@ export function LogsTable({ onCreateClick }: LogsTableProps) {
     <>
       <div className="space-y-4">
         {/* Action Buttons */}
-        <div className="flex gap-3 justify-end">
-          <Button
-            usage="create"
-            onClick={onCreateClick}>
-            Add Log
-          </Button>
-          <Button
-            size="sm"
-            variant="destructive"
-            onClick={() => setIsClearDialogOpen(true)}
-            startIcon={<Trash2 className="w-4 h-4" />}>
-            Clear Logs
-          </Button>
+        <div className="flex items-center justify-between">
+          <PageTitle title="Manage Logs" />
+          <div className="flex gap-3 justify-end">
+            <Button
+              usage="create"
+              onClick={onCreateClick}>
+              Add Log
+            </Button>
+            <Button
+              size="sm"
+              variant="destructive"
+              onClick={() => setIsClearDialogOpen(true)}
+              startIcon={<Trash2 className="w-4 h-4" />}>
+              Clear Logs
+            </Button>
+          </div>
         </div>
 
         {/* Table */}
@@ -107,7 +111,6 @@ export function LogsTable({ onCreateClick }: LogsTableProps) {
           searchPlaceholder="Search by ID, state, type, cronjob..."
           searchableColumns={["id", "state", "type", "cronjob"]}
           onRowClick={handleRowClick}
-          enableColumnVisibility={false}
         />
       </div>
 

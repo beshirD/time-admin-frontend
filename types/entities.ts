@@ -635,8 +635,8 @@ export type CronJob = {
 export type CronJobType = {
   id: number;
   name: string;
-  state: string;
-  createdOn: string;
+  state?: string;
+  createdOn?: string;
 };
 
 export type CronJobLog = {

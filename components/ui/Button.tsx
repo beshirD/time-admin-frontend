@@ -17,7 +17,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     {
       className,
       variant = "primary",
-      size = "md",
+      size = "sm",
       asChild = false,
       startIcon,
       endIcon,
@@ -35,8 +35,8 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 
     // Size Classes
     const sizeClasses = {
-      sm: "px-4 py-3 text-sm",
-      md: "px-5 py-3.5 text-sm",
+      sm: "px-4 py-2 text-sm",
+      md: "px-5 py-3 text-sm",
       icon: "h-9 w-9 p-0",
     };
 
@@ -91,7 +91,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       <Comp
         ref={ref}
         className={cn(
-          "inline-flex items-center justify-center font-medium gap-2 rounded-lg transition disabled:cursor-not-allowed disabled:opacity-50",
+          "inline-flex items-center justify-center font-medium gap-2 rounded-sm transition disabled:cursor-not-allowed disabled:opacity-50",
           sizeClasses[safeSize as keyof typeof sizeClasses],
           variantClasses[safeVariant as keyof typeof variantClasses],
           usageClasses,

@@ -37,7 +37,7 @@ export function TypeDialog({
     if (type) {
       setFormData({
         name: type.name,
-        state: type.state,
+        state: type.state || "Active",
       });
     } else {
       setFormData({

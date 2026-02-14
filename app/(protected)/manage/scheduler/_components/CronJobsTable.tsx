@@ -19,6 +19,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import PageTitle from "@/components/common/PageTitle";
 
 // Mock data based on the provided sample
 const mockCronJobs: CronJob[] = [
@@ -159,33 +160,33 @@ export function CronJobsTable({ onCreateClick }: CronJobsTableProps) {
     <>
       <div className="space-y-4">
         {/* Action Buttons */}
-        <div className="flex gap-3 justify-end">
-          <Button
-            usage="create"
-            onClick={onCreateClick}>
-            Create New Cron Job
-          </Button>
-          <Button
-            size="sm"
-            variant="outline"
-            onClick={handleExport}
-            startIcon={<FileDown className="w-4 h-4" />}>
-            Export
-          </Button>
-          <Button
-            size="sm"
-            variant="outline"
-            onClick={handleImport}
-            startIcon={<FileUp className="w-4 h-4" />}>
-            Import
-          </Button>
-          <Button
-            size="sm"
-            variant="destructive"
-            onClick={() => setIsClearDialogOpen(true)}
-            startIcon={<Trash2 className="w-4 h-4" />}>
-            Clear Cron Jobs
-          </Button>
+        <div className="flex items-center justify-between">
+          <PageTitle title="Manage Cron Jobs" />
+          <div className="flex gap-3 justify-end">
+            <Button
+              usage="create"
+              onClick={onCreateClick}>
+              Create New Cron Job
+            </Button>
+            <Button
+              variant="outline"
+              onClick={handleExport}
+              startIcon={<FileDown className="w-4 h-4" />}>
+              Export
+            </Button>
+            <Button
+              variant="outline"
+              onClick={handleImport}
+              startIcon={<FileUp className="w-4 h-4" />}>
+              Import
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={() => setIsClearDialogOpen(true)}
+              startIcon={<Trash2 className="w-4 h-4" />}>
+              Clear Cron Jobs
+            </Button>
+          </div>
         </div>
 
         {/* Hidden file input for import */}
@@ -204,7 +205,6 @@ export function CronJobsTable({ onCreateClick }: CronJobsTableProps) {
           searchPlaceholder="Search by title, command, type..."
           searchableColumns={["id", "title", "when", "type", "state"]}
           onRowClick={handleRowClick}
-          hideColumnVisibility
         />
       </div>
 
