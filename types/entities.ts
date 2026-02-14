@@ -619,3 +619,33 @@ export type Backup = {
   size: string;
   createTime: string;
 };
+
+export type CronJob = {
+  id: number;
+  title: string;
+  when: string;
+  type: string;
+  logs: number;
+  state: string;
+  createdOn: string;
+  command: string;
+  createdBy: string;
+};
+
+export type CronJobType = {
+  id: number;
+  name: string;
+  state: string;
+  createdOn: string;
+};
+
+export type CronJobLog = {
+  id: number;
+  state: string;
+  type: string;
+  cronjob: string;
+  scheduledOn: string;
+  executedOn: string;
+  createdOn: string;
+  createdBy: string;
+};
