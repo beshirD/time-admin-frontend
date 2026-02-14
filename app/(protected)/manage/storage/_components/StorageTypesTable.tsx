@@ -30,6 +30,34 @@ const mockTypes: StorageType[] = [
     createdOn: "Feb 14, 2026, 8:14:23 PM",
     createdBy: "Admins",
   },
+  {
+    id: 2,
+    title: "check 121",
+    state: "Active",
+    createdOn: "Feb 14, 2026, 8:14:23 PM",
+    createdBy: "Admins",
+  },
+  {
+    id: 3,
+    title: "check 121",
+    state: "Active",
+    createdOn: "Feb 14, 2026, 8:14:23 PM",
+    createdBy: "Admins",
+  },
+  {
+    id: 4,
+    title: "check 121",
+    state: "Active",
+    createdOn: "Feb 14, 2026, 8:14:23 PM",
+    createdBy: "Admins",
+  },
+  {
+    id: 5,
+    title: "check 121",
+    state: "Active",
+    createdOn: "Feb 14, 2026, 8:14:23 PM",
+    createdBy: "Admins",
+  },
 ];
 
 interface StorageTypesTableProps {

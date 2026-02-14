@@ -68,16 +68,11 @@ export function StorageTypeDialog({
       isOpen={isOpen}
       onClose={handleClose}
       className="max-w-[600px] m-4">
-      <div className="no-scrollbar border relative w-full lg:w-[600px] max-h-[90vh] overflow-y-auto rounded-3xl bg-white p-4 dark:bg-gray-900 lg:p-8">
+      <div className="no-scrollbar border relative w-full lg:w-[780px] max-h-[90vh] overflow-y-auto rounded-3xl bg-white p-4 dark:bg-gray-900 lg:p-8">
         <div className="px-2 pr-14">
           <h4 className="mb-2 text-2xl font-semibold text-gray-800 dark:text-white/90">
             {type ? "Edit Storage Type" : "Create Storage Type"}
           </h4>
-          <p className="mb-6 text-sm text-gray-500 dark:text-gray-400">
-            {type
-              ? "Update storage type information."
-              : "Add a new storage type."}
-          </p>
         </div>
 
         <form

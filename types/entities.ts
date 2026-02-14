@@ -689,3 +689,16 @@ export type StorageType = {
   createdOn?: string;
   createdBy?: string;
 };
+
+export type LoginHistory = {
+  id: number;
+  userIp: string;
+  userAgent: string;
+  state: string;
+  type: string;
+  code?: string;
+  createTime: string;
+  user?: string;
+  userId?: number;
+  failureReason?: string;
+};
