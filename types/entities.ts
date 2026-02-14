@@ -612,3 +612,10 @@ export type PageType = {
   id: number;
   name: string;
 };
+
+export type Backup = {
+  id: number;
+  name: string;
+  size: string;
+  createTime: string;
+};

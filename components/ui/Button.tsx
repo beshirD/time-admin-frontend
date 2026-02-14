@@ -1,5 +1,5 @@
 import React, { ReactNode } from "react";
-import { Plus, Pencil, Trash2, Eye } from "lucide-react";
+import { Plus, Pencil, Trash2, Eye, Download, RotateCcw } from "lucide-react";
 import { Slot } from "@radix-ui/react-slot";
 import { cn } from "@/lib/utils";
 
@@ -9,7 +9,7 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
   variant?: "primary" | "outline" | "destructive" | "ghost" | "default";
   startIcon?: ReactNode;
   endIcon?: ReactNode;
-  usage?: "create" | "edit" | "delete" | "view";
+  usage?: "create" | "edit" | "delete" | "view" | "download" | "restore";
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
@@ -64,6 +64,10 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         <Trash2 className="h-4 w-4" />
       ) : usage === "view" ? (
         <Eye className="w-4 h-4" />
+      ) : usage === "download" ? (
+        <Download className="w-4 h-4" />
+      ) : usage === "restore" ? (
+        <RotateCcw className="w-4 h-4" />
       ) : (
         startIcon
       );
@@ -77,7 +81,11 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
             ? "px-3 py-1.5 text-sm font-medium border-red-700 border-2 hover:bg-red-500/30 dark:hover:bg-red-500/40 text-red-500 bg-red-600/10 rounded-md gap-2"
             : usage === "view"
               ? "px-3 py-1.5 text-sm font-medium border-blue-600 border-2 text-blue-600 dark:text-blue-300 bg-blue-100 hover:bg-blue-500/30 dark:hover:bg-blue-500/30 dark:bg-blue-800/20 rounded-md gap-2"
-              : "";
+              : usage === "download"
+                ? "bg-primary text-white py-2 px-4 rounded-sm gap-2"
+                : usage === "restore"
+                  ? "px-3 py-1.5 text-sm font-medium border-green-600 border-2 text-green-600 dark:text-green-300 bg-green-100 hover:bg-green-500/30 dark:hover:bg-green-500/30 dark:bg-green-800/20 rounded-md gap-2"
+                  : "";
 
     return (
       <Comp
