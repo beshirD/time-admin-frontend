@@ -664,3 +664,19 @@ export type ErrorLog = {
   userAgent?: string;
   stackTrace?: string;
 };
+
+export type StorageProvider = {
+  id: number;
+  title: string;
+  key: string;
+  secret: string;
+  endpoint: string;
+  state: string;
+  type: string;
+  createdOn: string;
+  updatedOn?: string;
+  createdBy?: string;
+  description?: string;
+  readWrite?: string;
+  location?: string;
+};

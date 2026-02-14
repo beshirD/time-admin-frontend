@@ -43,7 +43,7 @@ export function ErrorLogDetailDialog({
 
         <div className="px-2 space-y-6">
           {/* Error Details Grid */}
-          <div className="grid grid-cols-2 gap-4 p-5 border border-gray-200 rounded-2xl dark:border-gray-800 bg-white dark:bg-gray-800">
+          <div className="grid grid-cols-3 gap-4 p-5 border border-gray-200 rounded-2xl dark:border-gray-800 bg-white dark:bg-gray-800">
             {/* ID */}
             <div>
               <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">
@@ -64,16 +64,6 @@ export function ErrorLogDetailDialog({
               </p>
             </div>
 
-            {/* Link */}
-            <div className="col-span-2">
-              <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">
-                Link
-              </p>
-              <p className="text-sm font-medium text-blue-600 dark:text-blue-400 break-all">
-                {errorLog.link}
-              </p>
-            </div>
-
             {/* Type */}
             <div>
               <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">
@@ -81,16 +71,6 @@ export function ErrorLogDetailDialog({
               </p>
               <p className="text-sm font-medium text-gray-900 dark:text-white">
                 {errorLog.type}
-              </p>
-            </div>
-
-            {/* Referer Link */}
-            <div>
-              <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">
-                Referer Link
-              </p>
-              <p className="text-sm font-medium text-gray-900 dark:text-white">
-                {errorLog.refererLink || "—"}
               </p>
             </div>
 
@@ -115,12 +95,32 @@ export function ErrorLogDetailDialog({
             </div>
 
             {/* Created On */}
-            <div className="col-span-2">
+            <div className="">
               <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">
                 Created On
               </p>
               <p className="text-sm font-medium text-gray-900 dark:text-white">
                 {errorLog.createdOn}
+              </p>
+            </div>
+
+            {/* Referer Link */}
+            <div className="col-span-3">
+              <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">
+                Referer Link
+              </p>
+              <p className="text-sm font-medium text-gray-900 dark:text-white">
+                {errorLog.refererLink || "—"}
+              </p>
+            </div>
+
+            {/* Link */}
+            <div className="col-span-3">
+              <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">
+                Link
+              </p>
+              <p className="text-sm font-medium text-blue-600 dark:text-blue-400 break-all">
+                {errorLog.link}
               </p>
             </div>
           </div>
@@ -131,16 +131,7 @@ export function ErrorLogDetailDialog({
               Additional Details
             </h5>
 
-            <div className="space-y-3 text-sm">
-              <div>
-                <span className="font-semibold text-gray-700 dark:text-gray-300">
-                  Url:
-                </span>{" "}
-                <span className="text-blue-600 dark:text-blue-400 break-all">
-                  {errorLog.url || errorLog.link}
-                </span>
-              </div>
-
+            <div className="space-y-3 text-sm grid grid-cols-3">
               <div>
                 <span className="font-semibold text-gray-700 dark:text-gray-300">
                   User:

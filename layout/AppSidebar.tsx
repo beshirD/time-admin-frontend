@@ -118,6 +118,7 @@ const othersItems: NavItem[] = [
       { name: "Scheduler", path: "/manage/scheduler" },
       { name: "Logger", path: "/manage/logger" },
       { name: "Storage", path: "/manage/storage" },
+      { name: "Login History", path: "/manage/login-history" },
     ],
   },
 
