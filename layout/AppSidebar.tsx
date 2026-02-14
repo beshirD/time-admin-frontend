@@ -16,6 +16,7 @@ import {
   RestaurantIcon,
 } from "../components/icons/index";
 import SidebarWidget from "./SidebarWidget";
+import { Album, Settings } from "lucide-react";
 
 type NavItem = {
   name: string;
@@ -90,9 +91,36 @@ const navItems: NavItem[] = [
 const othersItems: NavItem[] = [
   {
     icon: <UserCircleIcon />,
-    name: "Setting",
-    path: "/settings",
+    name: "Account Setting",
+    path: "/account-setting",
   },
+  {
+    icon: <Settings />,
+    name: "System Settings",
+    subItems: [
+      {
+        name: "Roles & Permissions",
+        path: "/system-setting/role-permissions",
+      },
+      { name: "Delivery Fee", path: "/system-setting/delivery-fee" },
+      { name: "Payments", path: "/system-setting/payments" },
+      { name: "Referral", path: "/system-setting/referral" },
+      { name: "Advanced", path: "/system-setting/advanced" },
+    ],
+  },
+  {
+    icon: <Album />,
+    name: "Manage Operations",
+    subItems: [
+      { name: "Activities", path: "/manage/activities" },
+      { name: "Pages", path: "/manage/pages" },
+      { name: "Backup", path: "/manage/backup" },
+      { name: "Scheduler", path: "/manage/scheduler" },
+      { name: "Logger", path: "/manage/logger" },
+      { name: "Storage", path: "/manage/storage" },
+    ],
+  },
+
   {
     icon: <PieChartIcon />,
     name: "Transaction",

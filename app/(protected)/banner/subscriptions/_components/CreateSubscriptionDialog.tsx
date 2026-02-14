@@ -3,7 +3,6 @@
 import { useState } from "react";
 import Label from "@/components/ui/Label";
 import Button from "@/components/ui/Button";
-import Textarea from "@/components/ui/Textarea";
 import { toast } from "sonner";
 import { Modal } from "@/components/ui/modal";
 import {
@@ -13,22 +12,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-
-// Mock data for dropdowns
-const restaurants = [
-  { id: 1, name: "Ahlan Gourmet" },
-  { id: 2, name: "Spice Garden" },
-  { id: 3, name: "Ocean Breeze" },
-  { id: 4, name: "Mountain View Cafe" },
-  { id: 5, name: "Urban Kitchen" },
-];
-
-const packages = [
-  { id: 1, name: "Basic Package - 1 Month" },
-  { id: 2, name: "Standard Package - 3 Months" },
-  { id: 3, name: "Premium Package - 6 Months" },
-  { id: 4, name: "Enterprise Package - 12 Months" },
-];
+import { useCreateSubscription } from "@/hooks/useSubscriptions";
+import { useRestaurants } from "@/hooks/useRestaurants";
+import { useBannerPackages } from "@/hooks/useBannerPackages";
 
 export function CreateSubscriptionDialog({
   title,
@@ -41,26 +27,39 @@ export function CreateSubscriptionDialog({
 }) {
   const [open, setOpen] = useState(false);
   const [formData, setFormData] = useState({
-    restaurant: resturant || "",
-    package: "",
-    adminNote: "",
+    restaurantId: "",
+    packageId: "",
   });
+
+  const createSubscription = useCreateSubscription();
+  const { data: restaurants, isLoading: loadingRestaurants } = useRestaurants();
+  const { packages, isLoading: loadingPackages } = useBannerPackages();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Form submitted:", formData);
 
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    // Validate form data
+    if (!formData.restaurantId || !formData.packageId) {
+      toast.error("Please fill in all required fields");
+      return;
+    }
 
-    toast.success("Subscription created successfully");
-    setOpen(false);
-    // Reset form
-    setFormData({
-      restaurant: isExtend ? resturant || "" : "",
-      package: "",
-      adminNote: "",
-    });
+    try {
+      await createSubscription.mutateAsync({
+        restaurantId: parseInt(formData.restaurantId),
+        packageId: parseInt(formData.packageId),
+      });
+
+      // Close dialog and reset form on success
+      setOpen(false);
+      setFormData({
+        restaurantId: "",
+        packageId: "",
+      });
+    } catch (error) {
+      // Error is handled by the mutation hook
+      console.error("Failed to create subscription:", error);
+    }
   };
 
   return (
@@ -104,19 +103,26 @@ export function CreateSubscriptionDialog({
                       Restaurant <span className="text-red-500">*</span>
                     </Label>
                     <Select
-                      value={formData.restaurant}
+                      value={formData.restaurantId}
                       onValueChange={(value) =>
-                        setFormData({ ...formData, restaurant: value })
+                        setFormData({ ...formData, restaurantId: value })
                       }
-                      required>
+                      required
+                      disabled={loadingRestaurants}>
                       <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Select a restaurant" />
+                        <SelectValue
+                          placeholder={
+                            loadingRestaurants
+                              ? "Loading restaurants..."
+                              : "Select a restaurant"
+                          }
+                        />
                       </SelectTrigger>
                       <SelectContent>
                         {restaurants.map((restaurant) => (
                           <SelectItem
                             key={restaurant.id}
-                            value={restaurant.name}>
+                            value={restaurant.id.toString()}>
                             {restaurant.name}
                           </SelectItem>
                         ))}
@@ -130,38 +136,31 @@ export function CreateSubscriptionDialog({
                       Package <span className="text-red-500">*</span>
                     </Label>
                     <Select
-                      value={formData.package}
+                      value={formData.packageId}
                       onValueChange={(value) =>
-                        setFormData({ ...formData, package: value })
+                        setFormData({ ...formData, packageId: value })
                       }
-                      required>
+                      required
+                      disabled={loadingPackages}>
                       <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Select a package" />
+                        <SelectValue
+                          placeholder={
+                            loadingPackages
+                              ? "Loading packages..."
+                              : "Select a package"
+                          }
+                        />
                       </SelectTrigger>
                       <SelectContent>
                         {packages.map((pkg) => (
                           <SelectItem
                             key={pkg.id}
-                            value={pkg.name}>
-                            {pkg.name}
+                            value={pkg.id.toString()}>
+                            {pkg.title} - {pkg.durationDays} days (${pkg.price})
                           </SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
-                  </div>
-
-                  {/* Admin Note */}
-                  <div>
-                    <Label htmlFor="adminNote">Admin Note</Label>
-                    <Textarea
-                      id="adminNote"
-                      rows={4}
-                      value={formData.adminNote}
-                      onChange={(e) =>
-                        setFormData({ ...formData, adminNote: e.target.value })
-                      }
-                      placeholder="Enter any notes or comments about this subscription..."
-                    />
                   </div>
                 </div>
               </div>
@@ -172,13 +171,19 @@ export function CreateSubscriptionDialog({
                 size="sm"
                 variant="outline"
                 type="button"
-                onClick={() => setOpen(false)}>
+                onClick={() => setOpen(false)}
+                disabled={createSubscription.isPending}>
                 Cancel
               </Button>
               <Button
                 size="sm"
-                type="submit">
-                {isExtend ? "Extend Subscription" : "Create Subscription"}
+                type="submit"
+                disabled={createSubscription.isPending}>
+                {createSubscription.isPending
+                  ? "Creating..."
+                  : isExtend
+                    ? "Extend Subscription"
+                    : "Create Subscription"}
               </Button>
             </div>
           </form>

@@ -4,16 +4,7 @@ import React, { useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
-
-type BannerStatus = "active" | "pending" | "archive";
-
-interface Banner {
-  id: number;
-  name: string;
-  restaurant: string;
-  status: BannerStatus;
-  imageUrl: string;
-}
+import { Banner, BannerStatus } from "@/types/entities";
 
 interface BannerCardProps {
   banner: Banner;
@@ -30,6 +21,11 @@ const statusConfig: Record<BannerStatus, { label: string; className: string }> =
       label: "Pending",
       className:
         "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/60 dark:text-yellow-500",
+    },
+    inactive: {
+      label: "Inactive",
+      className:
+        "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-400",
     },
     archive: {
       label: "Archived",
@@ -56,8 +52,8 @@ export default function BannerCard({ banner }: BannerCardProps) {
       {/* Banner Image Container with 4:3 aspect ratio */}
       <div className="relative w-full aspect-[8/5] overflow-hidden bg-gray-100 dark:bg-gray-900">
         <Image
-          src={banner.imageUrl}
-          alt={banner.name}
+          src={banner.bannerImage}
+          alt={`Banner ${banner.id}`}
           fill
           className="object-cover transition-transform duration-500 group-hover:scale-105"
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw"
@@ -75,12 +71,12 @@ export default function BannerCard({ banner }: BannerCardProps) {
           {/* Banner Info */}
           <div className="transform transition-transform duration-500 ease-out">
             <h3 className="text-white font-semibold text-2xl line-clamp-2 drop-shadow-md">
-              {banner.name}
+              Banner #{banner.id}
             </h3>
 
             <div className="flex items-center justify-between gap-2">
               <p className="text-white/90 text-lg font-medium drop-shadow-md line-clamp-1">
-                {banner.restaurant}
+                Restaurant ID: {banner.restaurantId}
               </p>
 
               <span

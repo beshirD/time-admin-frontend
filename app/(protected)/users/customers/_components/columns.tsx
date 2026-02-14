@@ -31,17 +31,13 @@ import { DeleteCustomerDialog } from "./DeleteCustomerDialog";
 // Action buttons component
 const ActionButtons = ({ customer }: { customer: Customer }) => {
   return (
-    <div className="flex items-center gap-2 justify-end">
+    <div className="flex items-center gap-2 justify-start">
       <Link
         href={`/users/customers/${customer.id}`}
         onClick={(e) => e.stopPropagation()}>
         <Button usage="view">View</Button>
       </Link>
-      <Link
-        href={`/users/customers/${customer.id}/edit`}
-        onClick={(e) => e.stopPropagation()}>
-        <Button usage="edit">Edit</Button>
-      </Link>
+
       <DeleteCustomerDialog
         customerId={customer.id}
         customerName={customer.fullName}

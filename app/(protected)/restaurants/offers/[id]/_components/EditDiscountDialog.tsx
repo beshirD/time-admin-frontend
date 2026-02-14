@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState } from "react";
 import { Modal } from "@/components/ui/modal";
 import Button from "@/components/ui/Button";
 import Label from "@/components/ui/Label";
@@ -13,9 +13,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Calendar } from "@/components/ui/calendar";
-import { CalendarIcon } from "lucide-react";
-import { format } from "date-fns";
 
 interface EditDiscountDialogProps {
   isOpen: boolean;
@@ -23,9 +20,9 @@ interface EditDiscountDialogProps {
   offer: RestaurantOffer;
   onSave: (data: {
     discountType: "fixed_amount" | "percentage";
-    discount: number;
-    minimumAmount?: number;
-    endTime: string;
+    discountValue: number;
+    maxDiscountAmount: number;
+    minOrderAmount: number;
   }) => void;
 }
 
@@ -38,50 +35,32 @@ export function EditDiscountDialog({
   const [discountType, setDiscountType] = useState<
     "fixed_amount" | "percentage"
   >(offer.discountType);
-  const [discount, setDiscount] = useState(offer.discountValue.toString());
-  const [minimumAmount, setMinimumAmount] = useState(
+  const [discountValue, setDiscountValue] = useState(
+    offer.discountValue.toString(),
+  );
+  const [maxDiscountAmount, setMaxDiscountAmount] = useState(
+    offer.maxDiscountAmount?.toString() || "0",
+  );
+  const [minOrderAmount, setMinOrderAmount] = useState(
     offer.minOrderAmount?.toString() || "0",
   );
-  const [endTime, setEndTime] = useState<Date>(new Date(offer.endDate));
-  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
-  const calendarRef = useRef<HTMLDivElement>(null);
-
-  // Close calendar when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        calendarRef.current &&
-        !calendarRef.current.contains(event.target as Node)
-      ) {
-        setIsCalendarOpen(false);
-      }
-    };
-
-    if (isCalendarOpen) {
-      document.addEventListener("mousedown", handleClickOutside);
-    }
-
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [isCalendarOpen]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onSave({
       discountType,
-      discount: parseFloat(discount),
-      minimumAmount: minimumAmount ? parseFloat(minimumAmount) : undefined,
-      endTime: endTime.toISOString().split("T")[0],
+      discountValue: parseFloat(discountValue),
+      maxDiscountAmount: parseFloat(maxDiscountAmount),
+      minOrderAmount: parseFloat(minOrderAmount),
     });
     onClose();
   };
 
   const handleClose = () => {
     setDiscountType(offer.discountType);
-    setDiscount(offer.discountValue.toString());
-    setMinimumAmount(offer.minOrderAmount?.toString() || "0");
-    setEndTime(new Date(offer.endDate));
+    setDiscountValue(offer.discountValue.toString());
+    setMaxDiscountAmount(offer.maxDiscountAmount?.toString() || "0");
+    setMinOrderAmount(offer.minOrderAmount?.toString() || "0");
     onClose();
   };
 
@@ -121,16 +100,17 @@ export function EditDiscountDialog({
             </div>
 
             <div>
-              <Label htmlFor="discount">
-                Discount ({discountType === "fixed_amount" ? "AFN" : "%"}){" "}
+              <Label htmlFor="discountValue">
+                Discount Value ({discountType === "fixed_amount" ? "AFN" : "%"}){" "}
                 <span className="text-red-500">*</span>
               </Label>
               <Input
-                id="discount"
+                id="discountValue"
                 type="number"
+                step="0.01"
                 required
-                value={discount}
-                onChange={(e) => setDiscount(e.target.value)}
+                value={discountValue}
+                onChange={(e) => setDiscountValue(e.target.value)}
                 placeholder={
                   discountType === "percentage"
                     ? "Enter value between 1 and 100"
@@ -142,60 +122,34 @@ export function EditDiscountDialog({
             </div>
 
             <div>
-              <Label htmlFor="minimumAmount">Minimum Amount (AFN)</Label>
+              <Label htmlFor="maxDiscountAmount">
+                Max Discount Amount (AFN)
+              </Label>
               <Input
-                id="minimumAmount"
+                id="maxDiscountAmount"
                 type="number"
-                value={minimumAmount}
-                onChange={(e) => setMinimumAmount(e.target.value)}
-                placeholder="Enter minimum amount"
+                step="0.01"
+                value={maxDiscountAmount}
+                onChange={(e) => setMaxDiscountAmount(e.target.value)}
+                placeholder="Enter max discount amount"
                 min="0"
               />
             </div>
 
             <div>
-              <Label htmlFor="endTime">
-                End Time <span className="text-red-500">*</span>
+              <Label htmlFor="minOrderAmount">
+                Min Order Amount (AFN) <span className="text-red-500">*</span>
               </Label>
-              <div
-                className="relative"
-                ref={calendarRef}>
-                <button
-                  type="button"
-                  onClick={() => setIsCalendarOpen(!isCalendarOpen)}
-                  className="w-full h-11 px-3 py-2 text-sm border border-gray-300 dark:border-gray-700 rounded-md bg-white dark:bg-gray-800 text-left flex items-center justify-between hover:border-primary transition">
-                  <span className="flex items-center gap-2">
-                    <CalendarIcon className="h-4 w-4 text-gray-500" />
-                    <span className="text-gray-900 dark:text-white">
-                      {format(endTime, "PPP")}
-                    </span>
-                  </span>
-                </button>
-
-                {isCalendarOpen && (
-                  <div className="absolute left-0 top-full mt-2 z-50 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg p-4">
-                    <div className="flex items-center justify-between mb-3">
-                      <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                        Select End Date
-                      </h3>
-                    </div>
-                    <Calendar
-                      mode="single"
-                      selected={endTime}
-                      onSelect={(date) => date && setEndTime(date)}
-                      className="rounded-md"
-                    />
-                    <div className="mt-3 flex justify-end">
-                      <button
-                        type="button"
-                        onClick={() => setIsCalendarOpen(false)}
-                        className="px-4 py-2 text-sm font-medium text-white bg-primary rounded-md hover:bg-primary/90 transition">
-                        Done
-                      </button>
-                    </div>
-                  </div>
-                )}
-              </div>
+              <Input
+                id="minOrderAmount"
+                type="number"
+                step="0.01"
+                required
+                value={minOrderAmount}
+                onChange={(e) => setMinOrderAmount(e.target.value)}
+                placeholder="Enter minimum order amount"
+                min="0"
+              />
             </div>
           </div>
 

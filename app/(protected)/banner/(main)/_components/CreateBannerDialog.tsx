@@ -15,16 +15,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import Image from "next/image";
-
-// Mock restaurants data
-const mockRestaurants = [
-  { id: "1", name: "Bella Italia" },
-  { id: "2", name: "The Breakfast Club" },
-  { id: "3", name: "Ocean View Cafe" },
-  { id: "4", name: "Golden Dragon" },
-  { id: "5", name: "Spice Garden" },
-  { id: "6", name: "Royal Palace" },
-];
+import { useCreateBanner } from "@/hooks/useBanners";
+import { useRestaurants } from "@/hooks/useRestaurants";
 
 const statusOptions = [
   { value: "active", label: "Active" },
@@ -42,23 +34,54 @@ export function CreateBannerDialog() {
     bannerImage: null as File | null,
   });
 
+  // Fetch restaurants for dropdown
+  const { data: restaurants, isLoading: isLoadingRestaurants } = useRestaurants(
+    {
+      page: 0,
+      size: 100,
+      status: "approved",
+    },
+  );
+
+  // Create banner mutation
+  const createBanner = useCreateBanner();
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Form submitted:", formData);
 
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    if (!formData.bannerImage) {
+      toast.error("Please select a banner image");
+      return;
+    }
 
-    toast.success("Banner created successfully");
-    setOpen(false);
-    // Reset form
-    setFormData({
-      name: "",
-      restaurantId: "",
-      status: "pending",
-      bannerImage: null,
-    });
-    setImagePreview(null);
+    if (!formData.restaurantId) {
+      toast.error("Please select a restaurant");
+      return;
+    }
+
+    // Create FormData for multipart/form-data request
+    const apiFormData = new FormData();
+    apiFormData.append("bannerImage", formData.bannerImage);
+
+    try {
+      await createBanner.mutateAsync({
+        restaurantId: parseInt(formData.restaurantId),
+        formData: apiFormData,
+      });
+
+      // Close dialog and reset form on success
+      setOpen(false);
+      setFormData({
+        name: "",
+        restaurantId: "",
+        status: "pending",
+        bannerImage: null,
+      });
+      setImagePreview(null);
+    } catch (error) {
+      // Error is handled by the mutation hook
+      console.error("Failed to create banner:", error);
+    }
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -143,17 +166,22 @@ export function CreateBannerDialog() {
                         setFormData({ ...formData, restaurantId: value })
                       }>
                       <SelectTrigger className="w-full h-11">
-                        <SelectValue placeholder="Select a restaurant" />
+                        <SelectValue
+                          placeholder={
+                            isLoadingRestaurants
+                              ? "Loading restaurants..."
+                              : "Select a restaurant"
+                          }
+                        />
                       </SelectTrigger>
                       <SelectContent>
-                        {mockRestaurants.map((restaurant) => (
+                        {restaurants.map((restaurant) => (
                           <SelectItem
                             key={restaurant.id}
-                            value={restaurant.id}>
+                            value={restaurant.id.toString()}>
                             {restaurant.name}
                           </SelectItem>
                         ))}
-                        feat:
                       </SelectContent>
                     </Select>
                   </div>
@@ -243,13 +271,15 @@ export function CreateBannerDialog() {
                 size="sm"
                 variant="outline"
                 type="button"
-                onClick={() => setOpen(false)}>
+                onClick={() => setOpen(false)}
+                disabled={createBanner.isPending}>
                 Cancel
               </Button>
               <Button
                 size="sm"
-                type="submit">
-                Create Banner
+                type="submit"
+                disabled={createBanner.isPending}>
+                {createBanner.isPending ? "Creating..." : "Create Banner"}
               </Button>
             </div>
           </form>

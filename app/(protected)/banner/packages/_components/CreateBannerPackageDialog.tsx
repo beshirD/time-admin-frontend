@@ -6,45 +6,57 @@ import Label from "@/components/ui/Label";
 import Button from "@/components/ui/Button";
 import { toast } from "sonner";
 import { Modal } from "@/components/ui/modal";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { useCreateBannerPackage } from "@/hooks/useBannerPackages";
 
 export function CreateBannerPackageDialog() {
   const [open, setOpen] = useState(false);
   const [formData, setFormData] = useState({
-    packageTitle: "",
+    title: "",
     description: "",
-    duration: "",
+    durationDays: "",
     price: "",
     maxBanners: "",
-    isPopular: "false",
-    status: "Active",
   });
+
+  const createPackage = useCreateBannerPackage();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Form submitted:", formData);
 
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    // Validate form data
+    if (
+      !formData.title ||
+      !formData.description ||
+      !formData.durationDays ||
+      !formData.price ||
+      !formData.maxBanners
+    ) {
+      toast.error("Please fill in all required fields");
+      return;
+    }
 
-    toast.success("Banner Package created successfully");
-    setOpen(false);
-    // Reset form
-    setFormData({
-      packageTitle: "",
-      description: "",
-      duration: "",
-      price: "",
-      maxBanners: "",
-      isPopular: "false",
-      status: "Active",
-    });
+    try {
+      await createPackage.mutateAsync({
+        title: formData.title,
+        description: formData.description,
+        durationDays: parseInt(formData.durationDays),
+        price: parseFloat(formData.price),
+        maxBanners: parseInt(formData.maxBanners),
+      });
+
+      // Close dialog and reset form on success
+      setOpen(false);
+      setFormData({
+        title: "",
+        description: "",
+        durationDays: "",
+        price: "",
+        maxBanners: "",
+      });
+    } catch (error) {
+      // Error is handled by the mutation hook
+      console.error("Failed to create banner package:", error);
+    }
   };
 
   return (
@@ -83,18 +95,18 @@ export function CreateBannerPackageDialog() {
                 <div className="grid grid-cols-1 gap-x-6 gap-y-5">
                   {/* Package Title */}
                   <div>
-                    <Label htmlFor="packageTitle">
+                    <Label htmlFor="title">
                       Package Title <span className="text-red-500">*</span>
                     </Label>
                     <Input
-                      id="packageTitle"
+                      id="title"
                       type="text"
                       required
-                      value={formData.packageTitle}
+                      value={formData.title}
                       onChange={(e) =>
                         setFormData({
                           ...formData,
-                          packageTitle: e.target.value,
+                          title: e.target.value,
                         })
                       }
                       placeholder="e.g., Premium Monthly"
@@ -125,16 +137,20 @@ export function CreateBannerPackageDialog() {
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                     {/* Duration */}
                     <div>
-                      <Label htmlFor="duration">
+                      <Label htmlFor="durationDays">
                         Duration (Days) <span className="text-red-500">*</span>
                       </Label>
                       <Input
-                        id="duration"
+                        id="durationDays"
                         type="number"
                         required
-                        value={formData.duration}
+                        min="1"
+                        value={formData.durationDays}
                         onChange={(e) =>
-                          setFormData({ ...formData, duration: e.target.value })
+                          setFormData({
+                            ...formData,
+                            durationDays: e.target.value,
+                          })
                         }
                         placeholder="30"
                       />
@@ -149,6 +165,8 @@ export function CreateBannerPackageDialog() {
                         id="price"
                         type="number"
                         required
+                        min="0"
+                        step="0.01"
                         value={formData.price}
                         onChange={(e) =>
                           setFormData({ ...formData, price: e.target.value })
@@ -158,64 +176,25 @@ export function CreateBannerPackageDialog() {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                    {/* Max Banners */}
-                    <div>
-                      <Label htmlFor="maxBanners">
-                        Max Banners <span className="text-red-500">*</span>
-                      </Label>
-                      <Input
-                        id="maxBanners"
-                        type="number"
-                        required
-                        value={formData.maxBanners}
-                        onChange={(e) =>
-                          setFormData({
-                            ...formData,
-                            maxBanners: e.target.value,
-                          })
-                        }
-                        placeholder="5"
-                      />
-                    </div>
-
-                    {/* Is Popular */}
-                    <div>
-                      <Label htmlFor="isPopular">Is Popular</Label>
-                      <Select
-                        value={formData.isPopular}
-                        onValueChange={(value) =>
-                          setFormData({ ...formData, isPopular: value })
-                        }>
-                        <SelectTrigger className="w-full h-11">
-                          <SelectValue placeholder="Select option" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="true">Yes</SelectItem>
-                          <SelectItem value="false">No</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
-
-                  {/* Status */}
+                  {/* Max Banners */}
                   <div>
-                    <Label htmlFor="status">
-                      Status <span className="text-red-500">*</span>
+                    <Label htmlFor="maxBanners">
+                      Max Banners <span className="text-red-500">*</span>
                     </Label>
-                    <Select
-                      value={formData.status}
-                      onValueChange={(value) =>
-                        setFormData({ ...formData, status: value })
-                      }>
-                      <SelectTrigger className="w-full h-11">
-                        <SelectValue placeholder="Select status" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="Active">Active</SelectItem>
-                        <SelectItem value="Inactive">Inactive</SelectItem>
-                      </SelectContent>
-                    </Select>
+                    <Input
+                      id="maxBanners"
+                      type="number"
+                      required
+                      min="1"
+                      value={formData.maxBanners}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          maxBanners: e.target.value,
+                        })
+                      }
+                      placeholder="5"
+                    />
                   </div>
                 </div>
               </div>
@@ -226,13 +205,15 @@ export function CreateBannerPackageDialog() {
                 size="sm"
                 variant="outline"
                 type="button"
-                onClick={() => setOpen(false)}>
+                onClick={() => setOpen(false)}
+                disabled={createPackage.isPending}>
                 Cancel
               </Button>
               <Button
                 size="sm"
-                type="submit">
-                Create Package
+                type="submit"
+                disabled={createPackage.isPending}>
+                {createPackage.isPending ? "Creating..." : "Create Package"}
               </Button>
             </div>
           </form>

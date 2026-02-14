@@ -27,7 +27,7 @@ export function useCreateManualOrder(adminUserId?: number) {
       console.log('[useCreateManualOrder] Sending request with X-Admin-User-Id header:', adminUserId.toString());
       
       const response = await api.post<CreateManualOrderResponse>(
-        "/api/admin/orders/manual",
+        "/api/admin/orders/create-manual-order",
         orderData,
         {
           headers: {
