@@ -14,24 +14,24 @@ import {
 } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
 
-interface DeleteActivityDialogProps {
-  activityId: number | string;
-  activityContent: string;
+interface DeletePageDialogProps {
+  pageId: number | string;
+  pageTitle: string;
   children: React.ReactNode;
   onDeleteSuccess?: () => void;
 }
 
-export function DeleteActivityDialog({
-  activityId,
-  activityContent,
+export function DeletePageDialog({
+  pageId,
+  pageTitle,
   children,
   onDeleteSuccess,
-}: DeleteActivityDialogProps) {
+}: DeletePageDialogProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   const handleDelete = async () => {
     // For now, just show success toast
-    toast.success("Activity deleted successfully");
+    toast.success("Page deleted successfully");
     setIsOpen(false);
     if (onDeleteSuccess) {
       onDeleteSuccess();
@@ -47,13 +47,8 @@ export function DeleteActivityDialog({
         <AlertDialogHeader>
           <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
           <AlertDialogDescription>
-            This action cannot be undone. This will permanently delete the
-            activity <strong>#{activityId}</strong> and remove its data from our
-            servers.
-            <span className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-              {activityContent.substring(0, 100)}
-              {activityContent.length > 100 ? "..." : ""}
-            </span>
+            This action cannot be undone. This will permanently delete the page{" "}
+            <strong>{pageTitle}</strong> and remove its data from our servers.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>

@@ -41,31 +41,18 @@ export function ActivityDetailDialog({
       onClose={onClose}
       className="max-w-[800px] m-4">
       <div className="no-scrollbar border relative w-full lg:w-[800px] max-h-[90vh] overflow-y-auto rounded-3xl bg-white p-4 dark:bg-gray-900 lg:p-8">
-        <div className="px-2 pr-14">
-          <h4 className="mb-2 text-2xl font-semibold text-gray-800 dark:text-white/90">
+        <div className="px-2 flex items-center gap-4">
+          <h4 className="mb-2 text-xl font-semibold text-gray-800 dark:text-white/90">
             Activity Details
           </h4>
-          <p className="mb-6 text-sm text-gray-500 dark:text-gray-400">
-            View detailed information about this activity.
-          </p>
+          {/* Status and Starred */}
+          <StatusBadge status={activity.state} />
+          <span className="text-sm text-gray-500 dark:text-gray-400">
+            Not Starred
+          </span>
         </div>
 
-        <div className="px-2 space-y-6">
-          {/* Activity Content */}
-          <div className="p-4 bg-gray-50 dark:bg-gray-900/50 rounded-lg border border-gray-200 dark:border-gray-700">
-            <p className="text-sm text-gray-800 dark:text-gray-200">
-              {activity.content}
-            </p>
-          </div>
-
-          {/* Status and Starred */}
-          <div className="flex items-center gap-3">
-            <StatusBadge status={activity.state} />
-            <span className="text-sm text-gray-500 dark:text-gray-400">
-              Not Starred
-            </span>
-          </div>
-
+        <div className="px-2 space-y-6 mt-2">
           {/* Activity Details Grid */}
           <div className="grid grid-cols-2 gap-4 p-5 border border-gray-200 rounded-2xl dark:border-gray-800 bg-white dark:bg-gray-800">
             {/* ID */}

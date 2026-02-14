@@ -12,12 +12,12 @@ export default function ActivitiesPage() {
 
   return (
     <div className="flex flex-col min-w-full gap-5 mb-7">
-      <div className="flex bg-white border dark:bg-gray-900 rounded-lg p-4 justify-between items-center">
+      <div className="flex bg-white border dark:bg-gray-900 rounded-lg py-4 px-6 justify-between items-center">
         <PageTitle title="Activities Management" />
         <Button
           usage="create"
           onClick={handleClear}>
-          Clear
+          Clear Activities
         </Button>
       </div>
       <div className="flex bg-white border dark:bg-gray-900 rounded-lg p-4">
