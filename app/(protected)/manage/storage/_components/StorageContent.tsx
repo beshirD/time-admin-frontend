@@ -3,11 +3,14 @@
 import { useState } from "react";
 import { ProvidersTable } from "./ProvidersTable";
 import { ProviderDialog } from "./ProviderDialog";
+import { StorageTypesTable } from "./StorageTypesTable";
+import { StorageTypeDialog } from "./StorageTypeDialog";
 import { Database, FileText, FolderTree } from "lucide-react";
 
 export function StorageContent() {
   const [isCreateProviderDialogOpen, setIsCreateProviderDialogOpen] =
     useState(false);
+  const [isCreateTypeDialogOpen, setIsCreateTypeDialogOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<"providers" | "files" | "types">(
     "providers",
   );
@@ -78,9 +81,10 @@ export function StorageContent() {
           )}
 
           {activeTab === "types" && (
-            <div className="w-full p-8 text-center text-gray-500 dark:text-gray-400">
-              <FolderTree className="h-12 w-12 mx-auto text-gray-400 mb-3" />
-              <p>Types section coming soon...</p>
+            <div className="w-full">
+              <StorageTypesTable
+                onCreateClick={() => setIsCreateTypeDialogOpen(true)}
+              />
             </div>
           )}
         </div>
@@ -89,6 +93,11 @@ export function StorageContent() {
       <ProviderDialog
         isOpen={isCreateProviderDialogOpen}
         onClose={() => setIsCreateProviderDialogOpen(false)}
+      />
+
+      <StorageTypeDialog
+        isOpen={isCreateTypeDialogOpen}
+        onClose={() => setIsCreateTypeDialogOpen(false)}
       />
     </>
   );

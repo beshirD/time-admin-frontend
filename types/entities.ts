@@ -680,3 +680,12 @@ export type StorageProvider = {
   readWrite?: string;
   location?: string;
 };
+
+export type StorageType = {
+  id: number;
+  title: string;
+  state: string;
+  description?: string;
+  createdOn?: string;
+  createdBy?: string;
+};

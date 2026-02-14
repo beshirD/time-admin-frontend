@@ -12,9 +12,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { RichTextEditor } from "@/components/ui/RichTextEditor";
 import { toast } from "sonner";
 import { StorageProvider } from "@/types/entities";
-import Textarea from "@/components/ui/Textarea";
 
 interface ProviderDialogProps {
   isOpen: boolean;
@@ -204,14 +204,12 @@ export function ProviderDialog({
             {/* Description */}
             <div>
               <Label htmlFor="description">Description</Label>
-              <Textarea
-                id="description"
+              <RichTextEditor
                 value={formData.description}
-                onChange={(e) =>
-                  setFormData({ ...formData, description: e.target.value })
+                onChange={(value) =>
+                  setFormData({ ...formData, description: value })
                 }
                 placeholder="Enter provider description"
-                rows={3}
               />
             </div>
           </div>
