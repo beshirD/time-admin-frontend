@@ -16,7 +16,7 @@ import {
   RestaurantIcon,
 } from "../components/icons/index";
 import SidebarWidget from "./SidebarWidget";
-import { Album, Settings } from "lucide-react";
+import { Album, Ambulance, Settings } from "lucide-react";
 
 type NavItem = {
   name: string;
@@ -71,16 +71,19 @@ const navItems: NavItem[] = [
     ],
   },
   {
+    icon: <Ambulance />,
+    name: "Deliveries Management",
+    subItems: [
+      { name: "Deliveries", path: "/deliveries" },
+      { name: "Delivery Fee", path: "/deliveries/delivery-fee" },
+      { name: "Delivery Fee Tiers", path: "/deliveries/fee-tiers" },
+    ],
+  },
+  {
     icon: <BoxCubeIcon />,
     name: "Orders",
     path: "/orders",
   },
-  {
-    icon: <BoxCubeIcon />,
-    name: "Deliveries",
-    path: "/deliveries",
-  },
-
   {
     icon: <GridIcon />,
     name: "Tailor Management",
@@ -102,7 +105,7 @@ const othersItems: NavItem[] = [
         name: "Roles & Permissions",
         path: "/system-setting/role-permissions",
       },
-      { name: "Delivery Fee", path: "/system-setting/delivery-fee" },
+
       { name: "Payments", path: "/system-setting/payments" },
       { name: "Referral", path: "/system-setting/referral" },
       { name: "Advanced", path: "/system-setting/advanced" },

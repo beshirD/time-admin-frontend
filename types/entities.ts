@@ -702,3 +702,21 @@ export type LoginHistory = {
   userId?: number;
   failureReason?: string;
 };
+
+export type DeliveryFeeTier = {
+  id: number;
+  minDistance: number;
+  maxDistance: number | null;
+  price: number;
+  sortOrder: number;
+  state: string;
+};
+
+export type DeliveryFeeSettings = {
+  useTieredPricing: boolean;
+  baseDeliveryFee: number;
+  feePerKilometer: number;
+  deliveryRadius: number;
+  averageDeliverySpeed: number;
+  freeDeliveryThreshold: number;
+};
