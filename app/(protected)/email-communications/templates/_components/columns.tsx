@@ -1,10 +1,10 @@
 import { ColumnDef } from "@tanstack/react-table";
-import { EmailAccount } from "@/types/entities";
+import { EmailTemplate } from "@/types/entities";
 import Button from "@/components/ui/Button";
 
 interface ColumnsProps {
-  onView: (id: number) => void;
-  onEdit: (account: EmailAccount) => void;
+  onView: (template: EmailTemplate) => void;
+  onEdit: (template: EmailTemplate) => void;
   onDelete: (id: number) => void;
 }
 
@@ -12,7 +12,7 @@ export const createColumns = ({
   onView,
   onEdit,
   onDelete,
-}: ColumnsProps): ColumnDef<EmailAccount>[] => [
+}: ColumnsProps): ColumnDef<EmailTemplate>[] => [
   {
     accessorKey: "id",
     header: "ID",
@@ -32,54 +32,6 @@ export const createColumns = ({
     ),
   },
   {
-    accessorKey: "email",
-    header: "Email",
-    cell: ({ row }) => (
-      <div className="text-sm text-gray-600 dark:text-gray-400">
-        {row.getValue("email")}
-      </div>
-    ),
-  },
-  {
-    accessorKey: "server",
-    header: "Server",
-    cell: ({ row }) => (
-      <div className="text-sm text-gray-600 dark:text-gray-400">
-        {row.getValue("server")}
-      </div>
-    ),
-  },
-  {
-    accessorKey: "port",
-    header: "Port",
-    cell: ({ row }) => (
-      <div className="text-sm text-gray-600 dark:text-gray-400">
-        {row.getValue("port")}
-      </div>
-    ),
-  },
-  {
-    accessorKey: "encryption",
-    header: "Encryption",
-    cell: ({ row }) => (
-      <div className="text-sm text-gray-600 dark:text-gray-400">
-        {row.getValue("encryption")}
-      </div>
-    ),
-  },
-  {
-    accessorKey: "limitPerEmail",
-    header: "Limit Per Email",
-    cell: ({ row }) => {
-      const limit = row.getValue("limitPerEmail") as number | null;
-      return (
-        <div className="text-sm text-gray-600 dark:text-gray-400">
-          {limit || ""}
-        </div>
-      );
-    },
-  },
-  {
     accessorKey: "state",
     header: "State",
     cell: ({ row }) => {
@@ -87,7 +39,9 @@ export const createColumns = ({
       const colorClass =
         state === "Active"
           ? "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400"
-          : "bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400";
+          : state === "New"
+            ? "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400"
+            : "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400";
       return (
         <span
           className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${colorClass}`}>
@@ -97,20 +51,30 @@ export const createColumns = ({
     },
   },
   {
-    accessorKey: "type",
-    header: "Type",
-    cell: ({ row }) => (
-      <div className="text-sm text-gray-600 dark:text-gray-400">
-        {row.getValue("type")}
-      </div>
-    ),
+    accessorKey: "createdOn",
+    header: "Created On",
+    cell: ({ row }) => {
+      const date = new Date(row.getValue("createdOn"));
+      return (
+        <div className="text-sm text-gray-600 dark:text-gray-400">
+          {date.toLocaleString("en-US", {
+            month: "short",
+            day: "numeric",
+            year: "numeric",
+            hour: "numeric",
+            minute: "numeric",
+            second: "numeric",
+            hour12: true,
+          })}
+        </div>
+      );
+    },
   },
-
   {
     id: "actions",
     header: "Actions",
     cell: ({ row }) => {
-      const account = row.original;
+      const template = row.original;
       return (
         <div className="flex items-center gap-2">
           <Button
@@ -118,7 +82,7 @@ export const createColumns = ({
             usage="view"
             onClick={(e) => {
               e.stopPropagation();
-              onView(account.id);
+              onView(template);
             }}>
             View
           </Button>
@@ -127,7 +91,7 @@ export const createColumns = ({
             usage="edit"
             onClick={(e) => {
               e.stopPropagation();
-              onEdit(account);
+              onEdit(template);
             }}>
             Edit
           </Button>
@@ -136,7 +100,7 @@ export const createColumns = ({
             usage="delete"
             onClick={(e) => {
               e.stopPropagation();
-              onDelete(account.id);
+              onDelete(template.id);
             }}>
             Delete
           </Button>

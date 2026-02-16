@@ -778,3 +778,22 @@ export interface EmailCommunication {
   sentOn: string;
   createdOn: string;
 }
+
+export type TemplateStatus = "Active" | "New" | "Deleted";
+
+export interface EmailTemplate {
+  id: number;
+  title: string;
+  description: string;
+  state: TemplateStatus;
+  type: "Email";
+  createdOn: string;
+  createdBy: string;
+}
+
+export interface TemplateFeed {
+  id: number;
+  content: string;
+  createdOn: string;
+  createdBy: string;
+}
