@@ -295,98 +295,100 @@ export function NotificationsTab() {
         </div>
 
         {/* Filter Tabs */}
-        <div className="flex items-center gap-2 border-b border-gray-200 dark:border-gray-800 mb-4">
-          <button
-            onClick={() => setFilter("all")}
-            className={cn(
-              "px-4 py-2 text-sm font-medium transition-colors relative",
-              filter === "all"
-                ? "text-primary"
-                : "text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200",
-            )}>
-            All
-            {filter === "all" && (
-              <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary" />
-            )}
-          </button>
-          <button
-            onClick={() => setFilter("unread")}
-            className={cn(
-              "px-4 py-2 text-sm font-medium transition-colors relative flex items-center gap-2",
-              filter === "unread"
-                ? "text-primary"
-                : "text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200",
-            )}>
-            Unread
-            {unreadCount > 0 && (
-              <span className="px-2 py-0.5 text-xs font-semibold text-white bg-primary rounded-full">
-                {unreadCount}
-              </span>
-            )}
-            {filter === "unread" && (
-              <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary" />
-            )}
-          </button>
-        </div>
-
-        {/* Date Range Filter */}
-        <div className="flex items-center gap-3">
-          <div
-            className="relative"
-            ref={calendarRef}>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2 border-b border-gray-200 dark:border-gray-800 mb-4">
             <button
-              onClick={() => setIsCalendarOpen(!isCalendarOpen)}
-              className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-primary bg-primary/10 hover:bg-primary/25 border-2 border-primary rounded-lg transition">
-              <CalendarIcon className="h-4 w-4" />
-              {dateRange?.from && dateRange?.to ? (
-                <span>
-                  {format(dateRange.from, "MMM dd, yyyy")} -{" "}
-                  {format(dateRange.to, "MMM dd, yyyy")}
-                </span>
-              ) : (
-                <span>Filter by Start & End Date</span>
+              onClick={() => setFilter("all")}
+              className={cn(
+                "px-4 py-2 text-sm font-medium transition-colors relative",
+                filter === "all"
+                  ? "text-primary"
+                  : "text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200",
+              )}>
+              All
+              {filter === "all" && (
+                <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary" />
               )}
             </button>
+            <button
+              onClick={() => setFilter("unread")}
+              className={cn(
+                "px-4 py-2 text-sm font-medium transition-colors relative flex items-center gap-2",
+                filter === "unread"
+                  ? "text-primary"
+                  : "text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200",
+              )}>
+              Unread
+              {unreadCount > 0 && (
+                <span className="px-2 py-0.5 text-xs font-semibold text-white bg-primary rounded-full">
+                  {unreadCount}
+                </span>
+              )}
+              {filter === "unread" && (
+                <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary" />
+              )}
+            </button>
+          </div>
 
-            {isCalendarOpen && (
-              <div className="absolute left-0 top-full mt-2 z-50 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg p-4">
-                <div className="flex items-center justify-between mb-3">
-                  <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                    Select Date Range
-                  </h3>
-                  {(dateRange?.from || dateRange?.to) && (
+          {/* Date Range Filter */}
+          <div className="flex items-center gap-3">
+            <div
+              className="relative"
+              ref={calendarRef}>
+              <button
+                onClick={() => setIsCalendarOpen(!isCalendarOpen)}
+                className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-primary bg-primary/10 hover:bg-primary/25 border-2 border-primary rounded-lg transition">
+                <CalendarIcon className="h-4 w-4" />
+                {dateRange?.from && dateRange?.to ? (
+                  <span>
+                    {format(dateRange.from, "MMM dd, yyyy")} -{" "}
+                    {format(dateRange.to, "MMM dd, yyyy")}
+                  </span>
+                ) : (
+                  <span>Filter by Start & End Date</span>
+                )}
+              </button>
+
+              {isCalendarOpen && (
+                <div className="absolute left-0 top-full mt-2 z-50 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg p-4">
+                  <div className="flex items-center justify-between mb-3">
+                    <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                      Select Date Range
+                    </h3>
+                    {(dateRange?.from || dateRange?.to) && (
+                      <button
+                        onClick={clearDateFilter}
+                        className="text-xs text-primary hover:underline">
+                        Clear
+                      </button>
+                    )}
+                  </div>
+                  <Calendar
+                    mode="range"
+                    selected={dateRange}
+                    onSelect={handleDateSelect}
+                    numberOfMonths={2}
+                    className="rounded-md"
+                  />
+                  <div className="mt-3 flex justify-end">
                     <button
-                      onClick={clearDateFilter}
-                      className="text-xs text-primary hover:underline">
-                      Clear
+                      onClick={() => setIsCalendarOpen(false)}
+                      className="px-4 py-2 text-sm font-medium text-white bg-primary rounded-md hover:bg-primary/90 transition">
+                      Done
                     </button>
-                  )}
+                  </div>
                 </div>
-                <Calendar
-                  mode="range"
-                  selected={dateRange}
-                  onSelect={handleDateSelect}
-                  numberOfMonths={2}
-                  className="rounded-md"
-                />
-                <div className="mt-3 flex justify-end">
-                  <button
-                    onClick={() => setIsCalendarOpen(false)}
-                    className="px-4 py-2 text-sm font-medium text-white bg-primary rounded-md hover:bg-primary/90 transition">
-                    Done
-                  </button>
-                </div>
+              )}
+            </div>
+
+            {/* Results Info */}
+            {hasActiveFilters && (
+              <div className="text-sm text-gray-600 dark:text-gray-400">
+                Showing {filteredNotifications.length} notification
+                {filteredNotifications.length !== 1 ? "s" : ""}
               </div>
             )}
           </div>
-
-          {/* Results Info */}
-          {hasActiveFilters && (
-            <div className="text-sm text-gray-600 dark:text-gray-400">
-              Showing {filteredNotifications.length} notification
-              {filteredNotifications.length !== 1 ? "s" : ""}
-            </div>
-          )}
         </div>
       </div>
 
@@ -434,14 +436,14 @@ export function NotificationsTab() {
                       <div className="flex items-start justify-between gap-3 mb-1">
                         <h4
                           className={cn(
-                            "text-sm font-semibold",
+                            "text-base font-semibold",
                             notification.status === "unread"
                               ? "text-gray-900 dark:text-white"
                               : "text-gray-700 dark:text-gray-300",
                           )}>
                           {notification.title}
                         </h4>
-                        <span className="text-xs text-gray-500 dark:text-gray-400 whitespace-nowrap">
+                        <span className="text-base text-gray-500 dark:text-gray-400 whitespace-nowrap">
                           {formatTimeAgo(notification.createdAt)}
                         </span>
                       </div>

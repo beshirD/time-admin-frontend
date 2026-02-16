@@ -16,7 +16,7 @@ import {
   RestaurantIcon,
 } from "../components/icons/index";
 import SidebarWidget from "./SidebarWidget";
-import { Album, Ambulance, Car, Settings } from "lucide-react";
+import { Album, Ambulance, Car, MailPlus, Settings } from "lucide-react";
 
 type NavItem = {
   name: string;
@@ -116,12 +116,29 @@ const othersItems: NavItem[] = [
     name: "Manage Operations",
     subItems: [
       { name: "Activities", path: "/manage/activities" },
+      { name: "Post Notification", path: "/manage/post-notification" },
       { name: "Pages", path: "/manage/pages" },
       { name: "Backup", path: "/manage/backup" },
       { name: "Scheduler", path: "/manage/scheduler" },
       { name: "Logger", path: "/manage/logger" },
       { name: "Storage", path: "/manage/storage" },
       { name: "Login History", path: "/manage/login-history" },
+    ],
+  },
+  {
+    icon: <MailPlus />,
+    name: "Email Communications",
+    subItems: [
+      { name: "Accounts", path: "/email-communications/accounts" },
+      {
+        name: "Templates",
+        path: "/email-communications/templates",
+      },
+      { name: "Email Queues", path: "/email-communications/email-queues" },
+      {
+        name: "Unsubscribed Email",
+        path: "/email-communications/unsubscribed Email",
+      },
     ],
   },
 

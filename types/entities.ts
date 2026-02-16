@@ -740,3 +740,12 @@ export type Notification = {
   actionUrl?: string;
   metadata?: Record<string, unknown>;
 };
+
+export interface NotificationPost {
+  id: number;
+  title: string;
+  description: string;
+  state: "Active" | "Inactive";
+  createdOn: string;
+  createdBy: string;
+}
