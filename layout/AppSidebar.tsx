@@ -16,7 +16,7 @@ import {
   RestaurantIcon,
 } from "../components/icons/index";
 import SidebarWidget from "./SidebarWidget";
-import { Album, Ambulance, Settings } from "lucide-react";
+import { Album, Ambulance, Car, Settings } from "lucide-react";
 
 type NavItem = {
   name: string;
@@ -71,7 +71,7 @@ const navItems: NavItem[] = [
     ],
   },
   {
-    icon: <Ambulance />,
+    icon: <Car />,
     name: "Deliveries Management",
     subItems: [
       { name: "Deliveries", path: "/deliveries" },

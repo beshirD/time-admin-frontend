@@ -720,3 +720,23 @@ export type DeliveryFeeSettings = {
   averageDeliverySpeed: number;
   freeDeliveryThreshold: number;
 };
+
+export type NotificationType = 
+  | "order" 
+  | "system" 
+  | "promotion" 
+  | "alert" 
+  | "info";
+
+export type NotificationStatus = "read" | "unread";
+
+export type Notification = {
+  id: number;
+  title: string;
+  message: string;
+  type: NotificationType;
+  status: NotificationStatus;
+  createdAt: string;
+  actionUrl?: string;
+  metadata?: Record<string, unknown>;
+};
