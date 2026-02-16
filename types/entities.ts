@@ -749,3 +749,32 @@ export interface NotificationPost {
   createdOn: string;
   createdBy: string;
 }
+
+export type EmailEncryption = "SSL" | "TLS" | "None";
+export type EmailAccountType = "SMTP" | "IMAP";
+export type EmailState = "Sent" | "Pending" | "Failed";
+
+export interface EmailAccount {
+  id: number;
+  title: string;
+  email: string;
+  password: string;
+  server: string;
+  port: number;
+  encryption: EmailEncryption;
+  limitPerEmail: number | null;
+  state: "Active" | "Inactive";
+  type: EmailAccountType;
+  createdOn: string;
+  updatedOn: string;
+  createdBy: string;
+}
+
+export interface EmailCommunication {
+  id: number;
+  subject: string;
+  to: string;
+  state: EmailState;
+  sentOn: string;
+  createdOn: string;
+}
