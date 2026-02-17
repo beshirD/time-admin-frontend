@@ -797,3 +797,22 @@ export interface TemplateFeed {
   createdOn: string;
   createdBy: string;
 }
+
+export interface EmailQueue {
+  id: number;
+  subject: string;
+  from: string;
+  to: string;
+  cc?: string;
+  bcc?: string;
+  state: EmailState;
+  sentOn: string;
+  createdOn: string;
+  attempts: number;
+  model?: string;
+  modelType?: string;
+  smtpAccount?: string;
+  message?: string;
+  reMessage?: string;
+  body: string;
+}

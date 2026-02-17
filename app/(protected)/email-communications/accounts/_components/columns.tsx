@@ -16,55 +16,35 @@ export const createColumns = ({
   {
     accessorKey: "id",
     header: "ID",
-    cell: ({ row }) => (
-      <div className="text-sm text-gray-900 dark:text-white">
-        {row.getValue("id")}
-      </div>
-    ),
+    cell: ({ row }) => <div className="text-sm ">{row.getValue("id")}</div>,
   },
   {
     accessorKey: "title",
     header: "Title",
     cell: ({ row }) => (
-      <div className="font-medium text-gray-900 dark:text-white">
-        {row.getValue("title")}
-      </div>
+      <div className="font-medium ">{row.getValue("title")}</div>
     ),
   },
   {
     accessorKey: "email",
     header: "Email",
-    cell: ({ row }) => (
-      <div className="text-sm text-gray-600 dark:text-gray-400">
-        {row.getValue("email")}
-      </div>
-    ),
+    cell: ({ row }) => <div className="text-sm ">{row.getValue("email")}</div>,
   },
   {
     accessorKey: "server",
     header: "Server",
-    cell: ({ row }) => (
-      <div className="text-sm text-gray-600 dark:text-gray-400">
-        {row.getValue("server")}
-      </div>
-    ),
+    cell: ({ row }) => <div className="text-sm ">{row.getValue("server")}</div>,
   },
   {
     accessorKey: "port",
     header: "Port",
-    cell: ({ row }) => (
-      <div className="text-sm text-gray-600 dark:text-gray-400">
-        {row.getValue("port")}
-      </div>
-    ),
+    cell: ({ row }) => <div className="text-sm ">{row.getValue("port")}</div>,
   },
   {
     accessorKey: "encryption",
     header: "Encryption",
     cell: ({ row }) => (
-      <div className="text-sm text-gray-600 dark:text-gray-400">
-        {row.getValue("encryption")}
-      </div>
+      <div className="text-sm ">{row.getValue("encryption")}</div>
     ),
   },
   {
@@ -72,11 +52,7 @@ export const createColumns = ({
     header: "Limit Per Email",
     cell: ({ row }) => {
       const limit = row.getValue("limitPerEmail") as number | null;
-      return (
-        <div className="text-sm text-gray-600 dark:text-gray-400">
-          {limit || ""}
-        </div>
-      );
+      return <div className="text-sm ">{limit || ""}</div>;
     },
   },
   {
@@ -99,11 +75,7 @@ export const createColumns = ({
   {
     accessorKey: "type",
     header: "Type",
-    cell: ({ row }) => (
-      <div className="text-sm text-gray-600 dark:text-gray-400">
-        {row.getValue("type")}
-      </div>
-    ),
+    cell: ({ row }) => <div className="text-sm ">{row.getValue("type")}</div>,
   },
 
   {

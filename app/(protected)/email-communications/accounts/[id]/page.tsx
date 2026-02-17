@@ -20,12 +20,13 @@ function getAccountById(id: string): EmailAccount {
   };
 }
 
-export default function EmailAccountDetailPage({
+export default async function EmailAccountDetailPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
-  const account = getAccountById(params.id);
+  const { id } = await params;
+  const account = getAccountById(id);
 
   return (
     <div className="flex flex-col min-w-full gap-5 mb-7">

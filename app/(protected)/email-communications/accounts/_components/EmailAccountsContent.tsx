@@ -222,7 +222,7 @@ export function EmailAccountsContent() {
             searchPlaceholder="Search email accounts..."
             searchableColumns={["title", "email", "server"]}
             enableSearch={true}
-            enableColumnVisibility={false}
+            // enableColumnVisibility={false}
             onRowClick={(row) => handleView(row.id)}
           />
         </div>
