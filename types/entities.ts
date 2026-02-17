@@ -816,3 +816,11 @@ export interface EmailQueue {
   reMessage?: string;
   body: string;
 }
+
+export interface UnsubscribeEmail {
+  id: number;
+  email: string;
+  state: "Active" | "Deactivate";
+  createdOn: string;
+  createdBy: string;
+}

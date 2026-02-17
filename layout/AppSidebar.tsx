@@ -136,8 +136,8 @@ const othersItems: NavItem[] = [
       },
       { name: "Email Queues", path: "/email-communications/email-queues" },
       {
-        name: "Unsubscribed Email",
-        path: "/email-communications/unsubscribed Email",
+        name: "Unsubscribe Email",
+        path: "/email-communications/unsubscribe",
       },
     ],
   },
