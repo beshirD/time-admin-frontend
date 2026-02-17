@@ -405,9 +405,7 @@ export function NotificationsTab() {
             <p className="text-sm text-gray-500 dark:text-gray-400 text-center">
               {hasActiveFilters
                 ? "No notifications match your filters"
-                : filter === "unread"
-                  ? "You have no unread notifications"
-                  : "You don't have any notifications yet"}
+                : "You don't have any notifications yet"}
             </p>
           </div>
         ) : (
