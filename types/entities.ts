@@ -824,3 +824,11 @@ export interface UnsubscribeEmail {
   createdOn: string;
   createdBy: string;
 }
+
+export interface FAQ {
+  id: number;
+  question: string;
+  answer: string;
+  state: "Active" | "Inactive" | "Deleted";
+  createdOn: string;
+}
