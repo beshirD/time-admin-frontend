@@ -16,7 +16,14 @@ import {
   RestaurantIcon,
 } from "../components/icons/index";
 import SidebarWidget from "./SidebarWidget";
-import { Album, Ambulance, Car, MailPlus, Settings } from "lucide-react";
+import {
+  Album,
+  Ambulance,
+  Car,
+  MailPlus,
+  MessagesSquare,
+  Settings,
+} from "lucide-react";
 
 type NavItem = {
   name: string;
@@ -158,9 +165,9 @@ const othersItems: NavItem[] = [
     path: "/faqs",
   },
   {
-    icon: <BoxCubeIcon />,
+    icon: <MessagesSquare />,
     name: "Chat",
-    path: "/chat",
+    path: "/chats",
   },
   {
     icon: <GridIcon />,

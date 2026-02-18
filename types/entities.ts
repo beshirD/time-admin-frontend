@@ -832,3 +832,23 @@ export interface FAQ {
   state: "Active" | "Inactive" | "Deleted";
   createdOn: string;
 }
+
+export interface ChatUser {
+  id: number;
+  name: string;
+  avatar?: string;
+  status: "online" | "offline" | "away";
+  lastMessage?: string;
+  lastMessageTime?: string;
+  unreadCount?: number;
+}
+
+export interface ChatMessage {
+  id: number;
+  senderId: number;
+  receiverId: number;
+  content: string;
+  timestamp: string;
+  isRead: boolean;
+  isSent: boolean;
+}
