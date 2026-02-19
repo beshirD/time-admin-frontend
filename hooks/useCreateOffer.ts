@@ -20,6 +20,15 @@ export function useCreateOffer() {
 
       if (!response.ok) {
         const errorData = await response.json();
+        
+        // If there are validation errors, extract and format them
+        if (errorData.validationErrors) {
+          const validationMessages = Object.entries(errorData.validationErrors)
+            .map(([field, message]) => `${field}: ${message}`)
+            .join(', ');
+          throw new Error(validationMessages);
+        }
+        
         throw new Error(errorData.message || 'Failed to create offer');
       }
 

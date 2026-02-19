@@ -13,7 +13,7 @@ interface EditDescriptionDialogProps {
   isOpen: boolean;
   onClose: () => void;
   offer: RestaurantOffer;
-  onSave: (data: { description: string; image?: string }) => void;
+  onSave: (data: { description: string; imageFile?: File }) => void;
 }
 
 export function EditDescriptionDialog({
@@ -44,7 +44,7 @@ export function EditDescriptionDialog({
     e.preventDefault();
     onSave({
       description,
-      image: imagePreview,
+      imageFile: imageFile || undefined,
     });
     onClose();
   };

@@ -25,21 +25,6 @@ export function RestaurantsMetrics({
     (r) => r.status === "inactive",
   ).length;
   const pendingCount = restaurants.filter((r) => r.status === "pending").length;
-  const approvedCount = restaurants.filter(
-    (r) => r.status === "approved",
-  ).length;
-  const rejectedCount = restaurants.filter(
-    (r) => r.status === "rejected",
-  ).length;
-  const suspendedCount = restaurants.filter(
-    (r) => r.status === "suspended",
-  ).length;
-
-  const averageRating =
-    restaurants.length > 0
-      ? restaurants.reduce((sum, r) => sum + (r.averageRating || 0), 0) /
-        restaurants.length
-      : 0;
 
   const metricsData = [
     {
@@ -50,14 +35,7 @@ export function RestaurantsMetrics({
       footerTitle: "Growing restaurant network",
       footerDescription: "All registered restaurants",
     },
-    {
-      title: "Approved",
-      value: approvedCount.toString(),
-      trend: "+12.5%",
-      isPositive: true,
-      footerTitle: "Approved & ready",
-      footerDescription: "Available for orders",
-    },
+
     {
       title: "Active",
       value: activeCount.toString(),
@@ -81,30 +59,6 @@ export function RestaurantsMetrics({
       isPositive: inactiveCount <= 3,
       footerTitle: "Temporarily inactive",
       footerDescription: "Not currently operating",
-    },
-    {
-      title: "Suspended",
-      value: suspendedCount.toString(),
-      trend: suspendedCount > 0 ? "+0.5%" : "0%",
-      isPositive: suspendedCount === 0,
-      footerTitle: "Suspended accounts",
-      footerDescription: "Requires attention",
-    },
-    {
-      title: "Rejected",
-      value: rejectedCount.toString(),
-      trend: rejectedCount > 0 ? "+0.3%" : "0%",
-      isPositive: rejectedCount === 0,
-      footerTitle: "Rejected applications",
-      footerDescription: "Did not meet criteria",
-    },
-    {
-      title: "Average Rating",
-      value: averageRating.toFixed(1),
-      trend: "+0.3",
-      isPositive: true,
-      footerTitle: "Customer satisfaction",
-      footerDescription: "Overall rating",
     },
   ];
 

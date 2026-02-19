@@ -11,6 +11,8 @@ import { DeleteConfirmationDialog } from "@/components/common/DeleteConfirmation
 import { EditBasicInfoDialog } from "./EditBasicInfoDialog";
 import { EditDiscountDialog } from "./EditDiscountDialog";
 import { EditDescriptionDialog } from "./EditDescriptionDialog";
+import { useDeleteOffer } from "@/hooks/useDeleteOffer";
+import { useUpdateOffer } from "@/hooks/useUpdateOffer";
 
 interface OfferDetailsContentProps {
   offer: RestaurantOffer;
@@ -22,31 +24,63 @@ export function OfferDetailsContent({
   restaurantName,
 }: OfferDetailsContentProps) {
   const router = useRouter();
+  const deleteOffer = useDeleteOffer();
+  const updateOffer = useUpdateOffer(offer.id);
   const [isEditBasicOpen, setIsEditBasicOpen] = useState(false);
   const [isEditDiscountOpen, setIsEditDiscountOpen] = useState(false);
   const [isEditDescriptionOpen, setIsEditDescriptionOpen] = useState(false);
 
-  const handleUpdateBasicInfo = (data: { title: string; code: string }) => {
-    console.log("Updating basic info:", data);
-    // TODO: Implement API call
+  const handleUpdateBasicInfo = (data: {
+    restaurantId: number;
+    title: string;
+    couponCode: string;
+    status: "active" | "inactive";
+    startDate: string;
+    endDate: string;
+    usageLimitPerUser: number;
+    totalUsageLimit: number;
+  }) => {
+    const formData = new FormData();
+    formData.append(
+      "data",
+      new Blob([JSON.stringify(data)], { type: "application/json" }),
+      "data.json",
+    );
+    updateOffer.mutate(formData);
   };
 
   const handleUpdateDiscount = (data: {
     discountType: "fixed_amount" | "percentage";
-    discount: number;
-    minimumAmount?: number;
-    endTime: string;
+    discountValue: number;
+    maxDiscountAmount: number;
+    minOrderAmount: number;
   }) => {
-    console.log("Updating discount:", data);
-    // TODO: Implement API call
+    const formData = new FormData();
+    formData.append(
+      "data",
+      new Blob([JSON.stringify(data)], { type: "application/json" }),
+      "data.json",
+    );
+    updateOffer.mutate(formData);
   };
 
   const handleUpdateDescription = (data: {
     description: string;
-    image?: string;
+    imageFile?: File;
   }) => {
-    console.log("Updating description:", data);
-    // TODO: Implement API call
+    const formData = new FormData();
+    const jsonData = { description: data.description };
+    formData.append(
+      "data",
+      new Blob([JSON.stringify(jsonData)], { type: "application/json" }),
+      "data.json",
+    );
+
+    if (data.imageFile) {
+      formData.append("image", data.imageFile);
+    }
+
+    updateOffer.mutate(formData);
   };
 
   return (
@@ -66,6 +100,9 @@ export function OfferDetailsContent({
             <DeleteConfirmationDialog
               itemType="Offer"
               itemName={offer.title}
+              onConfirm={async () => {
+                await deleteOffer.mutateAsync(offer.id);
+              }}
               onSuccess={() => {
                 router.push("/restaurants/offers");
               }}

@@ -37,6 +37,41 @@ export type TailorAdmin = {
 };
 
 
+
+export type BannerPackageStatus = "active" | "inactive";
+
+export type BannerPackage = {
+  id: number;
+  title: string;
+  description: string;
+  price: number;
+  durationDays: number;
+  maxBanners: number;
+  isPopular: boolean;
+  status: BannerPackageStatus;
+  createdAt: string;
+};
+
+export type BannerPackagesResponse = {
+  content: BannerPackage[];
+  page: PageMetadata;
+};
+
+export type CreateBannerPackageRequest = {
+  title: string;
+  description: string;
+  price: number;
+  durationDays: number;
+  maxBanners: number;
+};
+
+export type CreateBannerPackageResponse = {
+  success: boolean;
+  message: string;
+  data: BannerPackage;
+};
+
+// Legacy type for backward compatibility
 export type BannerPackages = {
   sNo: number;
   id: number;
@@ -50,6 +85,7 @@ export type BannerPackages = {
   createdOn: string;
   createdBy: string;
 };
+
 
 export type Subscription = {
   id: number;
@@ -71,6 +107,17 @@ export type Subscription = {
   created: string;
   createdBy?: string;
 };
+
+export type CreateSubscriptionRequest = {
+  packageId: number;
+};
+
+export type CreateSubscriptionResponse = {
+  success: boolean;
+  message: string;
+  data: string;
+};
+
 
 export type SubscriptionQueue = {
   id: number;
@@ -516,3 +563,372 @@ export type OpeningHour = {
   isClosed: boolean;
 };
 
+export type BannerStatus = "active" | "inactive" | "pending" | "archive";
+
+export type Banner = {
+  id: number;
+  subscriptionId: number;
+  restaurantId: number;
+  itemId: number;
+  bannerImage: string;
+  status: BannerStatus;
+  createdAt: string;
+};
+
+export type BannersResponse = {
+  content: Banner[];
+  page: PageMetadata;
+};
+
+export type CreateBannerResponse = {
+  success: boolean;
+  message: string;
+  data: Banner;
+};
+
+export type Activity = {
+  id: number;
+  content: string;
+  userIp: string;
+  userAgent: string;
+  state: string;
+  createdOn: string;
+  createdBy: string;
+  modelType: string;
+  model: string;
+  type: string;
+};
+
+export type Page = {
+  id: number;
+  title: string;
+  description: string;
+  state: string;
+  type: string;
+  createdOn: string;
+};
+
+export type PageType = {
+  id: number;
+  name: string;
+};
+
+export type Backup = {
+  id: number;
+  name: string;
+  size: string;
+  createTime: string;
+};
+
+export type CronJob = {
+  id: number;
+  title: string;
+  when: string;
+  type: string;
+  logs: number;
+  state: string;
+  createdOn: string;
+  command: string;
+  createdBy: string;
+};
+
+export type CronJobType = {
+  id: number;
+  name: string;
+  state?: string;
+  createdOn?: string;
+};
+
+export type CronJobLog = {
+  id: number;
+  state: string;
+  type: string;
+  cronjob: string;
+  scheduledOn: string;
+  executedOn: string;
+  createdOn: string;
+  createdBy: string;
+};
+
+export type ErrorLog = {
+  id: number;
+  error: string;
+  state: string;
+  link: string;
+  type: string;
+  userIp: string;
+  user: string;
+  createdOn: string;
+  refererLink?: string;
+  url?: string;
+  userAgent?: string;
+  stackTrace?: string;
+};
+
+export type StorageProvider = {
+  id: number;
+  title: string;
+  key: string;
+  secret: string;
+  endpoint: string;
+  state: string;
+  type: string;
+  createdOn: string;
+  updatedOn?: string;
+  createdBy?: string;
+  description?: string;
+  readWrite?: string;
+  location?: string;
+};
+
+export type StorageType = {
+  id: number;
+  title: string;
+  state: string;
+  description?: string;
+  createdOn?: string;
+  createdBy?: string;
+};
+
+export type LoginHistory = {
+  id: number;
+  userIp: string;
+  userAgent: string;
+  state: string;
+  type: string;
+  code?: string;
+  createTime: string;
+  user?: string;
+  userId?: number;
+  failureReason?: string;
+};
+
+export type DeliveryFeeTier = {
+  id: number;
+  minDistance: number;
+  maxDistance: number | null;
+  price: number;
+  sortOrder: number;
+  state: string;
+};
+
+export type DeliveryFeeSettings = {
+  useTieredPricing: boolean;
+  baseDeliveryFee: number;
+  feePerKilometer: number;
+  deliveryRadius: number;
+  averageDeliverySpeed: number;
+  freeDeliveryThreshold: number;
+};
+
+export type NotificationType = 
+  | "order" 
+  | "system" 
+  | "promotion" 
+  | "alert" 
+  | "info";
+
+export type NotificationStatus = "read" | "unread";
+
+export type Notification = {
+  id: number;
+  title: string;
+  message: string;
+  type: NotificationType;
+  status: NotificationStatus;
+  createdAt: string;
+  actionUrl?: string;
+  metadata?: Record<string, unknown>;
+};
+
+export interface NotificationPost {
+  id: number;
+  title: string;
+  description: string;
+  state: "Active" | "Inactive";
+  createdOn: string;
+  createdBy: string;
+}
+
+export type EmailEncryption = "SSL" | "TLS" | "None";
+export type EmailAccountType = "SMTP" | "IMAP";
+export type EmailState = "Sent" | "Pending" | "Failed";
+
+export interface EmailAccount {
+  id: number;
+  title: string;
+  email: string;
+  password: string;
+  server: string;
+  port: number;
+  encryption: EmailEncryption;
+  limitPerEmail: number | null;
+  state: "Active" | "Inactive";
+  type: EmailAccountType;
+  createdOn: string;
+  updatedOn: string;
+  createdBy: string;
+}
+
+export interface EmailCommunication {
+  id: number;
+  subject: string;
+  to: string;
+  state: EmailState;
+  sentOn: string;
+  createdOn: string;
+}
+
+export type TemplateStatus = "Active" | "New" | "Deleted";
+
+export interface EmailTemplate {
+  id: number;
+  title: string;
+  description: string;
+  state: TemplateStatus;
+  type: "Email";
+  createdOn: string;
+  createdBy: string;
+}
+
+export interface TemplateFeed {
+  id: number;
+  content: string;
+  createdOn: string;
+  createdBy: string;
+}
+
+export interface EmailQueue {
+  id: number;
+  subject: string;
+  from: string;
+  to: string;
+  cc?: string;
+  bcc?: string;
+  state: EmailState;
+  sentOn: string;
+  createdOn: string;
+  attempts: number;
+  model?: string;
+  modelType?: string;
+  smtpAccount?: string;
+  message?: string;
+  reMessage?: string;
+  body: string;
+}
+
+export interface UnsubscribeEmail {
+  id: number;
+  email: string;
+  state: "Active" | "Deactivate";
+  createdOn: string;
+  createdBy: string;
+}
+
+export interface FAQTranslation {
+  id: number;
+  languageCode: string;
+  title: string;
+  description: string;
+  question: string;
+  answer: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface FAQ {
+  id: number;
+  createdBy: number;
+  category: string;
+  displayOrder: number;
+  active: boolean;
+  translations: FAQTranslation[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface FAQsResponse {
+  content: FAQ[];
+  totalElements: number;
+  totalPages: number;
+  number: number;
+  size: number;
+  first: boolean;
+  last: boolean;
+  empty: boolean;
+}
+
+export interface UpdateFAQRequest {
+  category?: string;
+  displayOrder?: number;
+  active?: boolean;
+  translations?: Array<{
+    languageCode: string;
+    title: string;
+    description: string;
+    question: string;
+    answer: string;
+  }>;
+}
+
+export interface ChatUser {
+  id: number;
+  name: string;
+  avatar?: string;
+  status: "online" | "offline" | "away";
+  lastMessage?: string;
+  lastMessageTime?: string;
+  unreadCount?: number;
+}
+
+export interface ChatMessage {
+  id: number;
+  senderId: number;
+  receiverId: number;
+  content: string;
+  timestamp: string;
+  isRead: boolean;
+  isSent: boolean;
+}
+
+export type RestrictedAreaStatus = "active" | "inactive";
+
+export interface RestrictedArea {
+  id: number;
+  areaName: string;
+  geoPolygon: string;
+  startHour: string; // "HH:mm:ss"
+  endHour: string;   // "HH:mm:ss"
+  status: RestrictedAreaStatus;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type TransactionPayableType = "ORDER" | "TAILOR_ORDER" | "BANNER_SUBSCRIPTION";
+export type TransactionGateway = "HESABPAY" | "MANUAL";
+export type TransactionDirection = "CHARGE" | "REFUND";
+export type TransactionStatus = "PENDING" | "SUCCESS" | "FAILED";
+
+export interface Transaction {
+  id: number;
+  userId: number;
+  restaurantId: number;
+  payableType: TransactionPayableType;
+  payableId: number;
+  reference: string;
+  gateway: TransactionGateway;
+  amount: number;
+  currency: string;
+  direction: TransactionDirection;
+  status: TransactionStatus;
+  createdAt: string;
+  updatedAt: string;
+  response: string | null;
+}
+
+export interface TransactionsResponse {
+  total: number;
+  page: number;
+  size: number;
+  transactions: Transaction[];
+}

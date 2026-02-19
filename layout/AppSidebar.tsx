@@ -16,6 +16,15 @@ import {
   RestaurantIcon,
 } from "../components/icons/index";
 import SidebarWidget from "./SidebarWidget";
+import {
+  Album,
+  Ambulance,
+  Car,
+  FolderKanban,
+  MailPlus,
+  MessagesSquare,
+  Settings,
+} from "lucide-react";
 
 type NavItem = {
   name: string;
@@ -65,8 +74,16 @@ const navItems: NavItem[] = [
       { name: "Restaurants", path: "/restaurants" },
       { name: "Cuisines", path: "/restaurants/cuisines" },
       { name: "Add-Ons Category", path: "/restaurants/addons-category" },
-      { name: "Transactions", path: "/restaurants/transactions" },
       { name: "Offers", path: "/restaurants/offers" },
+    ],
+  },
+  {
+    icon: <Car />,
+    name: "Deliveries Management",
+    subItems: [
+      { name: "Deliveries", path: "/deliveries" },
+      { name: "Delivery Fee", path: "/deliveries/delivery-fee" },
+      { name: "Delivery Fee Tiers", path: "/deliveries/fee-tiers" },
     ],
   },
   {
@@ -74,12 +91,6 @@ const navItems: NavItem[] = [
     name: "Orders",
     path: "/orders",
   },
-  {
-    icon: <BoxCubeIcon />,
-    name: "Deliveries",
-    path: "/deliveries",
-  },
-
   {
     icon: <GridIcon />,
     name: "Tailor Management",
@@ -90,28 +101,69 @@ const navItems: NavItem[] = [
 const othersItems: NavItem[] = [
   {
     icon: <UserCircleIcon />,
-    name: "Setting",
-    path: "/settings",
+    name: "Account Setting",
+    path: "/account-setting",
   },
   {
-    icon: <PieChartIcon />,
+    icon: <Settings />,
+    name: "System Settings",
+    subItems: [
+      {
+        name: "Roles & Permissions",
+        path: "/system-setting/role-permissions",
+      },
+
+      { name: "Payments", path: "/system-setting/payments" },
+      { name: "Referral", path: "/system-setting/referral" },
+      { name: "Advanced", path: "/system-setting/advanced" },
+    ],
+  },
+  {
+    icon: <Album />,
+    name: "Manage Operations",
+    subItems: [
+      { name: "Activities", path: "/manage/activities" },
+      { name: "Post Notification", path: "/manage/post-notification" },
+      { name: "Pages", path: "/manage/pages" },
+      { name: "Backup", path: "/manage/backup" },
+      { name: "Scheduler", path: "/manage/scheduler" },
+      { name: "Logger", path: "/manage/logger" },
+      { name: "Storage", path: "/manage/storage" },
+      { name: "Login History", path: "/manage/login-history" },
+    ],
+  },
+  {
+    icon: <MailPlus />,
+    name: "Email Communications",
+    subItems: [
+      { name: "Accounts", path: "/email-communications/accounts" },
+      {
+        name: "Templates",
+        path: "/email-communications/templates",
+      },
+      { name: "Email Queues", path: "/email-communications/email-queues" },
+      {
+        name: "Unsubscribe Email",
+        path: "/email-communications/unsubscribe",
+      },
+    ],
+  },
+
+  {
+    icon: <FolderKanban />,
     name: "Transaction",
     path: "/transactions",
   },
-  {
-    icon: <PlugInIcon />,
-    name: "Manage",
-    path: "/manage",
-  },
+
   {
     icon: <ListIcon />,
     name: "FAQ's",
     path: "/faqs",
   },
   {
-    icon: <BoxCubeIcon />,
+    icon: <MessagesSquare />,
     name: "Chat",
-    path: "/chat",
+    path: "/chats",
   },
   {
     icon: <GridIcon />,
