@@ -6,40 +6,54 @@ import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
 import Label from "@/components/ui/Label";
 import { cn } from "@/lib/utils";
-import type { FAQ } from "@/types/entities";
+import type { FAQ, UpdateFAQRequest } from "@/types/entities";
+import { useFAQCategories, type CreateFAQRequest } from "@/hooks/useFAQs";
 
 interface CreateFAQModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (data: Omit<FAQ, "id" | "createdOn">) => void;
+  /** Called when creating a new FAQ — no editData provided */
+  onCreate?: (payload: CreateFAQRequest) => void;
+  /** Called when updating an existing FAQ — editData is provided */
+  onUpdate?: (id: number, payload: UpdateFAQRequest) => void;
   editData?: FAQ | null;
+  isSubmitting?: boolean;
 }
 
 export function CreateFAQModal({
   isOpen,
   onClose,
-  onSubmit,
+  onCreate,
+  onUpdate,
   editData,
+  isSubmitting = false,
 }: CreateFAQModalProps) {
+  const isEditing = !!editData;
+  const { categories, isLoading: isCategoriesLoading } = useFAQCategories();
+
   const [question, setQuestion] = useState("");
   const [answer, setAnswer] = useState("");
-  const [state, setState] = useState<"Active" | "Inactive" | "Deleted">(
-    "Active",
+  const [category, setCategory] = useState("");
+  const [displayOrder, setDisplayOrder] = useState(0);
+  const [active, setActive] = useState(true);
+  const [errors, setErrors] = useState<{ question?: string; answer?: string }>(
+    {},
   );
-  const [errors, setErrors] = useState<{
-    question?: string;
-    answer?: string;
-  }>({});
 
   useEffect(() => {
     if (editData) {
-      setQuestion(editData.question);
-      setAnswer(editData.answer);
-      setState(editData.state);
+      const translation = editData.translations[0];
+      setQuestion(translation?.question ?? "");
+      setAnswer(translation?.answer ?? "");
+      setCategory(editData.category ?? "");
+      setDisplayOrder(editData.displayOrder ?? 0);
+      setActive(editData.active);
     } else {
       setQuestion("");
       setAnswer("");
-      setState("Active");
+      setCategory("");
+      setDisplayOrder(0);
+      setActive(true);
     }
     setErrors({});
   }, [editData, isOpen]);
@@ -47,28 +61,56 @@ export function CreateFAQModal({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Validation
-    const newErrors: { question?: string; answer?: string } = {};
-    if (!question.trim()) {
-      newErrors.question = "Question is required";
-    }
-    if (!answer.trim()) {
-      newErrors.answer = "Answer is required";
-    }
-
+    const newErrors: typeof errors = {};
+    if (!question.trim()) newErrors.question = "Question is required";
+    if (!answer.trim()) newErrors.answer = "Answer is required";
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       return;
     }
 
-    onSubmit({ question, answer, state });
+    if (isEditing && onUpdate) {
+      const translation = editData.translations[0];
+      onUpdate(editData.id, {
+        category,
+        displayOrder,
+        active,
+        translations: [
+          {
+            languageCode: translation?.languageCode ?? "en",
+            title: translation?.title ?? question,
+            description: translation?.description ?? "",
+            question,
+            answer,
+          },
+        ],
+      });
+    } else if (!isEditing && onCreate) {
+      onCreate({
+        category,
+        displayOrder,
+        active,
+        translations: [
+          {
+            languageCode: "en",
+            title: question,
+            description: "",
+            question,
+            answer,
+          },
+        ],
+      });
+    }
+
     handleClose();
   };
 
   const handleClose = () => {
     setQuestion("");
     setAnswer("");
-    setState("Active");
+    setCategory("");
+    setDisplayOrder(0);
+    setActive(true);
     setErrors({});
     onClose();
   };
@@ -78,13 +120,13 @@ export function CreateFAQModal({
       isOpen={isOpen}
       onClose={handleClose}
       className="max-w-[700px] m-4">
-      <div className="relative border w-[640px] overflow-y-auto rounded-3xl bg-white p-4 dark:bg-gray-900 lg:p-11 no-scrollbar">
+      <div className="relative border w-[640px] overflow-y-auto rounded-3xl bg-white p-4 dark:bg-gray-900 lg:p-11 no-scrollbar max-h-[90vh]">
         <div className="px-2 pr-14">
           <h4 className="mb-2 text-2xl font-semibold text-gray-800 dark:text-white/90">
-            {editData ? "Edit FAQ" : "Create New FAQ"}
+            {isEditing ? "Edit FAQ" : "Create New FAQ"}
           </h4>
           <p className="mb-6 text-sm text-gray-500 dark:text-gray-400">
-            {editData
+            {isEditing
               ? "Update the FAQ information"
               : "Add a new frequently asked question"}
           </p>
@@ -95,7 +137,7 @@ export function CreateFAQModal({
           onSubmit={handleSubmit}>
           <div className="px-2 pb-3">
             <div className="grid grid-cols-1 gap-y-5">
-              {/* Question Field */}
+              {/* Question */}
               <div>
                 <Label>
                   Question <span className="text-red-500">*</span>
@@ -105,9 +147,8 @@ export function CreateFAQModal({
                   value={question}
                   onChange={(e) => {
                     setQuestion(e.target.value);
-                    if (errors.question) {
+                    if (errors.question)
                       setErrors({ ...errors, question: undefined });
-                    }
                   }}
                   placeholder="Enter the question"
                   className={cn(
@@ -119,7 +160,7 @@ export function CreateFAQModal({
                 )}
               </div>
 
-              {/* Answer Field */}
+              {/* Answer */}
               <div>
                 <Label>
                   Answer <span className="text-red-500">*</span>
@@ -128,9 +169,8 @@ export function CreateFAQModal({
                   value={answer}
                   onChange={(e) => {
                     setAnswer(e.target.value);
-                    if (errors.answer) {
+                    if (errors.answer)
                       setErrors({ ...errors, answer: undefined });
-                    }
                   }}
                   placeholder="Enter the answer"
                   rows={6}
@@ -141,7 +181,6 @@ export function CreateFAQModal({
                     "text-gray-900 dark:text-white",
                     "placeholder-gray-400 dark:placeholder-gray-500",
                     "focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent",
-                    "disabled:bg-gray-100 dark:disabled:bg-gray-900 disabled:cursor-not-allowed",
                     errors.answer && "border-red-500 focus:ring-red-500",
                   )}
                 />
@@ -150,20 +189,49 @@ export function CreateFAQModal({
                 )}
               </div>
 
-              {/* Status Field */}
+              {/* Category */}
+              <div>
+                <Label>Category</Label>
+                <select
+                  value={category}
+                  onChange={(e) => setCategory(e.target.value)}
+                  disabled={isCategoriesLoading}
+                  className="w-full px-3 py-2 border rounded-lg text-sm bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed">
+                  <option value="">
+                    {isCategoriesLoading
+                      ? "Loading categories..."
+                      : "Select a category"}
+                  </option>
+                  {categories.map((cat) => (
+                    <option
+                      key={cat}
+                      value={cat}>
+                      {cat}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Display Order */}
+              <div>
+                <Label>Display Order</Label>
+                <Input
+                  type="number"
+                  value={displayOrder}
+                  onChange={(e) => setDisplayOrder(Number(e.target.value))}
+                  placeholder="0"
+                />
+              </div>
+
+              {/* Status */}
               <div>
                 <Label>Status</Label>
                 <select
-                  value={state}
-                  onChange={(e) =>
-                    setState(
-                      e.target.value as "Active" | "Inactive" | "Deleted",
-                    )
-                  }
+                  value={active ? "active" : "inactive"}
+                  onChange={(e) => setActive(e.target.value === "active")}
                   className="w-full px-3 py-2 border rounded-lg text-sm bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
-                  <option value="Active">Active</option>
-                  <option value="Inactive">Inactive</option>
-                  <option value="Deleted">Deleted</option>
+                  <option value="active">Active</option>
+                  <option value="inactive">Inactive</option>
                 </select>
               </div>
             </div>
@@ -179,8 +247,15 @@ export function CreateFAQModal({
             </Button>
             <Button
               size="sm"
-              type="submit">
-              {editData ? "Update FAQ" : "Create FAQ"}
+              type="submit"
+              disabled={isSubmitting}>
+              {isSubmitting
+                ? isEditing
+                  ? "Saving..."
+                  : "Creating..."
+                : isEditing
+                  ? "Update FAQ"
+                  : "Create FAQ"}
             </Button>
           </div>
         </form>

@@ -825,12 +825,50 @@ export interface UnsubscribeEmail {
   createdBy: string;
 }
 
-export interface FAQ {
+export interface FAQTranslation {
   id: number;
+  languageCode: string;
+  title: string;
+  description: string;
   question: string;
   answer: string;
-  state: "Active" | "Inactive" | "Deleted";
-  createdOn: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface FAQ {
+  id: number;
+  createdBy: number;
+  category: string;
+  displayOrder: number;
+  active: boolean;
+  translations: FAQTranslation[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface FAQsResponse {
+  content: FAQ[];
+  totalElements: number;
+  totalPages: number;
+  number: number;
+  size: number;
+  first: boolean;
+  last: boolean;
+  empty: boolean;
+}
+
+export interface UpdateFAQRequest {
+  category?: string;
+  displayOrder?: number;
+  active?: boolean;
+  translations?: Array<{
+    languageCode: string;
+    title: string;
+    description: string;
+    question: string;
+    answer: string;
+  }>;
 }
 
 export interface ChatUser {

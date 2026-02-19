@@ -1,5 +1,5 @@
 import { ColumnDef } from "@tanstack/react-table";
-import { FAQ } from "@/types/entities";
+import type { FAQ } from "@/types/entities";
 import Button from "@/components/ui/Button";
 
 interface ColumnsProps {
@@ -14,58 +14,67 @@ export const createColumns = ({
   onDelete,
 }: ColumnsProps): ColumnDef<FAQ>[] => [
   {
-    accessorKey: "question",
-    header: "Question",
+    accessorKey: "id",
+    header: "ID",
     cell: ({ row }) => (
-      <div className="font-medium max-w-md">{row.getValue("question")}</div>
+      <div className="font-medium text-gray-900 dark:text-white">
+        {row.getValue("id")}
+      </div>
     ),
   },
   {
-    accessorKey: "answer",
-    header: "Answer",
+    id: "question",
+    header: "Question",
+    accessorFn: (row) => row.translations[0]?.question ?? "—",
     cell: ({ row }) => {
-      const answer = row.getValue("answer") as string;
-      const truncated =
-        answer.length > 100 ? answer.substring(0, 100) + "..." : answer;
-      return <div className="text-sm max-w-lg">{truncated}</div>;
-    },
-  },
-  {
-    accessorKey: "state",
-    header: "State",
-    cell: ({ row }) => {
-      const state = row.getValue("state") as string;
-      const colorClass =
-        state === "Active"
-          ? "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400"
-          : state === "Inactive"
-            ? "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400"
-            : "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400";
+      const question = row.getValue("question") as string;
       return (
-        <span
-          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${colorClass}`}>
-          {state}
-        </span>
+        <div
+          className="font-medium max-w-xs truncate"
+          title={question}>
+          {question}
+        </div>
       );
     },
   },
   {
-    accessorKey: "createdOn",
-    header: "Created On",
+    id: "answer",
+    header: "Answer",
+    accessorFn: (row) => row.translations[0]?.answer ?? "—",
     cell: ({ row }) => {
-      const date = new Date(row.getValue("createdOn"));
+      const answer = row.getValue("answer") as string;
+      const truncated =
+        answer.length > 80 ? answer.substring(0, 80) + "..." : answer;
       return (
-        <div className="text-sm">
-          {date.toLocaleString("en-US", {
-            day: "2-digit",
-            month: "short",
-            year: "numeric",
-            hour: "2-digit",
-            minute: "2-digit",
-            second: "2-digit",
-            hour12: true,
-          })}
+        <div className="text-sm max-w-sm text-gray-600 dark:text-gray-400">
+          {truncated}
         </div>
+      );
+    },
+  },
+  {
+    accessorKey: "category",
+    header: "Category",
+    cell: ({ row }) => (
+      <div className="text-sm capitalize">
+        {row.getValue("category") || "—"}
+      </div>
+    ),
+  },
+  {
+    accessorKey: "active",
+    header: "Status",
+    cell: ({ row }) => {
+      const active = row.getValue("active") as boolean;
+      return (
+        <span
+          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+            active
+              ? "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400"
+              : "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400"
+          }`}>
+          {active ? "Active" : "Inactive"}
+        </span>
       );
     },
   },

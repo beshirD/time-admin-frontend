@@ -6,44 +6,23 @@ import { DataTable } from "@/components/shared/DataTable";
 import { createColumns } from "./columns";
 import { CreateFAQModal } from "./CreateFAQModal";
 import { FAQDetailModal } from "./FAQDetailModal";
-import type { FAQ } from "@/types/entities";
-
-// Mock data
-const mockFAQs: FAQ[] = [
-  {
-    id: 1,
-    question: "How do I place an order?",
-    answer:
-      "Select your favorite restaurant, browse the menu, add items to your cart, and proceed to checkout. You can pay online or choose cash on delivery",
-    state: "Active",
-    createdOn: "2025-10-07T13:01:34Z",
-  },
-  {
-    id: 2,
-    question: "here it is",
-    answer: "new answers",
-    state: "Active",
-    createdOn: "2025-05-21T11:45:21Z",
-  },
-  {
-    id: 3,
-    question: "here it is",
-    answer: "new answer",
-    state: "Active",
-    createdOn: "2025-05-21T11:45:20Z",
-  },
-  {
-    id: 4,
-    question: "test faq",
-    answer: "this is",
-    state: "Active",
-    createdOn: "2025-05-21T11:44:27Z",
-  },
-];
+import type { FAQ, UpdateFAQRequest } from "@/types/entities";
+import { useFAQs } from "@/hooks/useFAQs";
+import type { CreateFAQRequest } from "@/hooks/useFAQs";
 
 export function FAQsContent() {
-  const [faqs, setFaqs] = useState<FAQ[]>(mockFAQs);
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const {
+    data: faqs,
+    isLoading,
+    createFAQ,
+    updateFAQ,
+    deleteFAQ,
+    isCreating,
+    isUpdating,
+    isDeleting,
+  } = useFAQs();
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
   const [editingFAQ, setEditingFAQ] = useState<FAQ | null>(null);
   const [selectedFAQ, setSelectedFAQ] = useState<FAQ | null>(null);
@@ -57,7 +36,7 @@ export function FAQsContent() {
 
   const handleEdit = (faq: FAQ) => {
     setEditingFAQ(faq);
-    setIsCreateModalOpen(true);
+    setIsModalOpen(true);
   };
 
   const handleDelete = (id: number) => {
@@ -66,29 +45,26 @@ export function FAQsContent() {
   };
 
   const confirmDelete = () => {
-    if (deleteId) {
-      setFaqs((prev) => prev.filter((f) => f.id !== deleteId));
-      setShowDeleteConfirm(false);
-      setDeleteId(null);
+    if (deleteId !== null) {
+      deleteFAQ(deleteId, {
+        onSuccess: () => {
+          setShowDeleteConfirm(false);
+          setDeleteId(null);
+        },
+        onError: () => {
+          setShowDeleteConfirm(false);
+          setDeleteId(null);
+        },
+      });
     }
   };
 
-  const handleCreateOrUpdate = (data: Omit<FAQ, "id" | "createdOn">) => {
-    if (editingFAQ) {
-      // Update existing FAQ
-      setFaqs((prev) =>
-        prev.map((f) => (f.id === editingFAQ.id ? { ...f, ...data } : f)),
-      );
-      setEditingFAQ(null);
-    } else {
-      // Create new FAQ
-      const newFAQ: FAQ = {
-        ...data,
-        id: faqs.length > 0 ? Math.max(...faqs.map((f) => f.id)) + 1 : 1,
-        createdOn: new Date().toISOString(),
-      };
-      setFaqs([newFAQ, ...faqs]);
-    }
+  const handleCreate = (payload: CreateFAQRequest) => {
+    createFAQ(payload);
+  };
+
+  const handleUpdate = (id: number, payload: UpdateFAQRequest) => {
+    updateFAQ({ id, payload });
   };
 
   const columns = createColumns({
@@ -100,25 +76,24 @@ export function FAQsContent() {
   return (
     <>
       <div className="flex flex-col gap-5">
-        {/* Header with Buttons */}
+        {/* Header */}
         <div className="flex items-center justify-between px-4 py-2.5 bg-white border dark:bg-gray-900 rounded-lg">
           <div>
             <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
               FAQs
             </h1>
           </div>
-          <div className="flex items-center gap-3">
-            <Button
-              size="sm"
-              usage="create"
-              onClick={() => {
-                setEditingFAQ(null);
-                setIsCreateModalOpen(true);
-              }}
-              className="gap-2">
-              Create FAQ
-            </Button>
-          </div>
+          <Button
+            size="sm"
+            usage="create"
+            disabled={isCreating}
+            onClick={() => {
+              setEditingFAQ(null);
+              setIsModalOpen(true);
+            }}
+            className="gap-2">
+            Create FAQ
+          </Button>
         </div>
 
         {/* FAQs Table */}
@@ -127,22 +102,25 @@ export function FAQsContent() {
             columns={columns}
             data={faqs}
             searchPlaceholder="Search FAQs..."
-            searchableColumns={["question", "answer"]}
+            searchableColumns={["question", "answer", "category"]}
             enableSearch={true}
+            isLoading={isLoading}
             onRowClick={(row) => handleView(row)}
           />
         </div>
       </div>
 
-      {/* Create/Edit Modal */}
+      {/* Create / Edit Modal */}
       <CreateFAQModal
-        isOpen={isCreateModalOpen}
+        isOpen={isModalOpen}
         onClose={() => {
-          setIsCreateModalOpen(false);
+          setIsModalOpen(false);
           setEditingFAQ(null);
         }}
-        onSubmit={handleCreateOrUpdate}
+        onCreate={handleCreate}
+        onUpdate={handleUpdate}
         editData={editingFAQ}
+        isSubmitting={editingFAQ ? isUpdating : isCreating}
       />
 
       {/* Detail Modal */}
@@ -153,6 +131,11 @@ export function FAQsContent() {
           setSelectedFAQ(null);
         }}
         faq={selectedFAQ}
+        onEdit={(faq) => {
+          setIsDetailModalOpen(false);
+          setSelectedFAQ(null);
+          handleEdit(faq);
+        }}
       />
 
       {/* Delete Confirmation Dialog */}
@@ -160,7 +143,9 @@ export function FAQsContent() {
         <div className="fixed inset-0 z-50 flex items-center justify-center">
           <div
             className="absolute inset-0 bg-black/50"
-            onClick={() => setShowDeleteConfirm(false)}
+            onClick={() => {
+              if (!isDeleting) setShowDeleteConfirm(false);
+            }}
           />
           <div className="relative bg-white dark:bg-gray-900 rounded-lg shadow-xl p-6 max-w-md mx-4">
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
@@ -177,14 +162,16 @@ export function FAQsContent() {
                 onClick={() => {
                   setShowDeleteConfirm(false);
                   setDeleteId(null);
-                }}>
+                }}
+                disabled={isDeleting}>
                 Cancel
               </Button>
               <Button
                 size="sm"
                 onClick={confirmDelete}
+                disabled={isDeleting}
                 className="bg-red-600 hover:bg-red-700">
-                Delete
+                {isDeleting ? "Deleting..." : "Delete"}
               </Button>
             </div>
           </div>

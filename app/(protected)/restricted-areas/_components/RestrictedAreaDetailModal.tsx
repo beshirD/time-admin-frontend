@@ -14,18 +14,19 @@ interface RestrictedAreaDetailModalProps {
 function DetailRow({
   label,
   value,
+  isColSpan3,
 }: {
   label: string;
   value: React.ReactNode;
+  isColSpan3?: boolean;
 }) {
   return (
-    <div className="flex justify-between items-start py-3 border-b border-gray-200 dark:border-gray-800 gap-4">
-      <span className="font-medium text-gray-600 dark:text-gray-300 text-sm shrink-0 min-w-[180px]">
+    <div
+      className={`flex flex-col py-3 gap-2 ${isColSpan3 ? "col-span-3" : ""}`}>
+      <span className=" text-gray-600 dark:text-gray-300 text-base">
         {label}
       </span>
-      <span className="text-gray-900 dark:text-white text-sm text-right break-all">
-        {value}
-      </span>
+      <span className="text-gray-900 dark:text-white text-base">{value}</span>
     </div>
   );
 }
@@ -48,13 +49,13 @@ export function RestrictedAreaDetailModal({
       isOpen={isOpen}
       onClose={onClose}
       className="max-w-[750px] m-4">
-      <div className="relative border w-[680px] overflow-y-auto rounded-3xl bg-white p-4 dark:bg-gray-900 lg:p-11 no-scrollbar max-h-[90vh]">
+      <div className="relative border w-[850px] overflow-y-auto rounded-3xl bg-white p-4 dark:bg-gray-900 lg:p-11 no-scrollbar max-h-[90vh]">
         {/* Header */}
         <div className="px-2 pr-14">
-          <h4 className="mb-2 text-2xl font-semibold text-gray-800 dark:text-white/90">
-            Restricted Area Details
-          </h4>
-          <div className="flex items-center gap-3 mb-6">
+          <div className="flex items-center gap-3">
+            <h4 className="mb-2 text-2xl font-semibold text-gray-800 dark:text-white/90">
+              Restricted Area Details
+            </h4>
             <span
               className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize ${statusColorClass}`}>
               {area.status}
@@ -63,7 +64,7 @@ export function RestrictedAreaDetailModal({
         </div>
 
         {/* Detail rows */}
-        <div className="px-2 space-y-0">
+        <div className="px-2 space-y-0 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           <DetailRow
             label="ID"
             value={area.id}
@@ -103,16 +104,7 @@ export function RestrictedAreaDetailModal({
               value={area.restrictedNow ? "Yes" : "No"}
             />
           )}
-          {area.polygonWkt && (
-            <DetailRow
-              label="Polygon (WKT)"
-              value={
-                <span className="font-mono text-xs break-all">
-                  {area.polygonWkt}
-                </span>
-              }
-            />
-          )}
+
           {area.createdAt && (
             <DetailRow
               label="Created At (Kabul)"
@@ -123,6 +115,17 @@ export function RestrictedAreaDetailModal({
             <DetailRow
               label="Updated At (Kabul)"
               value={area.updatedAt}
+            />
+          )}
+          {area.polygonWkt && (
+            <DetailRow
+              isColSpan3={true}
+              label="Polygon (WKT)"
+              value={
+                <span className="font-mono text-xs break-all">
+                  {area.polygonWkt}
+                </span>
+              }
             />
           )}
         </div>
