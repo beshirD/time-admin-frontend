@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { Modal } from "@/components/ui/modal";
 import Button from "@/components/ui/Button";
 import Label from "@/components/ui/Label";
-import { RestaurantTransaction } from "@/types/entities";
+import type { Transaction, TransactionStatus } from "@/types/entities";
 import {
   Select,
   SelectContent,
@@ -16,8 +16,9 @@ import {
 interface ChangeStatusDialogProps {
   isOpen: boolean;
   onClose: () => void;
-  transaction: RestaurantTransaction | null;
-  onSave: (newStatus: string) => void;
+  transaction: Transaction | null;
+  onSave: (transactionId: number, newStatus: TransactionStatus) => void;
+  isSaving?: boolean;
 }
 
 export function ChangeStatusDialog({
@@ -25,6 +26,7 @@ export function ChangeStatusDialog({
   onClose,
   transaction,
   onSave,
+  isSaving = false,
 }: ChangeStatusDialogProps) {
   const [status, setStatus] = useState<string>("");
 
@@ -36,9 +38,8 @@ export function ChangeStatusDialog({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (status) {
-      onSave(status);
-      onClose();
+    if (status && transaction) {
+      onSave(transaction.id, status as TransactionStatus);
     }
   };
 
@@ -70,10 +71,10 @@ export function ChangeStatusDialog({
             <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg space-y-2">
               <div className="flex justify-between">
                 <span className="text-sm text-gray-600 dark:text-gray-400">
-                  Order ID:
+                  Reference:
                 </span>
-                <span className="text-sm font-medium text-gray-900 dark:text-white">
-                  {transaction?.orderId}
+                <span className="text-sm font-medium text-gray-900 dark:text-white font-mono">
+                  {transaction?.reference}
                 </span>
               </div>
               <div className="flex justify-between">
@@ -81,14 +82,22 @@ export function ChangeStatusDialog({
                   Amount:
                 </span>
                 <span className="text-sm font-medium text-gray-900 dark:text-white">
-                  {transaction?.amount}
+                  {transaction?.amount?.toFixed(2)} {transaction?.currency}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-600 dark:text-gray-400">
+                  Gateway:
+                </span>
+                <span className="text-sm font-medium text-gray-900 dark:text-white">
+                  {transaction?.gateway}
                 </span>
               </div>
               <div className="flex justify-between">
                 <span className="text-sm text-gray-600 dark:text-gray-400">
                   Current Status:
                 </span>
-                <span className="text-sm font-medium text-gray-900 dark:text-white capitalize">
+                <span className="text-sm font-medium text-gray-900 dark:text-white">
                   {transaction?.status}
                 </span>
               </div>
@@ -106,10 +115,9 @@ export function ChangeStatusDialog({
                   <SelectValue placeholder="Select status" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="pending">Pending</SelectItem>
-                  <SelectItem value="completed">Completed</SelectItem>
-                  <SelectItem value="failed">Failed</SelectItem>
-                  <SelectItem value="canceled">Canceled</SelectItem>
+                  <SelectItem value="PENDING">Pending</SelectItem>
+                  <SelectItem value="SUCCESS">Success</SelectItem>
+                  <SelectItem value="FAILED">Failed</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -120,13 +128,15 @@ export function ChangeStatusDialog({
               size="sm"
               variant="outline"
               type="button"
-              onClick={handleClose}>
+              onClick={handleClose}
+              disabled={isSaving}>
               Cancel
             </Button>
             <Button
               size="sm"
-              type="submit">
-              Update Status
+              type="submit"
+              disabled={isSaving}>
+              {isSaving ? "Updating..." : "Update Status"}
             </Button>
           </div>
         </form>

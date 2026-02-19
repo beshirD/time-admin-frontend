@@ -904,3 +904,31 @@ export interface RestrictedArea {
   updatedAt: string;
 }
 
+export type TransactionPayableType = "ORDER" | "TAILOR_ORDER" | "BANNER_SUBSCRIPTION";
+export type TransactionGateway = "HESABPAY" | "MANUAL";
+export type TransactionDirection = "CHARGE" | "REFUND";
+export type TransactionStatus = "PENDING" | "SUCCESS" | "FAILED";
+
+export interface Transaction {
+  id: number;
+  userId: number;
+  restaurantId: number;
+  payableType: TransactionPayableType;
+  payableId: number;
+  reference: string;
+  gateway: TransactionGateway;
+  amount: number;
+  currency: string;
+  direction: TransactionDirection;
+  status: TransactionStatus;
+  createdAt: string;
+  updatedAt: string;
+  response: string | null;
+}
+
+export interface TransactionsResponse {
+  total: number;
+  page: number;
+  size: number;
+  transactions: Transaction[];
+}

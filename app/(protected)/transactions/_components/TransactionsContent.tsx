@@ -3,31 +3,52 @@
 import { useState } from "react";
 import { DataTable } from "@/components/shared/DataTable";
 import { createColumns } from "./columns";
-import { RestaurantTransaction } from "@/types/entities";
+import type { Transaction, TransactionStatus } from "@/types/entities";
 import { ChangeStatusDialog } from "./ChangeStatusDialog";
 import PageTitle from "@/components/common/PageTitle";
+import { useTransactions } from "@/hooks/useTransactions";
 
-interface TransactionsContentProps {
-  initialData: RestaurantTransaction[];
-}
+export function TransactionsContent() {
+  const [pageIndex, setPageIndex] = useState(0);
+  const [pageSize, setPageSize] = useState(20);
 
-export function TransactionsContent({ initialData }: TransactionsContentProps) {
+  const {
+    data: transactions,
+    total,
+    isLoading,
+    changeStatus,
+    isChangingStatus,
+  } = useTransactions({ page: pageIndex, size: pageSize });
+
   const [changingTransaction, setChangingTransaction] =
-    useState<RestaurantTransaction | null>(null);
+    useState<Transaction | null>(null);
 
-  const handleChangeStatus = (transaction: RestaurantTransaction) => {
+  const pageCount = Math.ceil(total / pageSize);
+
+  const handleChangeStatus = (transaction: Transaction) => {
     setChangingTransaction(transaction);
   };
 
-  const handleStatusUpdate = (newStatus: string) => {
-    console.log(
-      "Updating transaction:",
-      changingTransaction?.id,
-      "to status:",
-      newStatus,
+  const handleStatusUpdate = (
+    transactionId: number,
+    newStatus: TransactionStatus,
+  ) => {
+    changeStatus(
+      { id: transactionId, status: newStatus },
+      {
+        onSuccess: () => {
+          setChangingTransaction(null);
+        },
+      },
     );
-    // TODO: Implement API call to update status
-    setChangingTransaction(null);
+  };
+
+  const handlePaginationChange = (
+    newPageIndex: number,
+    newPageSize: number,
+  ) => {
+    setPageIndex(newPageIndex);
+    setPageSize(newPageSize);
   };
 
   const columns = createColumns(handleChangeStatus);
@@ -36,14 +57,26 @@ export function TransactionsContent({ initialData }: TransactionsContentProps) {
     <>
       <div className="flex flex-col gap-5">
         <div className="flex px-5 py-2 rounded-lg border bg-white dark:bg-gray-900 items-center justify-between">
-          <PageTitle title="Restaurant Transactions" />
+          <PageTitle title="Transactions" />
         </div>
         <div className="flex bg-white dark:bg-gray-900 p-5 rounded-lg">
           <DataTable
             columns={columns}
-            data={initialData}
-            searchPlaceholder="Search by order ID, user, restaurant..."
-            searchableColumns={["orderId", "user", "restaurant", "reference"]}
+            data={transactions}
+            searchPlaceholder="Search by reference, gateway..."
+            searchableColumns={[
+              "reference",
+              "gateway",
+              "status",
+              "payableType",
+            ]}
+            isLoading={isLoading}
+            manualPagination={true}
+            pageCount={pageCount}
+            pageIndex={pageIndex}
+            pageSize={pageSize}
+            totalItems={total}
+            onPaginationChange={handlePaginationChange}
           />
         </div>
       </div>
@@ -54,6 +87,7 @@ export function TransactionsContent({ initialData }: TransactionsContentProps) {
         onClose={() => setChangingTransaction(null)}
         transaction={changingTransaction}
         onSave={handleStatusUpdate}
+        isSaving={isChangingStatus}
       />
     </>
   );
