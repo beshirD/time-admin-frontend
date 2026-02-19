@@ -23,7 +23,7 @@ function DetailRow({
   return (
     <div
       className={`flex flex-col py-3 gap-2 ${isColSpan3 ? "col-span-3" : ""}`}>
-      <span className=" text-gray-600 dark:text-gray-300 text-base">
+      <span className="text-gray-600 dark:text-gray-300 text-base">
         {label}
       </span>
       <span className="text-gray-900 dark:text-white text-base">{value}</span>
@@ -43,6 +43,17 @@ export function RestrictedAreaDetailModal({
     area.status === "active"
       ? "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400"
       : "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400";
+
+  const formatDate = (dateStr: string) =>
+    new Date(dateStr).toLocaleString("en-US", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: true,
+    });
 
   return (
     <Modal
@@ -74,60 +85,34 @@ export function RestrictedAreaDetailModal({
             value={area.areaName}
           />
           <DetailRow
-            label="Start Hour (Afghanistan time)"
+            label="Start Hour"
             value={area.startHour}
           />
           <DetailRow
-            label="End Hour (Afghanistan time)"
+            label="End Hour"
             value={area.endHour}
           />
           <DetailRow
             label="Status"
             value={area.status}
           />
-
-          {area.visitorTimezone && (
-            <DetailRow
-              label="Visitor Timezone"
-              value={area.visitorTimezone}
-            />
-          )}
-          {area.currentTime && (
-            <DetailRow
-              label="Current Time (Visitor)"
-              value={area.currentTime}
-            />
-          )}
-          {area.restrictedNow !== undefined && (
-            <DetailRow
-              label="Restricted Now (Visitor)"
-              value={area.restrictedNow ? "Yes" : "No"}
-            />
-          )}
-
-          {area.createdAt && (
-            <DetailRow
-              label="Created At (Kabul)"
-              value={area.createdAt}
-            />
-          )}
-          {area.updatedAt && (
-            <DetailRow
-              label="Updated At (Kabul)"
-              value={area.updatedAt}
-            />
-          )}
-          {area.polygonWkt && (
-            <DetailRow
-              isColSpan3={true}
-              label="Polygon (WKT)"
-              value={
-                <span className="font-mono text-xs break-all">
-                  {area.polygonWkt}
-                </span>
-              }
-            />
-          )}
+          <DetailRow
+            label="Created At"
+            value={formatDate(area.createdAt)}
+          />
+          <DetailRow
+            label="Updated At"
+            value={formatDate(area.updatedAt)}
+          />
+          <DetailRow
+            isColSpan3={true}
+            label="Geo Polygon (WKT)"
+            value={
+              <span className="font-mono text-xs break-all">
+                {area.geoPolygon}
+              </span>
+            }
+          />
         </div>
 
         {/* Map placeholder */}

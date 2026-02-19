@@ -7,64 +7,25 @@ import { createColumns } from "./columns";
 import { CreateRestrictedAreaModal } from "./CreateRestrictedAreaModal";
 import { RestrictedAreaDetailModal } from "./RestrictedAreaDetailModal";
 import type { RestrictedArea } from "@/types/entities";
-
-// Mock data matching the spec
-const mockAreas: RestrictedArea[] = [
-  {
-    id: 8,
-    areaName: "jemo",
-    startHour: "00:01:00",
-    endHour: "23:58:00",
-    status: "active",
-    polygonWkt:
-      "POLYGON((38.6937783551722 8.955378498795955,38.6937783551722 8.95088489776269,38.698952770305254 8.950863701399841,38.70210704810677 8.954721419092067,38.69998273856697 8.95711782418486,38.6937783551722 8.955378498795955))",
-    visitorTimezone: "Asia/Kabul",
-    currentTime: "04:24:11",
-    restrictedNow: true,
-    createdAt: "2025-10-21 02:38:07",
-    updatedAt: "2025-10-21 02:38:07",
-  },
-  {
-    id: 10,
-    areaName: "JEMO 2",
-    startHour: "09:00:00",
-    endHour: "07:00:00",
-    status: "inactive",
-    visitorTimezone: "Asia/Kabul",
-    currentTime: "04:24:11",
-    restrictedNow: false,
-    createdAt: "2025-10-22 08:15:00",
-    updatedAt: "2025-10-22 08:15:00",
-  },
-  {
-    id: 11,
-    areaName: "demo 3",
-    startHour: "10:00:00",
-    endHour: "10:04:00",
-    status: "active",
-    visitorTimezone: "Asia/Kabul",
-    currentTime: "04:24:11",
-    restrictedNow: false,
-    createdAt: "2025-10-23 10:00:00",
-    updatedAt: "2025-10-23 10:00:00",
-  },
-  {
-    id: 12,
-    areaName: "check 121",
-    startHour: "14:00:00",
-    endHour: "15:00:00",
-    status: "active",
-    visitorTimezone: "Asia/Kabul",
-    currentTime: "04:24:11",
-    restrictedNow: false,
-    createdAt: "2025-10-24 14:00:00",
-    updatedAt: "2025-10-24 14:00:00",
-  },
-];
+import { useRestrictedAreas } from "@/hooks/useRestrictedAreas";
+import type {
+  CreateRestrictedAreaRequest,
+  UpdateRestrictedAreaRequest,
+} from "@/hooks/useRestrictedAreas";
 
 export function RestrictedAreasContent() {
-  const [areas, setAreas] = useState<RestrictedArea[]>(mockAreas);
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const {
+    data: areas,
+    isLoading,
+    createArea,
+    updateArea,
+    deleteArea,
+    isCreating,
+    isUpdating,
+    isDeleting,
+  } = useRestrictedAreas();
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
   const [editingArea, setEditingArea] = useState<RestrictedArea | null>(null);
   const [selectedArea, setSelectedArea] = useState<RestrictedArea | null>(null);
@@ -78,7 +39,7 @@ export function RestrictedAreasContent() {
 
   const handleEdit = (area: RestrictedArea) => {
     setEditingArea(area);
-    setIsCreateModalOpen(true);
+    setIsModalOpen(true);
   };
 
   const handleDelete = (id: number) => {
@@ -88,40 +49,25 @@ export function RestrictedAreasContent() {
 
   const confirmDelete = () => {
     if (deleteId !== null) {
-      setAreas((prev) => prev.filter((a) => a.id !== deleteId));
-      setShowDeleteConfirm(false);
-      setDeleteId(null);
+      deleteArea(deleteId, {
+        onSuccess: () => {
+          setShowDeleteConfirm(false);
+          setDeleteId(null);
+        },
+        onError: () => {
+          setShowDeleteConfirm(false);
+          setDeleteId(null);
+        },
+      });
     }
   };
 
-  const handleCreateOrUpdate = (
-    data: Omit<
-      RestrictedArea,
-      | "id"
-      | "createdAt"
-      | "updatedAt"
-      | "visitorTimezone"
-      | "currentTime"
-      | "restrictedNow"
-    >,
-  ) => {
-    if (editingArea) {
-      setAreas((prev) =>
-        prev.map((a) => (a.id === editingArea.id ? { ...a, ...data } : a)),
-      );
-      setEditingArea(null);
-    } else {
-      const newArea: RestrictedArea = {
-        ...data,
-        id: areas.length > 0 ? Math.max(...areas.map((a) => a.id)) + 1 : 1,
-        visitorTimezone: "Asia/Kabul",
-        currentTime: new Date().toTimeString().split(" ")[0],
-        restrictedNow: false,
-        createdAt: new Date().toISOString().replace("T", " ").slice(0, 19),
-        updatedAt: new Date().toISOString().replace("T", " ").slice(0, 19),
-      };
-      setAreas([newArea, ...areas]);
-    }
+  const handleCreate = (payload: CreateRestrictedAreaRequest) => {
+    createArea(payload);
+  };
+
+  const handleUpdate = (id: number, payload: UpdateRestrictedAreaRequest) => {
+    updateArea({ id, payload });
   };
 
   const columns = createColumns({
@@ -140,18 +86,16 @@ export function RestrictedAreasContent() {
               Restricted Areas
             </h1>
           </div>
-          <div className="flex items-center gap-3">
-            <Button
-              size="sm"
-              usage="create"
-              onClick={() => {
-                setEditingArea(null);
-                setIsCreateModalOpen(true);
-              }}
-              className="gap-2">
-              Create Restricted Area
-            </Button>
-          </div>
+          <Button
+            size="sm"
+            usage="create"
+            disabled={isCreating}
+            onClick={() => {
+              setEditingArea(null);
+              setIsModalOpen(true);
+            }}>
+            Create Restricted Area
+          </Button>
         </div>
 
         {/* Table */}
@@ -162,6 +106,7 @@ export function RestrictedAreasContent() {
             searchPlaceholder="Search restricted areas..."
             searchableColumns={["areaName"]}
             enableSearch={true}
+            isLoading={isLoading}
             onRowClick={(row) => handleView(row)}
           />
         </div>
@@ -169,13 +114,15 @@ export function RestrictedAreasContent() {
 
       {/* Create / Edit Modal */}
       <CreateRestrictedAreaModal
-        isOpen={isCreateModalOpen}
+        isOpen={isModalOpen}
         onClose={() => {
-          setIsCreateModalOpen(false);
+          setIsModalOpen(false);
           setEditingArea(null);
         }}
-        onSubmit={handleCreateOrUpdate}
+        onCreate={handleCreate}
+        onUpdate={handleUpdate}
         editData={editingArea}
+        isSubmitting={editingArea ? isUpdating : isCreating}
       />
 
       {/* Detail Modal */}
@@ -198,7 +145,9 @@ export function RestrictedAreasContent() {
         <div className="fixed inset-0 z-50 flex items-center justify-center">
           <div
             className="absolute inset-0 bg-black/50"
-            onClick={() => setShowDeleteConfirm(false)}
+            onClick={() => {
+              if (!isDeleting) setShowDeleteConfirm(false);
+            }}
           />
           <div className="relative bg-white dark:bg-gray-900 rounded-lg shadow-xl p-6 max-w-md mx-4">
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
@@ -215,14 +164,16 @@ export function RestrictedAreasContent() {
                 onClick={() => {
                   setShowDeleteConfirm(false);
                   setDeleteId(null);
-                }}>
+                }}
+                disabled={isDeleting}>
                 Cancel
               </Button>
               <Button
                 size="sm"
                 onClick={confirmDelete}
+                disabled={isDeleting}
                 className="bg-red-600 hover:bg-red-700">
-                Delete
+                {isDeleting ? "Deleting..." : "Delete"}
               </Button>
             </div>
           </div>

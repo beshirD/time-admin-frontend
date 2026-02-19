@@ -7,35 +7,39 @@ import Input from "@/components/ui/Input";
 import Label from "@/components/ui/Label";
 import { cn } from "@/lib/utils";
 import type { RestrictedArea } from "@/types/entities";
+import type {
+  CreateRestrictedAreaRequest,
+  UpdateRestrictedAreaRequest,
+} from "@/hooks/useRestrictedAreas";
+
+// Demo polygon until map integration — clearly marked as test data
+const DEMO_POLYGON =
+  "POLYGON((38.6937783551722 8.955378498795955,38.6937783551722 8.95088489776269,38.698952770305254 8.950863701399841,38.70210704810677 8.954721419092067,38.69998273856697 8.95711782418486,38.6937783551722 8.955378498795955))";
 
 interface CreateRestrictedAreaModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (
-    data: Omit<
-      RestrictedArea,
-      | "id"
-      | "createdAt"
-      | "updatedAt"
-      | "visitorTimezone"
-      | "currentTime"
-      | "restrictedNow"
-    >,
-  ) => void;
+  onCreate?: (payload: CreateRestrictedAreaRequest) => void;
+  onUpdate?: (id: number, payload: UpdateRestrictedAreaRequest) => void;
   editData?: RestrictedArea | null;
+  isSubmitting?: boolean;
 }
 
 export function CreateRestrictedAreaModal({
   isOpen,
   onClose,
-  onSubmit,
+  onCreate,
+  onUpdate,
   editData,
+  isSubmitting = false,
 }: CreateRestrictedAreaModalProps) {
+  const isEditing = !!editData;
+
   const [areaName, setAreaName] = useState("");
   const [startHour, setStartHour] = useState("");
   const [endHour, setEndHour] = useState("");
   const [status, setStatus] = useState<"active" | "inactive">("active");
-  const [polygonWkt, setPolygonWkt] = useState("");
+  const [geoPolygon, setGeoPolygon] = useState(DEMO_POLYGON);
   const [errors, setErrors] = useState<{
     areaName?: string;
     startHour?: string;
@@ -48,13 +52,13 @@ export function CreateRestrictedAreaModal({
       setStartHour(editData.startHour);
       setEndHour(editData.endHour);
       setStatus(editData.status);
-      setPolygonWkt(editData.polygonWkt ?? "");
+      setGeoPolygon(editData.geoPolygon || DEMO_POLYGON);
     } else {
       setAreaName("");
       setStartHour("");
       setEndHour("");
       setStatus("active");
-      setPolygonWkt("");
+      setGeoPolygon(DEMO_POLYGON);
     }
     setErrors({});
   }, [editData, isOpen]);
@@ -72,7 +76,14 @@ export function CreateRestrictedAreaModal({
       return;
     }
 
-    onSubmit({ areaName, startHour, endHour, status, polygonWkt });
+    const payload = { areaName, geoPolygon, startHour, endHour, status };
+
+    if (isEditing && onUpdate) {
+      onUpdate(editData.id, payload);
+    } else if (!isEditing && onCreate) {
+      onCreate(payload);
+    }
+
     handleClose();
   };
 
@@ -81,7 +92,7 @@ export function CreateRestrictedAreaModal({
     setStartHour("");
     setEndHour("");
     setStatus("active");
-    setPolygonWkt("");
+    setGeoPolygon(DEMO_POLYGON);
     setErrors({});
     onClose();
   };
@@ -94,10 +105,10 @@ export function CreateRestrictedAreaModal({
       <div className="relative border w-[680px] overflow-y-auto rounded-3xl bg-white p-4 dark:bg-gray-900 lg:p-11 no-scrollbar max-h-[90vh]">
         <div className="px-2 pr-14">
           <h4 className="mb-2 text-2xl font-semibold text-gray-800 dark:text-white/90">
-            {editData ? "Edit Restricted Area" : "Create Restricted Area"}
+            {isEditing ? "Edit Restricted Area" : "Create Restricted Area"}
           </h4>
           <p className="mb-6 text-sm text-gray-500 dark:text-gray-400">
-            {editData
+            {isEditing
               ? "Update the restricted area information"
               : "Define a new geographic area where orders are restricted"}
           </p>
@@ -200,7 +211,6 @@ export function CreateRestrictedAreaModal({
               <div>
                 <Label>Draw Restricted Area on Map</Label>
                 <div className="w-full rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50 flex flex-col items-center justify-center gap-2 py-10 px-4 text-center">
-                  {/* Map icon placeholder */}
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     className="h-12 w-12 text-gray-400 dark:text-gray-500 mb-1"
@@ -225,13 +235,17 @@ export function CreateRestrictedAreaModal({
                 </div>
               </div>
 
-              {/* Polygon WKT */}
+              {/* Geo Polygon (WKT) — pre-filled with demo value */}
               <div>
-                <Label>Polygon Coordinates (WKT)</Label>
+                <Label>
+                  Geo Polygon (WKT){" "}
+                  <span className="ml-2 inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400">
+                    Test polygon — replace when map is integrated
+                  </span>
+                </Label>
                 <textarea
-                  value={polygonWkt}
-                  onChange={(e) => setPolygonWkt(e.target.value)}
-                  placeholder="Coordinates will be filled automatically when the map is integrated. You can also paste WKT manually."
+                  value={geoPolygon}
+                  onChange={(e) => setGeoPolygon(e.target.value)}
                   rows={3}
                   className="w-full px-3 py-2 border rounded-lg text-sm font-mono bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
                 />
@@ -249,8 +263,15 @@ export function CreateRestrictedAreaModal({
             </Button>
             <Button
               size="sm"
-              type="submit">
-              {editData ? "Update Area" : "Create Area"}
+              type="submit"
+              disabled={isSubmitting}>
+              {isSubmitting
+                ? isEditing
+                  ? "Saving..."
+                  : "Creating..."
+                : isEditing
+                  ? "Update Area"
+                  : "Create Area"}
             </Button>
           </div>
         </form>

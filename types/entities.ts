@@ -896,13 +896,11 @@ export type RestrictedAreaStatus = "active" | "inactive";
 export interface RestrictedArea {
   id: number;
   areaName: string;
+  geoPolygon: string;
   startHour: string; // "HH:mm:ss"
   endHour: string;   // "HH:mm:ss"
   status: RestrictedAreaStatus;
-  polygonWkt?: string;
-  visitorTimezone?: string;
-  currentTime?: string;
-  restrictedNow?: boolean;
-  createdAt?: string;
-  updatedAt?: string;
+  createdAt: string;
+  updatedAt: string;
 }
+

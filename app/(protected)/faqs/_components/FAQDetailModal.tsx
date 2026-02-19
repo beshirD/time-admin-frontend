@@ -26,12 +26,12 @@ export function FAQDetailModal({
       isOpen={isOpen}
       onClose={onClose}
       className="max-w-[800px] m-4">
-      <div className="relative border w-[500px] overflow-y-auto rounded-3xl bg-white p-4 dark:bg-gray-900 lg:p-11 no-scrollbar">
+      <div className="relative border w-[600px] overflow-y-auto rounded-3xl bg-white p-4 dark:bg-gray-900 lg:p-11 no-scrollbar">
         <div className="px-2 pr-14">
-          <h4 className="mb-2 text-2xl font-semibold text-gray-800 dark:text-white/90">
-            FAQ Details
-          </h4>
-          <div className="flex items-center gap-3 mb-6">
+          <div className="flex items-center gap-3">
+            <h4 className="mb-2 text-2xl font-semibold text-gray-800 dark:text-white/90">
+              FAQ Details
+            </h4>
             <span
               className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
                 faq.active
@@ -43,40 +43,18 @@ export function FAQDetailModal({
           </div>
         </div>
 
-        <div className="px-2 space-y-4">
-          {/* Question */}
-          <div className="py-3 border-b border-gray-200 dark:border-gray-800">
-            <span className="font-medium text-gray-700 dark:text-gray-300 block mb-2">
-              Question
-            </span>
-            <p className="text-gray-900 dark:text-white">
-              {translation?.question ?? "—"}
-            </p>
-          </div>
-
-          {/* Answer */}
-          <div className="py-3 border-b border-gray-200 dark:border-gray-800">
-            <span className="font-medium text-gray-700 dark:text-gray-300 block mb-2">
-              Answer
-            </span>
-            <p className="text-gray-900 dark:text-white whitespace-pre-wrap">
-              {translation?.answer ?? "—"}
-            </p>
-          </div>
-
+        <div className="px-2 space-y-4 grid grid-cols-2 gap-4">
           {/* Category */}
-          <div className="flex justify-between py-3 border-b border-gray-200 dark:border-gray-800">
-            <span className="font-medium text-gray-700 dark:text-gray-300">
-              Category
-            </span>
+          <div className="flex flex-col gap-2 ">
+            <span className=" text-gray-700 dark:text-gray-300">Category</span>
             <span className="text-gray-900 dark:text-white capitalize">
               {faq.category || "—"}
             </span>
           </div>
 
           {/* Display Order */}
-          <div className="flex justify-between py-3 border-b border-gray-200 dark:border-gray-800">
-            <span className="font-medium text-gray-700 dark:text-gray-300">
+          <div className="flex flex-col gap-2 ">
+            <span className=" text-gray-700 dark:text-gray-300">
               Display Order
             </span>
             <span className="text-gray-900 dark:text-white">
@@ -85,8 +63,8 @@ export function FAQDetailModal({
           </div>
 
           {/* Created At */}
-          <div className="flex justify-between py-3 border-b border-gray-200 dark:border-gray-800">
-            <span className="font-medium text-gray-700 dark:text-gray-300">
+          <div className="flex flex-col gap-2 ">
+            <span className=" text-gray-700 dark:text-gray-300">
               Created At
             </span>
             <span className="text-gray-900 dark:text-white">
@@ -103,8 +81,8 @@ export function FAQDetailModal({
           </div>
 
           {/* Updated At */}
-          <div className="flex justify-between py-3 border-b border-gray-200 dark:border-gray-800">
-            <span className="font-medium text-gray-700 dark:text-gray-300">
+          <div className="flex flex-col gap-2 ">
+            <span className=" text-gray-700 dark:text-gray-300">
               Updated At
             </span>
             <span className="text-gray-900 dark:text-white">
@@ -119,28 +97,28 @@ export function FAQDetailModal({
               })}
             </span>
           </div>
+          {/* Question */}
+          <div className="">
+            <span className=" text-gray-700 dark:text-gray-300 block">
+              Question
+            </span>
+            <p className="text-gray-900 dark:text-white">
+              {translation?.question ?? "—"}
+            </p>
+          </div>
+
+          {/* Answer */}
+          <div className="py-3 col-span-2">
+            <span className=" text-gray-700 dark:text-gray-300 block mb-2">
+              Answer
+            </span>
+            <p className="text-gray-900 p-3 border rounded-md dark:text-white whitespace-pre-wrap">
+              {translation?.answer ?? "—"}
+            </p>
+          </div>
         </div>
 
         {/* Actions */}
-        {onEdit && (
-          <div className="flex items-center justify-end gap-3 px-2 mt-6">
-            <Button
-              size="sm"
-              usage="edit"
-              onClick={() => {
-                onClose();
-                onEdit(faq);
-              }}>
-              Edit
-            </Button>
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={onClose}>
-              Close
-            </Button>
-          </div>
-        )}
       </div>
     </Modal>
   );
