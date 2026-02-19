@@ -2,6 +2,7 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/lib/api-client';
+import { toast } from 'sonner';
 import type { PreferencesResponse, UpdatePreferences } from '@/types/preferences';
 
 /**
@@ -27,11 +28,15 @@ export function useUpdatePreferences() {
   return useMutation({
     mutationFn: async (data: UpdatePreferences) => {
       const response = await api.put<PreferencesResponse>('/api/profile/preferences', data);
-      return response.data;
+      return response;
     },
-    onSuccess: (data) => {
-      queryClient.setQueryData(['userPreferences'], data);
+    onSuccess: (response) => {
+      toast.success(response.message || 'Preferences saved successfully');
+      queryClient.setQueryData(['userPreferences'], response.data);
       queryClient.invalidateQueries({ queryKey: ['userPreferences'] });
+    },
+    onError: (error: Error) => {
+      toast.error(error.message || 'Failed to save preferences');
     },
   });
 }
@@ -45,11 +50,15 @@ export function usePatchPreferences() {
   return useMutation({
     mutationFn: async (data: Partial<UpdatePreferences>) => {
       const response = await api.patch<PreferencesResponse>('/api/profile/preferences', data);
-      return response.data;
+      return response;
     },
-    onSuccess: (data) => {
-      queryClient.setQueryData(['userPreferences'], data);
+    onSuccess: (response) => {
+      toast.success(response.message || 'Preferences saved successfully');
+      queryClient.setQueryData(['userPreferences'], response.data);
       queryClient.invalidateQueries({ queryKey: ['userPreferences'] });
+    },
+    onError: (error: Error) => {
+      toast.error(error.message || 'Failed to save preferences');
     },
   });
 }

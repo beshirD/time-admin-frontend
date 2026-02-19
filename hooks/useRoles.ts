@@ -11,21 +11,11 @@ export function useRoles() {
   return useQuery({
     queryKey: ['roles'],
     queryFn: async () => {
-      try {
-        const response = await api.get<RolesResponse>('/rbac/roles');
-        
-        if (!response.data || !response.data.roles) {
-          console.error('Invalid response structure:', response);
-          return [];
-        }
-        
-        return response.data.roles;
-      } catch (error) {
-        console.error('Error fetching roles:', error);
-        throw error;
-      }
+      const response = await api.get<RolesResponse>('/rbac/roles');
+      return response.data?.roles ?? [];
     },
-    staleTime: 5 * 60 * 1000, // 5 minutes - roles don't change frequently
+    staleTime: 5 * 60 * 1000,
     refetchOnWindowFocus: false,
+    retry: false, // Don't retry on access denied
   });
 }

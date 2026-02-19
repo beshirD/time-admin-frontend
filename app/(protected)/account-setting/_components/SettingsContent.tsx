@@ -20,31 +20,6 @@ export function SettingsContent() {
         {activeTab === "profile" && <ProfileTab />}
         {activeTab === "preferences" && <PreferencesTab />}
         {activeTab === "notifications" && <NotificationsTab />}
-        {activeTab === "security" && (
-          <div className="p-8 text-center text-gray-500 dark:text-gray-400">
-            Security tab - Coming soon
-          </div>
-        )}
-        {activeTab === "privacy" && (
-          <div className="p-8 text-center text-gray-500 dark:text-gray-400">
-            Privacy tab - Coming soon
-          </div>
-        )}
-        {activeTab === "billing" && (
-          <div className="p-8 text-center text-gray-500 dark:text-gray-400">
-            Billing tab - Coming soon
-          </div>
-        )}
-        {activeTab === "integrations" && (
-          <div className="p-8 text-center text-gray-500 dark:text-gray-400">
-            Integrations tab - Coming soon
-          </div>
-        )}
-        {activeTab === "advanced" && (
-          <div className="p-8 text-center text-gray-500 dark:text-gray-400">
-            Advanced tab - Coming soon
-          </div>
-        )}
       </div>
     </div>
   );

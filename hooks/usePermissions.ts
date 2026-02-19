@@ -12,15 +12,10 @@ export function usePermissions() {
     queryKey: ['permissions'],
     queryFn: async () => {
       const response = await api.get<PermissionsResponse>('/rbac/permissions');
-      
-      if (!response.data || !response.data.permissions) {
-        console.error('Invalid response structure:', response);
-        return [];
-      }
-      
-      return response.data.permissions;
+      return response.data?.permissions ?? [];
     },
-    staleTime: 5 * 60 * 1000, // 5 minutes
+    staleTime: 5 * 60 * 1000,
     refetchOnWindowFocus: false,
+    retry: false, // Don't retry on access denied
   });
 }

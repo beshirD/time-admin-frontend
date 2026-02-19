@@ -52,9 +52,6 @@ const tabs = [
   { id: "profile", label: "Profile", icon: User },
   { id: "preferences", label: "Preferences", icon: Settings },
   { id: "notifications", label: "Notifications", icon: Bell },
-  { id: "security", label: "Security", icon: Shield },
-  { id: "privacy", label: "Privacy", icon: Lock },
-  { id: "billing", label: "Billing", icon: CreditCard },
 ];
 
 export function SettingsTabs({ activeTab }: SettingsTabsProps) {
