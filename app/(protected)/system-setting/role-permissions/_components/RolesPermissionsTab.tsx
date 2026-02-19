@@ -3,9 +3,7 @@
 import { useState } from "react";
 import { useRoles } from "@/hooks/useRoles";
 import { usePermissions } from "@/hooks/usePermissions";
-// import { CreateRoleDialog } from "./_components/CreateRoleDialog";
-// import { CreatePermissionDialog } from "../../../account-setting/_components/CreatePermissionDialog";
-import { Loader2, Shield, Key } from "lucide-react";
+import { Loader2, Shield, Key, Lock } from "lucide-react";
 import { CreateRoleDialog } from "./CreateRoleDialog";
 import { CreatePermissionDialog } from "./CreatePermissionDialog";
 
@@ -14,9 +12,16 @@ export function RolesPermissionsContent() {
     "roles",
   );
 
-  const { data: roles, isLoading: isLoadingRoles } = useRoles();
-  const { data: permissions, isLoading: isLoadingPermissions } =
-    usePermissions();
+  const {
+    data: roles,
+    isLoading: isLoadingRoles,
+    error: rolesError,
+  } = useRoles();
+  const {
+    data: permissions,
+    isLoading: isLoadingPermissions,
+    error: permissionsError,
+  } = usePermissions();
 
   return (
     <div className="space-y-6">
@@ -70,6 +75,8 @@ export function RolesPermissionsContent() {
             <div className="flex items-center justify-center py-12">
               <Loader2 className="h-8 w-8 animate-spin text-primary" />
             </div>
+          ) : rolesError ? (
+            <AccessDeniedState message={(rolesError as Error).message} />
           ) : roles && roles.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
               {roles.map((role) => (
@@ -127,6 +134,8 @@ export function RolesPermissionsContent() {
             <div className="flex items-center justify-center py-12">
               <Loader2 className="h-8 w-8 animate-spin text-primary" />
             </div>
+          ) : permissionsError ? (
+            <AccessDeniedState message={(permissionsError as Error).message} />
           ) : permissions && permissions.length > 0 ? (
             <div className="space-y-4">
               {/* Group by category */}
@@ -189,6 +198,20 @@ export function RolesPermissionsContent() {
           )}
         </div>
       )}
+    </div>
+  );
+}
+
+function AccessDeniedState({ message }: { message?: string }) {
+  return (
+    <div className="text-center py-12 bg-red-50 dark:bg-red-900/10 rounded-xl border-2 border-dashed border-red-200 dark:border-red-800">
+      <Lock className="h-12 w-12 mx-auto text-red-400 mb-3" />
+      <p className="text-base font-semibold text-red-600 dark:text-red-400">
+        Access Denied
+      </p>
+      <p className="text-sm text-red-400 dark:text-red-500 mt-1">
+        {message || "You don't have permission to view this resource."}
+      </p>
     </div>
   );
 }

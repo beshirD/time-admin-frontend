@@ -13,6 +13,9 @@ interface ProfileHeaderProps {
 export function ProfileHeader({ user }: ProfileHeaderProps) {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
+  const displayName = user.fullName || `${user.firstName} ${user.lastName}`;
+  const primaryRole = user.roles?.[0]?.name || "Admin";
+
   return (
     <>
       <div className="flex items-center justify-between border bg-white dark:bg-gray-900 rounded-lg p-4">
@@ -22,7 +25,7 @@ export function ProfileHeader({ user }: ProfileHeaderProps) {
             {user.image ? (
               <Image
                 src={user.image}
-                alt={user.fullName}
+                alt={displayName}
                 fill
                 className="object-cover"
               />
@@ -39,10 +42,10 @@ export function ProfileHeader({ user }: ProfileHeaderProps) {
           {/* User Info */}
           <div>
             <h2 className="text-2xl font-bold text-gray-800 dark:text-white">
-              {user.fullName}
+              {displayName}
             </h2>
             <p className="text-sm text-gray-500 dark:text-gray-400">
-              {user.role.name} • {user.email}
+              {primaryRole} • {user.email}
             </p>
           </div>
         </div>

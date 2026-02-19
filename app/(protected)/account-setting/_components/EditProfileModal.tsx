@@ -21,16 +21,18 @@ export function EditProfileModal({
 }: EditProfileModalProps) {
   const updateProfile = useUpdateUserProfile();
 
-  const [formData, setFormData] = useState<UpdateUserProfile>({
+  const initialFormData = (): UpdateUserProfile => ({
     firstName: user.firstName,
     lastName: user.lastName,
-    phoneNumber: user.phoneNumber,
-    countryCode: user.countryCode,
-    dateOfBirth: user.dateOfBirth,
-    gender: user.gender,
-    language: user.language,
-    timezone: user.timezone,
+    phoneNumber: user.phoneNumber || "",
+    countryCode: user.countryCode || "",
+    dateOfBirth: user.dateOfBirth || "",
+    gender: user.gender || "MALE",
+    language: user.language || "en",
+    timezone: user.timezone || "UTC",
   });
+
+  const [formData, setFormData] = useState<UpdateUserProfile>(initialFormData);
 
   const handleChange = (field: keyof UpdateUserProfile, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -50,16 +52,7 @@ export function EditProfileModal({
   const handleClose = () => {
     if (!updateProfile.isPending) {
       // Reset form data to original values
-      setFormData({
-        firstName: user.firstName,
-        lastName: user.lastName,
-        phoneNumber: user.phoneNumber,
-        countryCode: user.countryCode,
-        dateOfBirth: user.dateOfBirth,
-        gender: user.gender,
-        language: user.language,
-        timezone: user.timezone,
-      });
+      setFormData(initialFormData());
       onClose();
     }
   };
@@ -194,24 +187,6 @@ export function EditProfileModal({
                 />
               </div>
             </div>
-
-            {/* Error Message */}
-            {updateProfile.error && (
-              <div className="mt-4 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
-                <p className="text-sm text-red-600 dark:text-red-400">
-                  Failed to update profile. Please try again.
-                </p>
-              </div>
-            )}
-
-            {/* Success Message */}
-            {updateProfile.isSuccess && (
-              <div className="mt-4 p-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
-                <p className="text-sm text-green-600 dark:text-green-400">
-                  Profile updated successfully!
-                </p>
-              </div>
-            )}
           </div>
 
           <div className="flex items-center gap-3 px-2 mt-6 lg:justify-end">

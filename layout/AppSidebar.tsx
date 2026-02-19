@@ -113,9 +113,7 @@ const othersItems: NavItem[] = [
         path: "/system-setting/role-permissions",
       },
 
-      { name: "Payments", path: "/system-setting/payments" },
       { name: "Referral", path: "/system-setting/referral" },
-      { name: "Advanced", path: "/system-setting/advanced" },
     ],
   },
   {

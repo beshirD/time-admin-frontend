@@ -8,10 +8,10 @@ export type UserStatus = 'ACTIVE' | 'INACTIVE' | 'BANNED' | 'PENDING';
 export interface UserRole {
   id: number;
   name: string;
-  description: string;
-  createdAt: string;
-  updatedAt: string;
-  descriptionOptional: string;
+  description?: string;
+  createdAt?: string;
+  updatedAt?: string;
+  descriptionOptional?: string;
 }
 
 export interface CurrentUser {
@@ -19,28 +19,28 @@ export interface CurrentUser {
   firstName: string;
   lastName: string;
   email: string;
-  phoneNumber: string;
-  countryCode: string;
-  password: string;
-  dateOfBirth: string;
-  gender: Gender;
-  language: string;
-  role: UserRole;
-  timezone: string;
-  image: string | null;
-  socialLoginId: string | null;
-  socialProvider: string | null;
-  isSocial: boolean;
+  phoneNumber?: string;
+  countryCode?: string;
+  password?: string;
+  dateOfBirth?: string;
+  gender?: Gender;
+  language?: string;
+  roles?: UserRole[];
+  timezone?: string;
+  image?: string | null;
+  socialLoginId?: string | null;
+  socialProvider?: string | null;
+  isSocial?: boolean;
   status: UserStatus;
-  lastLoginAt: string;
-  pointsBalance: number;
-  referralCode: string;
-  referredByUserId: number | null;
-  createdAt: string;
-  updatedAt: string;
-  documents: unknown[];
-  address: unknown | null;
-  fullName: string;
+  lastLoginAt?: string | null;
+  pointsBalance?: number;
+  referralCode?: string;
+  referredByUserId?: number | null;
+  createdAt?: string;
+  updatedAt?: string;
+  documents?: unknown[];
+  address?: unknown | null;
+  fullName?: string;
 }
 
 export interface CurrentUserResponse {

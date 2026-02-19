@@ -39,15 +39,19 @@ export function ProfileInfo({ user }: ProfileInfoProps) {
           />
           <InfoItem
             label="Phone"
-            value={`${user.countryCode} ${user.phoneNumber}`}
+            value={
+              user.phoneNumber
+                ? `${user.countryCode || ""} ${user.phoneNumber}`.trim()
+                : "-"
+            }
           />
           <InfoItem
             label="Date of Birth"
-            value={formatDate(user.dateOfBirth)}
+            value={user.dateOfBirth ? formatDate(user.dateOfBirth) : "-"}
           />
           <InfoItem
             label="Gender"
-            value={user.gender}
+            value={user.gender || "-"}
           />
         </div>
       </div>
@@ -61,7 +65,7 @@ export function ProfileInfo({ user }: ProfileInfoProps) {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <InfoItem
             label="Role"
-            value={user.role.name}
+            value={user.roles?.[0]?.name || "-"}
           />
           <InfoItem
             label="Status"
@@ -69,19 +73,19 @@ export function ProfileInfo({ user }: ProfileInfoProps) {
           />
           <InfoItem
             label="Language"
-            value={user.language}
+            value={user.language || "-"}
           />
           <InfoItem
             label="Timezone"
-            value={user.timezone}
+            value={user.timezone || "-"}
           />
           <InfoItem
             label="Referral Code"
-            value={user.referralCode}
+            value={user.referralCode || "-"}
           />
           <InfoItem
             label="Member Since"
-            value={formatDate(user.createdAt)}
+            value={user.createdAt ? formatDate(user.createdAt) : "-"}
           />
           {user.lastLoginAt && (
             <InfoItem
