@@ -20,6 +20,7 @@ import {
   Album,
   Ambulance,
   Car,
+  FolderKanban,
   MailPlus,
   MessagesSquare,
   Settings,
@@ -73,7 +74,6 @@ const navItems: NavItem[] = [
       { name: "Restaurants", path: "/restaurants" },
       { name: "Cuisines", path: "/restaurants/cuisines" },
       { name: "Add-Ons Category", path: "/restaurants/addons-category" },
-      { name: "Transactions", path: "/restaurants/transactions" },
       { name: "Offers", path: "/restaurants/offers" },
     ],
   },
@@ -150,15 +150,11 @@ const othersItems: NavItem[] = [
   },
 
   {
-    icon: <PieChartIcon />,
+    icon: <FolderKanban />,
     name: "Transaction",
     path: "/transactions",
   },
-  {
-    icon: <PlugInIcon />,
-    name: "Manage",
-    path: "/manage",
-  },
+
   {
     icon: <ListIcon />,
     name: "FAQ's",
